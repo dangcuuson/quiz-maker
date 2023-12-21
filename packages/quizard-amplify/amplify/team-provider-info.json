@@ -10,6 +10,11 @@
       "StackName": "amplify-quizardamplify-dev-74416",
       "StackId": "arn:aws:cloudformation:ap-southeast-2:432907444026:stack/amplify-quizardamplify-dev-74416/b587ac30-a041-11ee-908c-0ab4654d946b",
       "AmplifyAppId": "d2drqkqohn7be5"
+    },
+    "categories": {
+      "auth": {
+        "quizardamplify4933a860": {}
+      }
     }
   }
 }
