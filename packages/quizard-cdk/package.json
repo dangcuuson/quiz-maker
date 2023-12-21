@@ -1,0 +1,7 @@
+{
+    "name": "quizard-cdk",
+    "version": "1.0.0",
+    "dependencies": {
+        "aws-cdk-lib": "2.115.0"
+    }
+}
