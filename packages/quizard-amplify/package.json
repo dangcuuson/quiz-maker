@@ -1,0 +1,10 @@
+{
+    "name": "quizard-amplify",
+    "version": "1.0.0",
+    "devDependencies": {
+        "@aws-amplify/cli": "12.10.0"
+    },
+    "scripts": {
+        "amplify": "amplify"
+    }
+}
