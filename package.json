@@ -1,18 +1,25 @@
 {
-  "name": "quiz-maker",
+  "name": "quizzard",
   "version": "1.0.0",
   "private": true,
-  "repository": "git@github.com:dangcuuson/quiz-maker.git",
+  "workspaces": [
+    "packages/*"
+  ],
+  "repository": "git@github.com:dangcuuson/quizard.git",
   "author": "jack <dangcuuson@gmail.com>",
   "license": "MIT",
   "scripts": {
     "reset-modules": "rm -rf node_modules/ packages/*/node_modules",
-    "test-all": "lerna run test --stream --scope dcs-web",
-    "typecheck-all": "lerna exec tsc --stream --scope dcs-web"
+    "test-all": "lerna run test --stream --scope quizard-web",
+    "typecheck": "tsc",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "devDependencies": {
     "@types/jest": "29.5.11",
+    "@typescript-eslint/eslint-plugin": "6.15.0",
+    "@typescript-eslint/parser": "6.15.0",
     "cross-env": "7.0.3",
+    "eslint": "8.56.0",
     "jest": "29.7.0",
     "lerna": "8.0.1",
     "typescript": "5.3.3"
