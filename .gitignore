@@ -3,3 +3,5 @@
 **/dist
 **/local
 yarn-error.log
+
+.aws-sam
