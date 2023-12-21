@@ -10,5 +10,6 @@ module.exports = {
         project: ['./tsconfig.json'],
     },
     plugins: ['@typescript-eslint'],
+    ignorePatterns: [".eslintrc.cjs"],
     root: true,
 };
