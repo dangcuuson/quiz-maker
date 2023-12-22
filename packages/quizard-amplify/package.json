@@ -1,6 +1,7 @@
 {
     "name": "quizard-amplify",
     "version": "1.0.0",
+    "license": "MIT",
     "devDependencies": {
         "@aws-amplify/cli": "12.10.0"
     },

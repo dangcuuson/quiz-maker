@@ -2,6 +2,14 @@
     "name": "quizard-cdk",
     "version": "1.0.0",
     "dependencies": {
-        "aws-cdk-lib": "2.115.0"
+        "aws-cdk-lib": "2.115.0",
+        "git-branch": "2.0.1"
+    },
+    "devDependencies": {
+        "@types/git-branch": "2.0.5"
+    },
+    "scripts": {
+        "cdk": "cdk",
+        "deploy": "cdk deploy --outputs-file ./cdk-outputs.json"
     }
 }
