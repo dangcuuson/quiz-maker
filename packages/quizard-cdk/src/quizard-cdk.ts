@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 import * as cdk from 'aws-cdk-lib';
 import { QuizardStack } from './stacks/quizardStack';
 import gitBranch from 'git-branch';
