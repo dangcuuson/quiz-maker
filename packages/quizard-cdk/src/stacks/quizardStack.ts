@@ -4,6 +4,8 @@ import * as appsync from 'aws-cdk-lib/aws-appsync';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
 import { CDKContext } from '../shared/types';
 import { Construct } from 'constructs';
+import fs from 'fs';
+import path from 'path';
 
 export class QuizardStack extends Stack {
     constructor(scope: Construct, id: string, props: StackProps, context: CDKContext) {
@@ -23,6 +25,13 @@ export class QuizardStack extends Stack {
             billingMode: ddb.BillingMode.PAY_PER_REQUEST,
             partitionKey: { name: 'quizId', type: ddb.AttributeType.STRING },
             removalPolicy
+        });
+
+        // topic index to query list of topic
+        quizTable.addGlobalSecondaryIndex({
+            indexName: `topic-index`,
+            partitionKey: { name: 'topic', type: ddb.AttributeType.STRING },
+            projectionType: ddb.ProjectionType.KEYS_ONLY,
         });
 
         // Cognito
@@ -60,11 +69,35 @@ export class QuizardStack extends Stack {
             userPool,
         });
 
-        // graphql
+        //#region GRAPHQL
+
+        // recursively look through schema folder and grab files ended with .graphql
+        // and merge them together into one file
+        function recursiveSearchFile(basePath: string, filterRegex: RegExp, fileNames: string[] = []) {
+            const fileStat = fs.statSync(basePath);
+            if (fileStat.isDirectory()) {
+                const directory = fs.readdirSync(basePath);
+                directory.forEach((f) => recursiveSearchFile(path.join(basePath, f), filterRegex, fileNames));
+            } else if (filterRegex.test(basePath)) {
+                fileNames.push(basePath);
+            }
+            return fileNames;
+        }
+        const graphqlFiles = recursiveSearchFile(path.resolve('src/schema'), /\.graphql$/);
+        const schemaDefs = graphqlFiles
+            .map(fileName => {
+                return appsync.SchemaFile.fromAsset(fileName).definition
+            })
+            .join('\n');
+        
+        // write combined schema def into one big file and .gitignore it.
+        // Make sure to not write them under same folder where we look for smaller .graphql files, otherwise
+        // the combined file will be duplicated in subsequence build
+        fs.writeFileSync(path.resolve('combined_schema.graphql'), schemaDefs, 'utf-8');
         const graphqlApi = new appsync.GraphqlApi(this, 'graphqlApi', {
             name: contextId,
             definition: {
-                schema: appsync.SchemaFile.fromAsset('src/schema/schema.graphql')
+                schema: appsync.SchemaFile.fromAsset('combined_schema.graphql')
             },
             authorizationConfig: {
                 defaultAuthorization: {
@@ -100,10 +133,12 @@ export class QuizardStack extends Stack {
                 fieldName: 'addQuiz',
                 requestMappingTemplate: appsync.MappingTemplate.dynamoDbPutItem(
                     appsync.PrimaryKey.partition('quizId').auto(),
-                    appsync.Values.projecting('input')
+                    appsync.Values.projecting('input').attribute('test').is('yes')
                 ),
                 responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultItem()
             });
+
+        //#endregion
 
 
         // output for web client
