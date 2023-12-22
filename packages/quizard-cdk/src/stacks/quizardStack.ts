@@ -26,6 +26,7 @@ export class QuizardStack extends Stack {
         });
 
         // Cognito
+        const verifyCodeBody = 'Thank you for signing up to Quizard! Your verification code is {####}';
         const userPool = new cognito.UserPool(this, 'userPool', {
             userPoolName: `userPool-${contextId}`,
             removalPolicy,
@@ -33,9 +34,12 @@ export class QuizardStack extends Stack {
             accountRecovery: cognito.AccountRecovery.PHONE_AND_EMAIL,
             userVerification: {
                 emailStyle: cognito.VerificationEmailStyle.CODE,
+                emailBody: verifyCodeBody,
+                smsMessage: verifyCodeBody
             },
             autoVerify: {
                 email: true,
+                phone: true
             },
             standardAttributes: {
                 email: {
