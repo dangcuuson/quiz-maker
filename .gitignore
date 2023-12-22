@@ -6,4 +6,4 @@ yarn-error.log
 
 .aws-sam
 
-quizard-amplify
+cdk-outputs.json

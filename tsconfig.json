@@ -8,15 +8,15 @@
             "DOM.Iterable"
         ],
         "module": "ESNext",
-        "skipLibCheck": true,
-        /* Bundler mode */
+        "jsx": "react-jsx",
         "moduleResolution": "bundler",
-        "allowImportingTsExtensions": true,
+        "types": ["vite/client"],
         "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "allowImportingTsExtensions": true,
         "isolatedModules": true,
         // noEmit because we only use tsc for typechecking & linting. js files will be output by bundler
         "noEmit": true,
-        "jsx": "react-jsx",
         /* Linting */
         "strict": true,
         "noUnusedLocals": true,
@@ -25,6 +25,8 @@
     },
     "include": [
         "./packages/*/vite.config.ts",
-        "./packages/*/src"
+        "./packages/*/src",
+        "./packages/*/scripts",
+        "globalTypes.d.ts"
     ]
 }

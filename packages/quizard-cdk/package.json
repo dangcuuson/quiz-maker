@@ -13,6 +13,6 @@
     "scripts": {
         "cdk": "cdk",
         "build": "cdk synth",
-        "deploy": "cdk deploy --outputs-file ./cdk-outputs.json"
+        "deploy": "cdk deploy --outputs-file ../cdk-outputs.json"
     }
 }

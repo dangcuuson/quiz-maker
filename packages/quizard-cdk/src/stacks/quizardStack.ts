@@ -104,10 +104,12 @@ export class QuizardStack extends Stack {
 
 
         // output for web client
-        new CfnOutput(this, 'UserPoolId', {
+        function asType<T>(value: T) { return value; }
+        type ValidKey = keyof NodeJS.ProcessEnvExtension;
+        new CfnOutput(this, asType<ValidKey>('VITE_Cognito_UserPoolId'), {
             value: userPool.userPoolId,
         })
-        new CfnOutput(this, 'UserPoolClientId', {
+        new CfnOutput(this, asType<ValidKey>('VITE_Cognito_UserPoolClientId'), {
             value: userPoolClient.userPoolClientId,
         })
         new CfnOutput(this, 'GraphQLAPIURL', {
