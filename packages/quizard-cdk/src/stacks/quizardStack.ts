@@ -1,11 +1,12 @@
-import { App, CfnOutput, RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
+import { CfnOutput, RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
 import * as ddb from 'aws-cdk-lib/aws-dynamodb';
 import * as appsync from 'aws-cdk-lib/aws-appsync';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
 import { CDKContext } from '../shared/types';
+import { Construct } from 'constructs';
 
 export class QuizardStack extends Stack {
-    constructor(scope: App, id: string, props: StackProps, context: CDKContext) {
+    constructor(scope: Construct, id: string, props: StackProps, context: CDKContext) {
         super(scope, id, props);
 
         const contextId = `${context.appName}-${context.branchName}`;

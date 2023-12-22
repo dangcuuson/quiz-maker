@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "dependencies": {
         "aws-cdk-lib": "2.115.0",
+        "constructs": "10.3.0",
         "git-branch": "2.0.1"
     },
     "devDependencies": {
@@ -10,6 +11,7 @@
     },
     "scripts": {
         "cdk": "cdk",
+        "build": "cdk synth",
         "deploy": "cdk deploy --outputs-file ./cdk-outputs.json"
     }
 }

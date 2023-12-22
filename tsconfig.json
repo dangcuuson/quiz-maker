@@ -25,9 +25,6 @@
     },
     "include": [
         "./packages/*/vite.config.ts",
-        "./packages/*/src",
-        "./packages/*/bin",
-        "./packages/*/lib",
-        "globalTypes.ts"
+        "./packages/*/src"
     ]
 }

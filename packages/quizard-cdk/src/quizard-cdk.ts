@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import * as cdk from 'aws-cdk-lib';
-import { QuizardStack } from '../lib/quizardStack';
+import { QuizardStack } from './stacks/quizardStack';
 import gitBranch from 'git-branch';
-import { CDKContext } from '../shared/types';
+import { CDKContext } from './shared/types';
 
 const createStacks = async () => {
     try {
@@ -25,4 +25,7 @@ const createStacks = async () => {
     }
 };
 
-createStacks();
+createStacks().catch(err => {
+    console.error(err);
+    process.exit(1);
+});
