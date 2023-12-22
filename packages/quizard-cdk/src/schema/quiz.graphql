@@ -27,6 +27,7 @@ type QuizQuestionOptions {
 
 input QuizInput {
   topic: String!
+  title: String!
   questions: [QuizInputQuestion!]
 }
 

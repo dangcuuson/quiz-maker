@@ -5,7 +5,6 @@ schema {
 
 type Query {
   quizList(topic: String!): [Quiz!]!
-  quizItem(id: ID!): Quiz
   topicList: [String!]!
 }
 
