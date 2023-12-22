@@ -59,9 +59,8 @@ export class QuizardStack extends Stack {
         // graphql
         const graphqlApi = new appsync.GraphqlApi(this, 'graphqlApi', {
             name: contextId,
-            // schema: appsync.Schema.fromAsset('lib/schema.graphql'),
             definition: {
-                schema: appsync.SchemaFile.fromAsset('lib/schema.graphql')
+                schema: appsync.SchemaFile.fromAsset('src/schema/schema.graphql')
             },
             authorizationConfig: {
                 defaultAuthorization: {

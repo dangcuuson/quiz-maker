@@ -1,0 +1,44 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Query {
+  quizList(topic: String!): [Quiz!]!
+  quizItem(id: ID!): Quiz
+}
+
+type Quiz {
+  quizId: ID!
+  topic: String!
+  questions: [QuizQuestion!]!
+}
+
+type QuizQuestion {
+  questionText: String!
+  options: [QuizQuestionOptions]!
+}
+
+type QuizQuestionOptions {
+  optionText: String!
+  isCorrect: Boolean
+}
+
+input QuizInput {
+  topic: String!
+  questions: [QuizInputQuestion!]
+}
+
+input QuizInputQuestion {
+  questionText: String!
+  options: [QuizInputQuestionOptions]!
+}
+
+input QuizInputQuestionOptions {
+  optionText: String!
+  isCorrect: Boolean
+}
+
+type Mutation {
+  addQuiz(input: QuizInput!): Quiz!
+}

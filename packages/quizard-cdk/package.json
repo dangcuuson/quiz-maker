@@ -1,6 +1,7 @@
 {
     "name": "quizard-cdk",
     "version": "1.0.0",
+    "license": "MIT",
     "dependencies": {
         "aws-cdk-lib": "2.115.0",
         "constructs": "10.3.0",
