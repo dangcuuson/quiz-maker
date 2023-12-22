@@ -2,13 +2,21 @@ export { }
 
 declare global {
 
-    interface ViteEndExtension {
-        VITE_BRANCH: string;
-        VITE_Cognito_UserPoolId: string;
-        VITE_Cognito_UserPoolClientId: string;
+    // CfnOutput doesn't accept _ so we need to maintain
+    // keys of CDKOutputJSON and ViteEndExtension manually
+    interface CDKOutputJSON {
+        userPoolId: string;
+        userPoolClientId: string;
     }
+
+    interface ViteEndExtension {
+        VITE_branch: string;
+        VITE_userPoolId: string;
+        VITE_userPoolClientId: string;
+    }
+
     namespace NodeJS {
-        interface ProcessEnvExtension extends ViteEndExtension {
+        interface ProcessEnvExtension {
         }
         interface ProcessEnv extends ProcessEnvExtension {
         }

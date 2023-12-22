@@ -16,12 +16,11 @@ const start = async () => {
 
     const lines = Object.keys(jsonData)
         .map(key => {
-            return `${key}=${jsonData[key]}`
+            return `VITE_${key}=${jsonData[key]}`
         })
-        .filter(lines => lines.startsWith('VITE_'))
         .join('\n');
 
-    const outputFile = path.resolve('./.env');
+    const outputFile = path.resolve('.env');
     fs.writeFileSync(outputFile, lines, 'utf-8');
 }
 
