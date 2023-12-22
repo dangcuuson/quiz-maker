@@ -68,11 +68,14 @@ export class QuizardStack extends Stack {
             },
             authorizationConfig: {
                 defaultAuthorization: {
-                    authorizationType: appsync.AuthorizationType.API_KEY,
+                    authorizationType: appsync.AuthorizationType.USER_POOL,
+                    userPoolConfig: {
+                        userPool
+                    }
                 },
-                // additionalAuthorizationModes: [{
-                //   authorizationType: appsync.AuthorizationType.USER_POOL
-                // }]
+                additionalAuthorizationModes: [{
+                    authorizationType: appsync.AuthorizationType.API_KEY,
+                }]
             },
         });
 
