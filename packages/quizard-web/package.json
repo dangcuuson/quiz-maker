@@ -11,6 +11,8 @@
         "vite": "5.0.10"
     },
     "dependencies": {
+        "@aws-amplify/ui-react": "6.0.7",
+        "aws-amplify": "6.0.9",
         "react": "18.2.0",
         "react-dom": "18.2.0",
         "react-router": "6.21.0",
