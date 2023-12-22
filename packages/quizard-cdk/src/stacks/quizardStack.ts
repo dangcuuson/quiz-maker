@@ -26,10 +26,11 @@ export class QuizardStack extends Stack {
             sortKey: { name: 'topic', type: ddb.AttributeType.STRING },
             removalPolicy
         });
+        const topicGSIName = 'topic-index';
         quizTable.addGlobalSecondaryIndex({
-            indexName: `topic-index`,
+            indexName: topicGSIName,
             partitionKey: { name: 'topic', type: ddb.AttributeType.STRING },
-            projectionType: ddb.ProjectionType.KEYS_ONLY,
+            projectionType: ddb.ProjectionType.ALL
         });
 
         // Cognito
@@ -89,14 +90,18 @@ export class QuizardStack extends Stack {
         // map graphql resources to DDB tables
         // TODO: generate types from schema for type-safety
 
-        // query.quizItem
+        // query.quizList
         graphqlApi
-            .addDynamoDbDataSource('quizItemQueryDS', quizTable)
-            .createResolver('quizItemQueryResolver', {
+            .addDynamoDbDataSource('quizListQueryDS', quizTable)
+            .createResolver('quizListQueryResolver', {
                 typeName: 'Query',
-                fieldName: 'quizItem',
-                requestMappingTemplate: appsync.MappingTemplate.dynamoDbGetItem('quizId', 'id'),
-                responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultItem()
+                fieldName: 'quizList',
+                requestMappingTemplate: appsync.MappingTemplate.dynamoDbQuery(
+                    // 1st topic = dynamo db name, 2st topic = graphql name
+                    appsync.KeyCondition.eq('topic', 'topic'),
+                    topicGSIName
+                ),
+                responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultList()
             });
 
         // mutation.addQuiz
@@ -105,7 +110,6 @@ export class QuizardStack extends Stack {
             .createResolver('addQuizMutationResolve', {
                 typeName: 'Mutation',
                 fieldName: 'addQuiz',
-                runtime: appsync.FunctionRuntime.JS_1_0_0,
                 requestMappingTemplate: appsync.MappingTemplate.dynamoDbPutItem(
                     appsync.PrimaryKey.partition('quizId').auto(),
                     appsync.Values.projecting('input')
