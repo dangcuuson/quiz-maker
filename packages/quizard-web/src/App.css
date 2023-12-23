@@ -1,0 +1,25 @@
+*,
+*:before,
+*:after {
+    box-sizing: border-box;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #fafafa;
+    /*
+	  Have to use overflow-x: hidden because:
+	  1. A problem with MUI Grid layout https://github.com/mui-org/material-ui/issues/7466
+	  To fix this, we must not use Grid container as top-level layout.
+	  (Basically any Grid container in the Router Component)
+	  2. 100vw on #root always create horizontal scrollbar
+	  If we ever fix these 2 problems, then we can remove overflow-x here
+	 */
+    overflow-x: hidden;
+
+    /* https://stackoverflow.com/a/60799683 */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}

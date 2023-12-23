@@ -1,10 +1,15 @@
+import _ from 'lodash';
 import React from 'react';
-import { withAuthenticator, WithAuthenticatorProps, ThemeProvider } from '@aws-amplify/ui-react';
-import '@aws-amplify/ui-react/styles.css';
-import { Amplify } from 'aws-amplify';
-import GraphQLTest from './pages/GraphQLTest';
+import MainLayout from '@pages/MainLayout';
 import ApolloCognitoProvider from './components/ApolloWrapper/ApolloCognitoProvider';
 import ApolloMutationResultMessagePopup from './components/ApolloWrapper/ApolloMutationResultMessagePopup';
+import { Amplify } from 'aws-amplify';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { RouteItemConfig, routeConfigs } from '@pages/routeConfig';
+import { withAuthenticator, WithAuthenticatorProps } from '@aws-amplify/ui-react';
+import { LightDarkContextThemeProvider } from '@components/LightDarkMode/LightDarkContext';
+import '@aws-amplify/ui-react/styles.css';
+import './App.css';
 
 Amplify.configure({
     Auth: {
@@ -21,18 +26,25 @@ Amplify.configure({
     },
 });
 
+const renderRoutes = (configMap: { [K: string]: RouteItemConfig }) => {
+    return _.values(configMap).map((config, index) => {
+        return <Route key={index} {...config.props} />;
+    });
+};
+
 interface Props extends WithAuthenticatorProps {}
-const App: React.FC<Props> = (props) => {
-    const { user, signOut } = props;
+const App: React.FC<Props> = () => {
     return (
-        <ThemeProvider>
-            <ApolloMutationResultMessagePopup />
+        <LightDarkContextThemeProvider>
             <ApolloCognitoProvider>
-                <h1>Hello {user?.username || 'Anonymous'}</h1>
-                <button onClick={signOut}>Sign out</button>
-                <GraphQLTest />
+                <ApolloMutationResultMessagePopup />
+                <BrowserRouter>
+                    <MainLayout>
+                        <Routes>{renderRoutes(routeConfigs)}</Routes>
+                    </MainLayout>
+                </BrowserRouter>
             </ApolloCognitoProvider>
-        </ThemeProvider>
+        </LightDarkContextThemeProvider>
     );
 };
 

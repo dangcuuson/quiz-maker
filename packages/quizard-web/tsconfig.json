@@ -1,0 +1,13 @@
+{
+    "extends": ["../../tsconfig.json"],
+    "compilerOptions": {
+        "baseUrl": "./src", // This is to avoid adding the ./src prefix to each path below.
+        "paths": {
+            "@gql/*": ["gql/*"],
+            "@components/*": ["components/*"],
+            "@pages/*": ["pages/*"],
+            "@hooks/*": ["hooks/*"],
+            "@utils/*": ["utils/*"]
+        }
+    }
+}

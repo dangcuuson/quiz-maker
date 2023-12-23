@@ -1,7 +1,7 @@
 import React from 'react';
-import { gql } from '../../gql';
+import { gql } from '@gql/index';
 import { Button } from '@aws-amplify/ui-react';
-import ApolloMutationWrapper from '../ApolloWrapper/ApolloMutationWrapper';
+import ApolloMutationWrapper from '@components/ApolloWrapper/ApolloMutationWrapper';
 
 const populateQuizMutation = gql(/* GraphQL */ `
     mutation populateQuizData {
