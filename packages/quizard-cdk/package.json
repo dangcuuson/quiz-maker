@@ -16,9 +16,8 @@
         "graphql-schema-typescript": "1.5.2"
     },
     "scripts": {
-        "cdk": "cdk",
-        "build": "cdk synth",
-        "deploy": "cdk deploy --outputs-file ../cdk-outputs.json",
-        "build-gql": "ts-node -P ../../tsconfig.node.json ./scripts/generateGQLTypes.ts"
+        "build-gql": "ts-node -P ../../tsconfig.node.json ./scripts/generateGQLTypes.ts",
+        "predeploy": "npm run build-gql",
+        "deploy": "cdk deploy --outputs-file ../cdk-outputs.json"
     }
 }

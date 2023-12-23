@@ -3,7 +3,7 @@ export { }
 declare global {
 
     // CfnOutput doesn't accept _ so we need to maintain
-    // keys of CDKOutputJSON and ViteEndExtension manually
+    // keys of CDKOutputJSON and ViteEnvExtension manually
     interface CDKOutputJSON {
         userPoolId: string;
         userPoolClientId: string;
@@ -12,7 +12,7 @@ declare global {
         GraphQLAPIKey: string;
     }
 
-    interface ViteEndExtension {
+    interface ViteEnvExtension {
         VITE_branch: string;
         VITE_userPoolId: string;
         VITE_userPoolClientId: string;
@@ -28,6 +28,6 @@ declare global {
         }
     }
 
-    interface ImportMetaEnv extends ViteEndExtension {
+    interface ImportMetaEnv extends ViteEnvExtension {
     }
 }
