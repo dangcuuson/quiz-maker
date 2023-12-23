@@ -1,36 +1,43 @@
 import React from 'react';
-
+import { gql } from '../gql';
 import { generateClient } from 'aws-amplify/api';
 import { fetchAuthSession } from 'aws-amplify/auth';
-import {  } from '@apollo/client';
+import { useQuery } from '@apollo/client'
 const client = generateClient();
 
+const testLambdaQuery = gql(/* GraphQL */ `
+    query MyQ($topic: String!) {
+        quizList(topic: $topic) {
+            quizId
+        }
+        testLambda(value: "ABC")
+    }
+`);
 
-interface Props { }
+interface Props {}
 const GraphQLTest: React.FC<Props> = () => {
-    return (
-        <Inner />
-    );
-}
+    const { data } = useQuery(testLambdaQuery, { variables: { topic: 'ABC'  } });
+    return <Inner />;
+};
 
 const Inner: React.FC<Props> = () => {
-    React.useEffect(
-        () => {
-            fetchAuthSession({ forceRefresh: true }).then(data => {
-                const dc = `
+    React.useEffect(() => {
+        fetchAuthSession({ forceRefresh: true }).then((data) => {
+            const dc = `
                 query MyQ{ 
                     testLambda(value: "ABC")
                 }`;
 
-                client.graphql({ query: dc, authToken: `Bearer ${data.tokens?.accessToken.toString()}` }).then((res) => {
+            client
+                .graphql({ query: dc, authToken: `Bearer ${data.tokens?.accessToken.toString()}` })
+                .then((res) => {
                     console.log('>>>OK', res);
-                }).catch(err => {
-                    console.error('>>ERR', err);
                 })
-            })
-        },
-        []
-    )
+                .catch((err) => {
+                    console.error('>>ERR', err);
+                });
+        });
+    }, []);
     return <div>Test</div>;
     // // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     // const { data, error, loading } = useQuery(gql`query MyQ{
