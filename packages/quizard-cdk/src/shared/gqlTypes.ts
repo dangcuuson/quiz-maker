@@ -48,6 +48,7 @@ export interface GQLQuizInputQuestionOptions {
 export interface GQLQuery {
   quizList: Array<GQLQuiz>;
   topicList: Array<string>;
+  testLambda: string;
 }
 
 export interface GQLMutation {
@@ -128,6 +129,7 @@ export interface QuizQuestionOptionsToIsCorrectResolver<TParent = any, TResult =
 export interface GQLQueryTypeResolver<TParent = any> {
   quizList?: QueryToQuizListResolver<TParent>;
   topicList?: QueryToTopicListResolver<TParent>;
+  testLambda?: QueryToTestLambdaResolver<TParent>;
 }
 
 export interface QueryToQuizListArgs {
@@ -139,6 +141,13 @@ export interface QueryToQuizListResolver<TParent = any, TResult = any> {
 
 export interface QueryToTopicListResolver<TParent = any, TResult = any> {
   (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
+}
+
+export interface QueryToTestLambdaArgs {
+  value: string;
+}
+export interface QueryToTestLambdaResolver<TParent = any, TResult = any> {
+  (parent: TParent, args: QueryToTestLambdaArgs, context: any, info: GraphQLResolveInfo): TResult;
 }
 
 export interface GQLMutationTypeResolver<TParent = any> {

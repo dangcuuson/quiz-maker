@@ -1,0 +1,13 @@
+{
+    "extends": ["../../tsconfig.node.json"],
+    "compilerOptions": {
+        // setup path mapping for lambda functions
+        "baseUrl": ".",
+        "paths": {
+            "*": ["src/*"],
+            "/opt/*": [
+                "src/shared/*"
+            ]
+        }
+    }
+}

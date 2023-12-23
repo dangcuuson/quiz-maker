@@ -6,6 +6,7 @@ schema {
 type Query {
   quizList(topic: String!): [Quiz!]!
   topicList: [String!]!
+  testLambda(value: String!): String!
 }
 
 type Mutation {

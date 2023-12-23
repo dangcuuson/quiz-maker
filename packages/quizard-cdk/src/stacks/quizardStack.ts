@@ -2,6 +2,9 @@ import { CfnOutput, RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
 import * as ddb from 'aws-cdk-lib/aws-dynamodb';
 import * as appsync from 'aws-cdk-lib/aws-appsync';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { CDKContext } from '../shared/types';
 import { Construct } from 'constructs';
 import { combineGraphqlFilesIntoSchema } from './stacksHelper';
@@ -19,8 +22,9 @@ export class QuizardStack extends Stack {
             : RemovalPolicy.DESTROY
 
         // DynamoDB
+        const quizTableName = `quiz-${contextId}`;
         const quizTable = new ddb.Table(this, 'quizTable', {
-            tableName: `quiz-${contextId}`,
+            tableName: quizTableName,
             billingMode: ddb.BillingMode.PAY_PER_REQUEST,
             partitionKey: { name: 'quizId', type: ddb.AttributeType.STRING },
             sortKey: { name: 'topic', type: ddb.AttributeType.STRING },
@@ -39,15 +43,13 @@ export class QuizardStack extends Stack {
             userPoolName: `userPool-${contextId}`,
             removalPolicy,
             selfSignUpEnabled: true,
-            accountRecovery: cognito.AccountRecovery.PHONE_AND_EMAIL,
+            accountRecovery: cognito.AccountRecovery.EMAIL_ONLY,
             userVerification: {
                 emailStyle: cognito.VerificationEmailStyle.CODE,
-                emailBody: verifyCodeBody,
-                smsMessage: verifyCodeBody
+                emailBody: verifyCodeBody
             },
             autoVerify: {
-                email: true,
-                phone: true
+                email: true
             },
             standardAttributes: {
                 email: {
@@ -68,6 +70,43 @@ export class QuizardStack extends Stack {
             userPool,
         });
 
+
+        //#region Lambda
+        // create lambda role and grant access to quizTable + generate log
+        const lambdaRole = new iam.Role(this, 'lambdaRole', {
+            roleName: `lambda-role-${contextId}`,
+            assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
+            managedPolicies: [iam.ManagedPolicy.fromAwsManagedPolicyName('ReadOnlyAccess')],
+        });
+
+        lambdaRole.attachInlinePolicy(
+            new iam.Policy(this, 'lambdaExecutionAccess', {
+                policyName: 'lambdaExecutionAccess',
+                statements: [
+                    new iam.PolicyStatement({
+                        effect: iam.Effect.ALLOW,
+                        resources: ['*'],
+                        actions: [
+                            'logs:CreateLogGroup',
+                            'logs:CreateLogStream',
+                            'logs:DescribeLogGroups',
+                            'logs:DescribeLogStreams',
+                            'logs:PutLogEvents',
+                        ],
+                    }),
+                ],
+            })
+        );
+
+        const lambdaLayer = new lambda.LayerVersion(this, 'lambdaLayer', {
+            code: lambda.Code.fromAsset('src/shared'),
+            compatibleRuntimes: [lambda.Runtime.NODEJS_20_X],
+            description: `Lambda Layer for ${context.appName}`,
+        });
+        quizTable.grantReadWriteData(lambdaRole);
+
+        //#endregion
+
         //#region GRAPHQL
         const graphqlApi = new appsync.GraphqlApi(this, 'graphqlApi', {
             name: contextId,
@@ -76,19 +115,35 @@ export class QuizardStack extends Stack {
             },
             authorizationConfig: {
                 defaultAuthorization: {
-                    authorizationType: appsync.AuthorizationType.API_KEY,
-                },
-                additionalAuthorizationModes: [{
                     authorizationType: appsync.AuthorizationType.USER_POOL,
                     userPoolConfig: {
                         userPool
                     }
+                },
+                additionalAuthorizationModes: [{
+                    authorizationType: appsync.AuthorizationType.API_KEY,
                 }]
             },
         });
 
         // map graphql resources to DDB tables
         // TODO: generate types from schema for type-safety
+        const lambdaFunction = new NodejsFunction(this, 'testLambdaFn', {
+            functionName: `testLambadaFn-${contextId}`,
+            entry: 'src/lambda/testLambda.ts',
+            runtime: lambda.Runtime.NODEJS_20_X,
+            environment: {
+                quizTableName
+            },
+            role: lambdaRole,
+            layers: [lambdaLayer]
+        })
+        graphqlApi
+            .addLambdaDataSource('testLambdaDS', lambdaFunction)
+            .createResolver('Query.testLambda', {
+                typeName: 'Query',
+                fieldName: 'testLambda'
+            })
 
         // query.quizList
         graphqlApi
@@ -119,7 +174,7 @@ export class QuizardStack extends Stack {
         //#endregion
 
         // output for web client
-        function asType<T>(value: T): string { return value + ''; }
+        function asType<T>(value: T): T { return value; }
         type ValidKey = keyof CDKOutputJSON;
         new CfnOutput(this, asType<ValidKey>('userPoolId'), {
             value: userPool.userPoolId,
@@ -127,13 +182,13 @@ export class QuizardStack extends Stack {
         new CfnOutput(this, asType<ValidKey>('userPoolClientId'), {
             value: userPoolClient.userPoolClientId,
         })
-        new CfnOutput(this, 'GraphQLAPIURL', {
+        new CfnOutput(this, asType<ValidKey>('GraphQLAPIURL'), {
             value: graphqlApi.graphqlUrl,
         })
-        new CfnOutput(this, 'GraphQLAPIKey', {
+        new CfnOutput(this, asType<ValidKey>('GraphQLAPIKey'), {
             value: graphqlApi.apiKey || '',
         })
-        new CfnOutput(this, 'GraphQLAPIID', {
+        new CfnOutput(this, asType<ValidKey>('GraphQLAPIID'), {
             value: graphqlApi.apiId,
         })
     }

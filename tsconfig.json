@@ -10,7 +10,9 @@
         "module": "ESNext",
         "jsx": "react-jsx",
         "moduleResolution": "bundler",
-        "types": ["vite/client"],
+        "types": [
+            "vite/client"
+        ],
         "resolveJsonModule": true,
         "skipLibCheck": true,
         "allowImportingTsExtensions": true,
