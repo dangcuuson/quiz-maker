@@ -1,6 +1,6 @@
 import React from 'react';
 import { gql } from '../gql';
-import { createApolloQuery } from '../components/ApolloQuery/ApolloQuery';
+import ApolloQuerywrapper from '../components/ApolloWrapper/ApolloQueryWrapper';
 
 const topicListQuery = gql(/* GraphQL */ `
     query topicList {
@@ -8,17 +8,16 @@ const topicListQuery = gql(/* GraphQL */ `
         testLambda(value: "AAA")
     }
 `);
-const TopicListQuery = createApolloQuery(topicListQuery);
 
 interface Props {}
 const GraphQLTest: React.FC<Props> = () => {
     return (
-        <TopicListQuery>
+        <ApolloQuerywrapper query={topicListQuery}>
             {({ data }) => {
-                return <div>{data.topicList.length}</div>
+                return <div>{data.topicList.length}</div>;
             }}
-        </TopicListQuery>
-    )
+        </ApolloQuerywrapper>
+    );
 };
 
 export default GraphQLTest;

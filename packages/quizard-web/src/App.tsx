@@ -3,7 +3,8 @@ import { withAuthenticator, WithAuthenticatorProps, ThemeProvider } from '@aws-a
 import '@aws-amplify/ui-react/styles.css';
 import { Amplify } from 'aws-amplify';
 import GraphQLTest from './pages/GraphQLTest';
-import ApolloCognitoProvider from './components/ApolloCognitoProvider/ApolloCognitoProvider';
+import ApolloCognitoProvider from './components/ApolloWrapper/ApolloCognitoProvider';
+import ApolloMutationResultMessagePopup, { useSetMessage } from './components/ApolloWrapper/ApolloMutationResultMessagePopup';
 
 Amplify.configure({
     Auth: {
@@ -16,15 +17,26 @@ Amplify.configure({
             loginWith: {
                 email: true,
             },
-        }
-    }
+        },
+    },
 });
 
 interface Props extends WithAuthenticatorProps {}
 const App: React.FC<Props> = (props) => {
     const { user, signOut } = props;
+    const setMessage = useSetMessage();
+    React.useEffect(
+        () => {
+            setMessage({
+                color: 'success',
+                content: 'Test'
+            })
+        },
+        []
+    )
     return (
         <ThemeProvider>
+            <ApolloMutationResultMessagePopup />
             <ApolloCognitoProvider>
                 <h1>Hello {user?.username || 'Anonymous'}</h1>
                 <button onClick={signOut}>Sign out</button>
