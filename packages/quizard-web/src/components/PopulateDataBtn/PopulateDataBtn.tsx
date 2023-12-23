@@ -1,23 +1,36 @@
 import React from 'react';
 import { gql } from '../../gql';
-import { createApolloQuery } from '../ApolloWrapper/ApolloQueryWrapper';
+import { Button } from '@aws-amplify/ui-react';
+import ApolloMutationWrapper from '../ApolloWrapper/ApolloMutationWrapper';
 
-const addQuizMutation = gql(/* GraphQL */ `
-    mutation addQuiz($input: QuizInput!) {
-        quizId
+const populateQuizMutation = gql(/* GraphQL */ `
+    mutation populateQuizData {
+        populateQuizData
     }
 `);
-const AddQuizMutation = createApolloQuery(addQuizMutation);
 
-interface Props {}
-const PopulateData: React.FC<Props> = () => {
+interface Props {
+    onCompleted: () => void;
+}
+const PopulateDataBtn: React.FC<Props> = ({ onCompleted }) => {
     return (
-        <TopicListQuery>
-            {({ data }) => {
-                return <div>{data.topicList.length}</div>
+        <ApolloMutationWrapper
+            mutation={populateQuizMutation}
+            onCompleted={onCompleted}
+            getSuccessMessage={() => 'Quiz data populated'}
+        >
+            {(mutate, mutateState) => {
+                return (
+                    <Button
+                        variation="primary"
+                        children="Populate quiz data"
+                        onClick={() => mutate()}
+                        disabled={mutateState.loading}
+                    />
+                );
             }}
-        </TopicListQuery>
-    )
+        </ApolloMutationWrapper>
+    );
 };
 
-export default PopulateData;
+export default PopulateDataBtn;

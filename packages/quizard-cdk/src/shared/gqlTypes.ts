@@ -48,11 +48,11 @@ export interface GQLQuizInputQuestionOptions {
 export interface GQLQuery {
   quizList: Array<GQLQuiz>;
   topicList: Array<string>;
-  testLambda: string;
 }
 
 export interface GQLMutation {
   addQuiz: GQLQuiz;
+  populateQuizData: number;
 }
 
 export interface GQLScore {
@@ -129,7 +129,6 @@ export interface QuizQuestionOptionsToIsCorrectResolver<TParent = any, TResult =
 export interface GQLQueryTypeResolver<TParent = any> {
   quizList?: QueryToQuizListResolver<TParent>;
   topicList?: QueryToTopicListResolver<TParent>;
-  testLambda?: QueryToTestLambdaResolver<TParent>;
 }
 
 export interface QueryToQuizListArgs {
@@ -143,15 +142,9 @@ export interface QueryToTopicListResolver<TParent = any, TResult = any> {
   (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
 }
 
-export interface QueryToTestLambdaArgs {
-  value: string;
-}
-export interface QueryToTestLambdaResolver<TParent = any, TResult = any> {
-  (parent: TParent, args: QueryToTestLambdaArgs, context: any, info: GraphQLResolveInfo): TResult;
-}
-
 export interface GQLMutationTypeResolver<TParent = any> {
   addQuiz?: MutationToAddQuizResolver<TParent>;
+  populateQuizData?: MutationToPopulateQuizDataResolver<TParent>;
 }
 
 export interface MutationToAddQuizArgs {
@@ -159,6 +152,10 @@ export interface MutationToAddQuizArgs {
 }
 export interface MutationToAddQuizResolver<TParent = any, TResult = any> {
   (parent: TParent, args: MutationToAddQuizArgs, context: any, info: GraphQLResolveInfo): TResult;
+}
+
+export interface MutationToPopulateQuizDataResolver<TParent = any, TResult = any> {
+  (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
 }
 
 export interface GQLScoreTypeResolver<TParent = any> {

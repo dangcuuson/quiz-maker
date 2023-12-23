@@ -106,9 +106,9 @@ export const buildLambdaResolvers = (args: {
             });
     }
 
-    addLambdaResolver('Query', 'testLambda', 'testLambda.ts');
     addLambdaResolver('Query', 'topicList', 'topicListResolver.ts');
     addLambdaResolver('Mutation', 'addQuiz', 'addQuizResolver.ts');
+    addLambdaResolver('Mutation', 'populateQuizData', 'populateQuizResolver.ts');
 };
 
 export const buildDDBResolvers = (args: {

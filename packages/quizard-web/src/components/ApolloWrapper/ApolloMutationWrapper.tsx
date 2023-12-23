@@ -15,7 +15,7 @@ type MutationWrapperProps<TData, TVariables> = MutationComponentOptions<TData, T
     mutateOnMount?: boolean;
 };
 
-export function ApolloMutationWrapper<TData, TVariables extends OperationVariables>(
+function ApolloMutationWrapper<TData, TVariables extends OperationVariables>(
     props: MutationWrapperProps<TData, TVariables>,
 ): React.ReactNode {
     const setMessage = useSetMessage();
@@ -45,3 +45,5 @@ export function ApolloMutationWrapper<TData, TVariables extends OperationVariabl
         />
     );
 }
+
+export default ApolloMutationWrapper;

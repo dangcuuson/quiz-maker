@@ -4,7 +4,7 @@ import '@aws-amplify/ui-react/styles.css';
 import { Amplify } from 'aws-amplify';
 import GraphQLTest from './pages/GraphQLTest';
 import ApolloCognitoProvider from './components/ApolloWrapper/ApolloCognitoProvider';
-import ApolloMutationResultMessagePopup, { useSetMessage } from './components/ApolloWrapper/ApolloMutationResultMessagePopup';
+import ApolloMutationResultMessagePopup from './components/ApolloWrapper/ApolloMutationResultMessagePopup';
 
 Amplify.configure({
     Auth: {
@@ -24,16 +24,6 @@ Amplify.configure({
 interface Props extends WithAuthenticatorProps {}
 const App: React.FC<Props> = (props) => {
     const { user, signOut } = props;
-    const setMessage = useSetMessage();
-    React.useEffect(
-        () => {
-            setMessage({
-                color: 'success',
-                content: 'Test'
-            })
-        },
-        []
-    )
     return (
         <ThemeProvider>
             <ApolloMutationResultMessagePopup />

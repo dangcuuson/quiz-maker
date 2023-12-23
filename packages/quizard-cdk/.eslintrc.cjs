@@ -1,12 +1,11 @@
-// workaround for a bug where if quizard-cdk was added as workspace, it doesn't recognize
-// the ts.config in the folder where we added logic for lambda path mapping
+// workaround for a bug where eslint report error on editor (but not on cli)
+// looks like we have to add .eslintrc in every package folder
 module.exports = {
     settings: {
         'import/resolver': {
             'typescript': {
                 'project': [
-                    './tsconfig.json',
-                    'packages/*/tsconfig.json',
+                    './tsconfig.json'
                 ]
             }
         }
@@ -18,7 +17,9 @@ module.exports = {
     parser: '@typescript-eslint/parser',
     parserOptions: {
         tsconfigRootDir: __dirname,
-        project: ['./tsconfig.json', 'packages/*/tsconfig.json'],
+        project: [
+            './tsconfig.json'
+        ],
     },
     plugins: ['@typescript-eslint', 'import'],
     ignorePatterns: ['.eslintrc.cjs', 'node_modules', 'cdk.out'],
