@@ -2,12 +2,11 @@ import {
     ApolloClient,
     ApolloLink,
     ApolloProvider,
-    DefaultContext,
     HttpLink,
     InMemoryCache,
     NormalizedCacheObject,
-    Observable,
 } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import React from 'react';
@@ -49,46 +48,24 @@ const makeApolloClient = (authToken: string): ApolloClient<NormalizedCacheObject
         }
     });
 
-    const requestLink = new ApolloLink(
-        (operation, forward) =>
-            new Observable((observer) => {
-                let handle: any;
-                Promise.resolve(operation)
-                    .then((op) =>
-                        op.setContext((context: DefaultContext) => {
-                            return {
-                                ...context.headers,
-                                headers: {
-                                    Authorization: authToken,
-                                },
-                            };
-                        }),
-                    )
-                    .then(() => {
-                        handle = forward(operation).subscribe({
-                            next: observer.next.bind(observer),
-                            error: observer.error.bind(observer),
-                            complete: observer.complete.bind(observer),
-                        });
-                    })
-                    .catch(observer.error.bind(observer));
-
-                return () => {
-                    if (handle) {
-                        handle.unsubscribe();
-                    }
-                };
-            }),
-    );
+    const authLink = setContext((_, { headers }) => {
+        return {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            headers: {
+                ...headers,
+                authorization: authToken,
+            },
+        };
+    });
 
     const httpLink = new HttpLink({
         uri: import.meta.env.VITE_GraphQLAPIURL,
     });
 
-    const link = ApolloLink.from([errorLink, requestLink, httpLink]);
+    const link = ApolloLink.from([errorLink, authLink, httpLink]);
 
     const cache = new InMemoryCache();
-    const client = new ApolloClient({ cache, link, name: 'quizard' });
+    const client = new ApolloClient({ cache, link });
     return client;
 };
 

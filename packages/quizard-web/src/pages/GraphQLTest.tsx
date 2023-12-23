@@ -5,7 +5,7 @@ import { createApolloQuery } from '../components/ApolloQuery/ApolloQuery';
 const topicListQuery = gql(/* GraphQL */ `
     query topicList {
         topicList
-        testLambda(value: "ABC")
+        testLambda(value: "AAA")
     }
 `);
 const TopicListQuery = createApolloQuery(topicListQuery);
@@ -15,7 +15,7 @@ const GraphQLTest: React.FC<Props> = () => {
     return (
         <TopicListQuery>
             {({ data }) => {
-                return <div>{data.testLambda}</div>
+                return <div>{data.topicList.length}</div>
             }}
         </TopicListQuery>
     )
