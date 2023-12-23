@@ -5,7 +5,7 @@ import * as cognito from 'aws-cdk-lib/aws-cognito';
 import { CDKContext } from '../shared/types';
 import { Construct } from 'constructs';
 import { combineGraphqlFilesIntoSchema, buildLambdaResolvers, buildDDBResolvers } from './stacksHelper';
-import { DBQuizKeys, Quiz_distinctTopicIndex } from '../shared/models/models';
+import { DBQuizKeys, Quiz_distinctTopicIndex, Quiz_topicIndex } from '../shared/models/models';
 
 export class QuizardStack extends Stack {
     constructor(scope: Construct, id: string, props: StackProps, context: CDKContext) {
@@ -29,6 +29,11 @@ export class QuizardStack extends Stack {
             indexName: Quiz_distinctTopicIndex,
             partitionKey: { name: DBQuizKeys.dTopic, type: ddb.AttributeType.STRING },
             projectionType: ddb.ProjectionType.KEYS_ONLY,
+        });
+        quizTable.addGlobalSecondaryIndex({
+            indexName: Quiz_topicIndex,
+            partitionKey: { name: DBQuizKeys.topic, type: ddb.AttributeType.STRING },
+            projectionType: ddb.ProjectionType.ALL,
         });
 
         // Cognito

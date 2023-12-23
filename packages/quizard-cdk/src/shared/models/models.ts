@@ -16,6 +16,7 @@ export type DBQuiz = GQLQuiz & {
 }
 
 export const Quiz_distinctTopicIndex = 'distinct_topic';
+export const Quiz_topicIndex = 'topic_index';
 
 export const DBQuizKeys: KeyedObj<DBQuiz> = {
     dTopic: 'dTopic',

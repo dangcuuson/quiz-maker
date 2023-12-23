@@ -37,6 +37,7 @@ function ApolloMutationWrapper<TData, TVariables extends OperationVariables>(
                     ? `There was an error occured :(`
                     : error.message.replace(/GraphQL error:/g, '');
                 const errorMessage = props.getErrorMessage ? props.getErrorMessage() : defaultErrorMessage;
+                console.error(error);
                 setMessage({ color: 'error', content: errorMessage });
                 if (props.onError) {
                     props.onError(error);

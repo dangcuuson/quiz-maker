@@ -4,7 +4,7 @@ import * as appsync from 'aws-cdk-lib/aws-appsync';
 import { GQLResolver } from '../shared/gqlTypes';
 import { LambdaEnv } from '../shared/types';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { Stack } from 'aws-cdk-lib';
+import { Duration, Stack } from 'aws-cdk-lib';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as ddb from 'aws-cdk-lib/aws-dynamodb';
@@ -78,10 +78,14 @@ export const buildLambdaResolvers = (args: {
     });
     quizTable.grantReadWriteData(lambdaRole);
 
+    type AddLambdaOptions = {
+        timeout?: Duration;
+    };
     function addLambdaResolver<TypeName extends keyof GQLResolver>(
         typeName: TypeName,
         _fieldName: keyof Required<GQLResolver>[TypeName],
         fileName: string,
+        options: AddLambdaOptions = {},
     ) {
         // ts workaround
         const fieldName = _fieldName.toString();
@@ -96,6 +100,7 @@ export const buildLambdaResolvers = (args: {
             environment,
             role: lambdaRole,
             layers: [lambdaLayer],
+            timeout: options.timeout
         });
 
         graphqlApi
@@ -108,13 +113,10 @@ export const buildLambdaResolvers = (args: {
 
     addLambdaResolver('Query', 'topicList', 'topicListResolver.ts');
     addLambdaResolver('Mutation', 'addQuiz', 'addQuizResolver.ts');
-    addLambdaResolver('Mutation', 'populateQuizData', 'populateQuizResolver.ts');
+    addLambdaResolver('Mutation', 'populateQuizData', 'populateQuizResolver.ts', { timeout: Duration.millis(20000) });
 };
 
-export const buildDDBResolvers = (args: {
-    graphqlApi: appsync.GraphqlApi;
-    quizTable: ddb.Table;
-}) => {
+export const buildDDBResolvers = (args: { graphqlApi: appsync.GraphqlApi; quizTable: ddb.Table }) => {
     const { graphqlApi, quizTable } = args;
 
     // simple wrap around addDynamoDbDataSource but type-safed

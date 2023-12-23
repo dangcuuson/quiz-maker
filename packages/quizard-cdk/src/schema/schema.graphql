@@ -10,5 +10,5 @@ type Query {
 
 type Mutation {
   addQuiz(input: QuizInput!): Quiz! @aws_api_key
-  populateQuizData: Int! @aws_api_key
+  populateQuizData: Int! @aws_api_key @aws_cognito_user_pools
 }

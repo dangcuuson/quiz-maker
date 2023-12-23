@@ -23,7 +23,7 @@ const PopulateDataBtn: React.FC<Props> = ({ onCompleted }) => {
                 return (
                     <Button
                         variation="primary"
-                        children="Populate quiz data"
+                        children={mutateState.loading ? 'Please wait. This may takes a while' : 'Populate quiz dat '}
                         onClick={() => mutate()}
                         disabled={mutateState.loading}
                     />
