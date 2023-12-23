@@ -13,7 +13,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "\n    query MyQ($topic: String!) {\n        quizList(topic: $topic) {\n            quizId\n        }\n        testLambda(value: \"ABC\")\n    }\n": types.MyQDocument,
+    "\n    query topicList {\n        topicList\n        testLambda(value: \"ABC\")\n    }\n": types.TopicListDocument,
 };
 
 /**
@@ -33,7 +33,7 @@ export function gql(source: string): unknown;
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n    query MyQ($topic: String!) {\n        quizList(topic: $topic) {\n            quizId\n        }\n        testLambda(value: \"ABC\")\n    }\n"): (typeof documents)["\n    query MyQ($topic: String!) {\n        quizList(topic: $topic) {\n            quizId\n        }\n        testLambda(value: \"ABC\")\n    }\n"];
+export function gql(source: "\n    query topicList {\n        topicList\n        testLambda(value: \"ABC\")\n    }\n"): (typeof documents)["\n    query topicList {\n        topicList\n        testLambda(value: \"ABC\")\n    }\n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

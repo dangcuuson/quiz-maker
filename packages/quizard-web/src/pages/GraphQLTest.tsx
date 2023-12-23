@@ -1,66 +1,24 @@
 import React from 'react';
 import { gql } from '../gql';
-import { generateClient } from 'aws-amplify/api';
-import { fetchAuthSession } from 'aws-amplify/auth';
-import { useQuery } from '@apollo/client'
-const client = generateClient();
+import { createApolloQuery } from '../components/ApolloQuery/ApolloQuery';
 
-const testLambdaQuery = gql(/* GraphQL */ `
-    query MyQ($topic: String!) {
-        quizList(topic: $topic) {
-            quizId
-        }
+const topicListQuery = gql(/* GraphQL */ `
+    query topicList {
+        topicList
         testLambda(value: "ABC")
     }
 `);
+const TopicListQuery = createApolloQuery(topicListQuery);
 
 interface Props {}
 const GraphQLTest: React.FC<Props> = () => {
-    const { data } = useQuery(testLambdaQuery, { variables: { topic: 'ABC'  } });
-    return <Inner />;
-};
-
-const Inner: React.FC<Props> = () => {
-    React.useEffect(() => {
-        fetchAuthSession({ forceRefresh: true }).then((data) => {
-            const dc = `
-                query MyQ{ 
-                    testLambda(value: "ABC")
-                }`;
-
-            client
-                .graphql({ query: dc, authToken: `Bearer ${data.tokens?.accessToken.toString()}` })
-                .then((res) => {
-                    console.log('>>>OK', res);
-                })
-                .catch((err) => {
-                    console.error('>>ERR', err);
-                });
-        });
-    }, []);
-    return <div>Test</div>;
-    // // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    // const { data, error, loading } = useQuery(gql`query MyQ{
-    //     quizList(topic: "Maths") {
-    //       quizId
-    //       topic
-    //       # title
-    //     }
-    //   }`);
-
-    // if (loading) {
-    //     return <div>Loading</div>
-    // }
-    // if (error) {
-    //     return <div>{JSON.stringify(error, null, 2)}</div>
-    // }
-
-    // if (!data) {
-    //     return <div>No data</div>
-    // }
-    // return (
-    //     <div>{JSON.stringify(data, null, 2)}</div>
-    // )
+    return (
+        <TopicListQuery>
+            {({ data }) => {
+                return <div>{data.testLambda}</div>
+            }}
+        </TopicListQuery>
+    )
 };
 
 export default GraphQLTest;

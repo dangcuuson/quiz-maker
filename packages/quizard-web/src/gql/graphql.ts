@@ -84,12 +84,10 @@ export type Score = {
   dummy?: Maybe<Scalars['String']['output']>;
 };
 
-export type MyQQueryVariables = Exact<{
-  topic: Scalars['String']['input'];
-}>;
+export type TopicListQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MyQQuery = { __typename?: 'Query', testLambda: string, quizList: Array<{ __typename?: 'Quiz', quizId: string }> };
+export type TopicListQuery = { __typename?: 'Query', topicList: Array<string>, testLambda: string };
 
 
-export const MyQDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"MyQ"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"topic"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"quizList"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"topic"},"value":{"kind":"Variable","name":{"kind":"Name","value":"topic"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"quizId"}}]}},{"kind":"Field","name":{"kind":"Name","value":"testLambda"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"value"},"value":{"kind":"StringValue","value":"ABC","block":false}}]}]}}]} as unknown as DocumentNode<MyQQuery, MyQQueryVariables>;
+export const TopicListDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"topicList"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"topicList"}},{"kind":"Field","name":{"kind":"Name","value":"testLambda"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"value"},"value":{"kind":"StringValue","value":"ABC","block":false}}]}]}}]} as unknown as DocumentNode<TopicListQuery, TopicListQueryVariables>;
