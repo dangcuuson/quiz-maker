@@ -1,1 +1,5 @@
 .env
+
+# auto generated files that has high chance of merge conflict
+src/gql/gql.ts
+src/gql/graphql.ts
