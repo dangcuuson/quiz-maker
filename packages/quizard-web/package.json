@@ -2,7 +2,7 @@
     "name": "quizard-web",
     "version": "1.0.0",
     "scripts": {
-        "build-gql": "graphql-codegen -c ./scripts/codegen.ts",
+        "build-gql": "graphql-codegen -c ./scripts/generateTypesFromGQL.ts",
         "build-env": "ts-node -P ../../tsconfig.node.json ./scripts/buildEnv.ts",
         "watch-gql": "npm run build-gql -- --watch",
         "predev": "npm run build-env && npm run build-gql",
