@@ -17,9 +17,7 @@ export class QuizardStack extends Stack {
         const isProd = context.branchName === 'prod';
 
         // do not destroy on prod
-        const removalPolicy = isProd
-            ? RemovalPolicy.RETAIN
-            : RemovalPolicy.DESTROY
+        const removalPolicy = isProd ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY;
 
         // DynamoDB
         const quizTableName = `quiz-${contextId}`;
@@ -28,13 +26,13 @@ export class QuizardStack extends Stack {
             billingMode: ddb.BillingMode.PAY_PER_REQUEST,
             partitionKey: { name: 'quizId', type: ddb.AttributeType.STRING },
             sortKey: { name: 'topic', type: ddb.AttributeType.STRING },
-            removalPolicy
+            removalPolicy,
         });
         const topicGSIName = 'topic-index';
         quizTable.addGlobalSecondaryIndex({
             indexName: topicGSIName,
             partitionKey: { name: 'topic', type: ddb.AttributeType.STRING },
-            projectionType: ddb.ProjectionType.ALL
+            projectionType: ddb.ProjectionType.ALL,
         });
 
         // Cognito
@@ -43,13 +41,13 @@ export class QuizardStack extends Stack {
             userPoolName: `userPool-${contextId}`,
             removalPolicy,
             selfSignUpEnabled: true,
-            accountRecovery: cognito.AccountRecovery.EMAIL_ONLY,
+            accountRecovery: cognito.AccountRecovery.PHONE_AND_EMAIL,
             userVerification: {
                 emailStyle: cognito.VerificationEmailStyle.CODE,
-                emailBody: verifyCodeBody
+                emailBody: verifyCodeBody,
             },
             autoVerify: {
-                email: true
+                email: true,
             },
             standardAttributes: {
                 email: {
@@ -59,17 +57,9 @@ export class QuizardStack extends Stack {
             },
         });
 
-
-        new cognito.CfnUserPoolGroup(this, 'userPoolGroup', {
-            userPoolId: userPool.userPoolId,
-            groupName: 'Admin',
-            description: `Admin users for ${contextId}`,
-        });
-
         const userPoolClient = new cognito.UserPoolClient(this, 'UserPoolClient', {
             userPool,
         });
-
 
         //#region Lambda
         // create lambda role and grant access to quizTable + generate log
@@ -95,7 +85,7 @@ export class QuizardStack extends Stack {
                         ],
                     }),
                 ],
-            })
+            }),
         );
 
         const lambdaLayer = new lambda.LayerVersion(this, 'lambdaLayer', {
@@ -111,18 +101,20 @@ export class QuizardStack extends Stack {
         const graphqlApi = new appsync.GraphqlApi(this, 'graphqlApi', {
             name: contextId,
             definition: {
-                schema: combineGraphqlFilesIntoSchema()
+                schema: combineGraphqlFilesIntoSchema(),
             },
             authorizationConfig: {
                 defaultAuthorization: {
-                    authorizationType: appsync.AuthorizationType.USER_POOL,
-                    userPoolConfig: {
-                        userPool
-                    }
-                },
-                additionalAuthorizationModes: [{
                     authorizationType: appsync.AuthorizationType.API_KEY,
-                }]
+                },
+                additionalAuthorizationModes: [
+                    {
+                        authorizationType: appsync.AuthorizationType.USER_POOL,
+                        userPoolConfig: {
+                            userPool,
+                        }
+                    },
+                ],
             },
         });
 
@@ -133,63 +125,59 @@ export class QuizardStack extends Stack {
             entry: 'src/lambda/testLambda.ts',
             runtime: lambda.Runtime.NODEJS_20_X,
             environment: {
-                quizTableName
+                quizTableName,
             },
             role: lambdaRole,
-            layers: [lambdaLayer]
-        })
-        graphqlApi
-            .addLambdaDataSource('testLambdaDS', lambdaFunction)
-            .createResolver('Query.testLambda', {
-                typeName: 'Query',
-                fieldName: 'testLambda'
-            })
+            layers: [lambdaLayer],
+        });
+        graphqlApi.addLambdaDataSource('testLambdaDS', lambdaFunction).createResolver('Query.testLambda', {
+            typeName: 'Query',
+            fieldName: 'testLambda',
+        });
 
         // query.quizList
-        graphqlApi
-            .addDynamoDbDataSource('quizListQueryDS', quizTable)
-            .createResolver('quizListQueryResolver', {
-                typeName: 'Query',
-                fieldName: 'quizList',
-                requestMappingTemplate: appsync.MappingTemplate.dynamoDbQuery(
-                    // 1st topic = dynamo db name, 2st topic = graphql name
-                    appsync.KeyCondition.eq('topic', 'topic'),
-                    topicGSIName
-                ),
-                responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultList()
-            });
+        graphqlApi.addDynamoDbDataSource('quizListQueryDS', quizTable).createResolver('quizListQueryResolver', {
+            typeName: 'Query',
+            fieldName: 'quizList',
+            requestMappingTemplate: appsync.MappingTemplate.dynamoDbQuery(
+                // 1st topic = dynamo db name, 2st topic = graphql name
+                appsync.KeyCondition.eq('topic', 'topic'),
+                topicGSIName,
+            ),
+            responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultList(),
+        });
 
         // mutation.addQuiz
-        graphqlApi
-            .addDynamoDbDataSource('addQuizMutationDS', quizTable)
-            .createResolver('addQuizMutationResolve', {
-                typeName: 'Mutation',
-                fieldName: 'addQuiz',
-                requestMappingTemplate: appsync.MappingTemplate.dynamoDbPutItem(
-                    appsync.PrimaryKey.partition('quizId').auto(),
-                    appsync.Values.projecting('input')
-                ),
-                responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultItem()
-            });
+        graphqlApi.addDynamoDbDataSource('addQuizMutationDS', quizTable).createResolver('addQuizMutationResolve', {
+            typeName: 'Mutation',
+            fieldName: 'addQuiz',
+            requestMappingTemplate: appsync.MappingTemplate.dynamoDbPutItem(
+                appsync.PrimaryKey.partition('quizId').auto(),
+                appsync.Values.projecting('input'),
+            ),
+            responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultItem(),
+        });
         //#endregion
 
         // output for web client
-        function asType<T>(value: T): T { return value; }
+        function asType<T>(value: T): T {
+            return value;
+        }
         type ValidKey = keyof CDKOutputJSON;
         new CfnOutput(this, asType<ValidKey>('userPoolId'), {
             value: userPool.userPoolId,
-        })
+        });
         new CfnOutput(this, asType<ValidKey>('userPoolClientId'), {
             value: userPoolClient.userPoolClientId,
-        })
+        });
         new CfnOutput(this, asType<ValidKey>('GraphQLAPIURL'), {
             value: graphqlApi.graphqlUrl,
-        })
+        });
         new CfnOutput(this, asType<ValidKey>('GraphQLAPIKey'), {
             value: graphqlApi.apiKey || '',
-        })
+        });
         new CfnOutput(this, asType<ValidKey>('GraphQLAPIID'), {
             value: graphqlApi.apiId,
-        })
+        });
     }
 }
