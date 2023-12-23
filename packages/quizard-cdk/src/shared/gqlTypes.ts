@@ -32,7 +32,7 @@ export interface GQLQuizQuestionOptions {
 export interface GQLQuizInput {
   topic: string;
   title: string;
-  questions?: Array<GQLQuizInputQuestion>;
+  questions: Array<GQLQuizInputQuestion>;
 }
 
 export interface GQLQuizInputQuestion {

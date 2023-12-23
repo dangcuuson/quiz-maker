@@ -1,13 +1,13 @@
 import fs from 'fs';
 import path from 'path';
 import * as appsync from 'aws-cdk-lib/aws-appsync';
-import { GQLResolver } from 'shared/gqlTypes';
+import { GQLResolver } from '../shared/gqlTypes';
+import { LambdaEnv } from '../shared/types';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Stack } from 'aws-cdk-lib';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as ddb from 'aws-cdk-lib/aws-dynamodb';
-import { LambdaEnv } from 'shared/types';
 
 export const combineGraphqlFilesIntoSchema = () => {
     // recursively look through schema folder and grab files ended with .graphql
@@ -25,7 +25,7 @@ export const combineGraphqlFilesIntoSchema = () => {
     const graphqlFiles = recursiveSearchFile(path.resolve('src/schema'), /\.graphql$/);
     const schemaDefs = graphqlFiles
         .map((fileName) => {
-            return appsync.SchemaFile.fromAsset(fileName).definition;
+            return fs.readFileSync(fileName, 'utf-8');
         })
         .join('\n');
 
@@ -106,7 +106,9 @@ export const buildLambdaResolvers = (args: {
             });
     }
 
+    addLambdaResolver('Query', 'testLambda', 'testLambda.ts');
     addLambdaResolver('Query', 'topicList', 'topicListResolver.ts');
+    addLambdaResolver('Mutation', 'addQuiz', 'addQuizResolver.ts');
 };
 
 export const buildDDBResolvers = (args: {
@@ -145,15 +147,5 @@ export const buildDDBResolvers = (args: {
             'topic-index',
         ),
         responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultList(),
-    });
-
-    addDDBResolver({
-        typeName: 'Mutation',
-        fieldName: 'addQuiz',
-        requestMappingTemplate: appsync.MappingTemplate.dynamoDbPutItem(
-            appsync.PrimaryKey.partition('quizId').auto(),
-            appsync.Values.projecting('input'),
-        ),
-        responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultItem(),
     });
 };

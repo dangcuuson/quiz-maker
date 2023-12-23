@@ -5,6 +5,7 @@ import * as cognito from 'aws-cdk-lib/aws-cognito';
 import { CDKContext } from '../shared/types';
 import { Construct } from 'constructs';
 import { combineGraphqlFilesIntoSchema, buildLambdaResolvers, buildDDBResolvers } from './stacksHelper';
+import { DBQuizKeys, Quiz_distinctTopicIndex } from '../shared/models/models';
 
 export class QuizardStack extends Stack {
     constructor(scope: Construct, id: string, props: StackProps, context: CDKContext) {
@@ -21,14 +22,13 @@ export class QuizardStack extends Stack {
         const quizTable = new ddb.Table(this, 'quizTable', {
             tableName: quizTableName,
             billingMode: ddb.BillingMode.PAY_PER_REQUEST,
-            partitionKey: { name: 'quizId', type: ddb.AttributeType.STRING },
-            sortKey: { name: 'topic', type: ddb.AttributeType.STRING },
+            partitionKey: { name: DBQuizKeys.quizId, type: ddb.AttributeType.STRING },
             removalPolicy,
         });
         quizTable.addGlobalSecondaryIndex({
-            indexName: 'topic-index',
-            partitionKey: { name: 'topic', type: ddb.AttributeType.STRING },
-            projectionType: ddb.ProjectionType.ALL,
+            indexName: Quiz_distinctTopicIndex,
+            partitionKey: { name: DBQuizKeys.dTopic, type: ddb.AttributeType.STRING },
+            projectionType: ddb.ProjectionType.KEYS_ONLY,
         });
 
         // Cognito
@@ -72,7 +72,7 @@ export class QuizardStack extends Stack {
                         authorizationType: appsync.AuthorizationType.USER_POOL,
                         userPoolConfig: {
                             userPool,
-                        }
+                        },
                     },
                 ],
             },
@@ -82,7 +82,7 @@ export class QuizardStack extends Stack {
             rootStack: this,
             graphqlApi,
             contextId,
-            quizTable
+            quizTable,
         });
         buildDDBResolvers({ graphqlApi, quizTable });
 

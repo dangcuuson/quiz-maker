@@ -1,5 +1,5 @@
 import { AppSyncResolverHandler } from 'aws-lambda';
-import { GQLQuery } from '../shared/gqlTypes';
+import { GQLQuery } from '/opt/gqlTypes';
 
 type TResult = GQLQuery['testLambda'];
 
