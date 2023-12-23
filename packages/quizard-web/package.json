@@ -2,9 +2,9 @@
     "name": "quizard-web",
     "version": "1.0.0",
     "scripts": {
-        "codegen-watch": "graphql-codegen  --watch",
-        "build-gql": "graphql-codegen",
+        "build-gql": "graphql-codegen -c ./scripts/codegen.ts",
         "build-env": "ts-node -P ../../tsconfig.node.json ./scripts/buildEnv.ts",
+        "watch-gql": "npm run build-gql -- --watch",
         "predev": "npm run build-env && npm run build-gql",
         "dev": "vite --port 8000"
     },

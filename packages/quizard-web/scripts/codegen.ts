@@ -1,6 +1,9 @@
 import { CodegenConfig } from '@graphql-codegen/cli';
 
 const config: CodegenConfig = {
+    // even though the file is in ./scripts,
+    // the base path is where execute this script
+    // which is in one more level up
     schema: ['../quizard-cdk/src/schema'],
     documents: ['src/**/*.tsx'],
     ignoreNoDocuments: true, // for better experience with the watcher

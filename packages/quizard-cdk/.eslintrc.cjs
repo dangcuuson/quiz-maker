@@ -1,3 +1,5 @@
+// workaround for a bug where if quizard-cdk was added as workspace, it doesn't recognize
+// the ts.config in the folder where we added logic for lambda path mapping
 module.exports = {
     settings: {
         'import/resolver': {
