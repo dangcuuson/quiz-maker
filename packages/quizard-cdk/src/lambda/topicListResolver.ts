@@ -18,5 +18,5 @@ export const handler: AppSyncResolverHandler<unknown, TResult> = async () => {
         }),
     );
 
-    return (result.Items || []).map(i => i[DBQuizKeys.dTopic] + '');
+    return (result.Items || []).map(i => i[DBQuizKeys.dTopic] + '').sort();
 };

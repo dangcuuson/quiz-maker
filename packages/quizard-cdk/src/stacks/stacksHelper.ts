@@ -1,13 +1,14 @@
 import fs from 'fs';
 import path from 'path';
-import * as appsync from 'aws-cdk-lib/aws-appsync';
-import { GQLResolver } from '../shared/gqlTypes';
-import { LambdaEnv } from '../shared/types';
-import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { Duration, Stack } from 'aws-cdk-lib';
-import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import { Duration, Stack } from 'aws-cdk-lib';
 import * as ddb from 'aws-cdk-lib/aws-dynamodb';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as appsync from 'aws-cdk-lib/aws-appsync';
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { LambdaEnv } from '../shared/types';
+import { DBQuiz, Quiz_topicIndex } from '../shared/models/models';
+import { GQLQuery, GQLQuiz, GQLResolver } from '../shared/gqlTypes';
 
 export const combineGraphqlFilesIntoSchema = () => {
     // recursively look through schema folder and grab files ended with .graphql
@@ -100,7 +101,7 @@ export const buildLambdaResolvers = (args: {
             environment,
             role: lambdaRole,
             layers: [lambdaLayer],
-            timeout: options.timeout
+            timeout: options.timeout,
         });
 
         graphqlApi
@@ -139,14 +140,17 @@ export const buildDDBResolvers = (args: { graphqlApi: appsync.GraphqlApi; quizTa
             });
     }
 
-    // TODO: some of the strings here are not type-safed
+    const query: keyof GQLResolver = 'Query';
+    const quizList: keyof GQLQuery = 'quizList';
+    const topicGql: keyof GQLQuiz = 'topic';
+    const topicDB: keyof DBQuiz = 'topic';
     addDDBResolver({
-        typeName: 'Query',
-        fieldName: 'quizList',
+        typeName: query,
+        fieldName: quizList,
         requestMappingTemplate: appsync.MappingTemplate.dynamoDbQuery(
             // 1st topic = dynamo db name, 2st topic = graphql name
-            appsync.KeyCondition.eq('topic', 'topic'),
-            'topic-index',
+            appsync.KeyCondition.eq(topicGql, topicDB),
+            Quiz_topicIndex,
         ),
         responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultList(),
     });

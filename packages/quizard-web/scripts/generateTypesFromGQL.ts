@@ -12,6 +12,8 @@ const config: CodegenConfig = {
             preset: 'client',
             presetConfig: {
                 gqlTagName: 'gql',
+                // https://github.com/dotansimha/graphql-code-generator/discussions/8859
+                fragmentMasking: false
             },
         },
     },

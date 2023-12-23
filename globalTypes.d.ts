@@ -7,7 +7,7 @@ declare global {
     interface CDKOutputJSON {
         userPoolId: string;
         userPoolClientId: string;
-        GraphQLAPIURL: string;
+        // GraphQLAPIURL: string;
         GraphQLAPIID: string;
         GraphQLAPIKey: string;
     }
@@ -16,7 +16,7 @@ declare global {
         VITE_branch: string;
         VITE_userPoolId: string;
         VITE_userPoolClientId: string;
-        VITE_GraphQLAPIURL: string;
+        // VITE_GraphQLAPIURL: string;
         VITE_GraphQLAPIID: string;
         VITE_GraphQLAPIKey: string;
     }

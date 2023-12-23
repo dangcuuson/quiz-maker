@@ -70,16 +70,11 @@ export class QuizardStack extends Stack {
             },
             authorizationConfig: {
                 defaultAuthorization: {
-                    authorizationType: appsync.AuthorizationType.API_KEY,
-                },
-                additionalAuthorizationModes: [
-                    {
-                        authorizationType: appsync.AuthorizationType.USER_POOL,
-                        userPoolConfig: {
-                            userPool,
-                        },
+                    authorizationType: appsync.AuthorizationType.USER_POOL,
+                    userPoolConfig: {
+                        userPool,
                     },
-                ],
+                }
             },
         });
         // build resolvers from lambda & DDB DataSource
@@ -102,9 +97,10 @@ export class QuizardStack extends Stack {
         new CfnOutput(this, asType<ValidKey>('userPoolClientId'), {
             value: userPoolClient.userPoolClientId,
         });
-        new CfnOutput(this, asType<ValidKey>('GraphQLAPIURL'), {
-            value: graphqlApi.graphqlUrl,
-        });
+        // do not output graphql api as we only use user pool auth
+        // new CfnOutput(this, asType<ValidKey>('GraphQLAPIURL'), {
+        //     value: graphqlApi.graphqlUrl,
+        // });
         new CfnOutput(this, asType<ValidKey>('GraphQLAPIKey'), {
             value: graphqlApi.apiKey || '',
         });

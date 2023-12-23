@@ -9,7 +9,7 @@ const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
     const theme = useTheme();
     return (
         <ErrorBoundary>
-            <View backgroundColor="background.secondary" padding={0}>
+            <View backgroundColor="background.secondary">
                 <View
                     margin="auto"
                     boxShadow="large"
@@ -27,10 +27,9 @@ const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
                                 onClick={() => navigate(routeConfigs.home.get())}
                                 children={"Quizard"}
                             />
-                            {/* <DayNightMusicPlayer /> */}
                             {/* <NightModeToggle /> */}
                         </Flex>
-                        <View padding={2} width="100%">
+                        <View padding="relative.medium" width="100%">
                             {children}
                         </View>
                     </React.Suspense>

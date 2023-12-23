@@ -4,11 +4,11 @@ schema {
 }
 
 type Query {
-  quizList(topic: String!): [Quiz!]! @aws_api_key @aws_cognito_user_pools
-  topicList: [String!]! @aws_api_key @aws_cognito_user_pools
+  quizList(topic: String!): [Quiz!]!
+  topicList: [String!]!
 }
 
 type Mutation {
-  addQuiz(input: QuizInput!): Quiz! @aws_api_key
-  populateQuizData: Int! @aws_api_key @aws_cognito_user_pools
+  addQuiz(input: QuizInput!): Quiz!
+  populateQuizData: Int!
 }
