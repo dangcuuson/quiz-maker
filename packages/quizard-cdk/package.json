@@ -8,11 +8,13 @@
         "git-branch": "2.0.1"
     },
     "devDependencies": {
-        "@types/git-branch": "2.0.5"
+        "@types/git-branch": "2.0.5",
+        "graphql-schema-typescript": "1.5.2"
     },
     "scripts": {
         "cdk": "cdk",
         "build": "cdk synth",
-        "deploy": "cdk deploy --outputs-file ../cdk-outputs.json"
+        "deploy": "cdk deploy --outputs-file ../cdk-outputs.json",
+        "build-gql": "ts-node -P ../../tsconfig.node.json ./scripts/generateGQLTypes.ts"
     }
 }

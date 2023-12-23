@@ -4,7 +4,7 @@
         "types": ["node"],
         "esModuleInterop": true,
         "module": "commonjs",
-        "moduleResolution": "classic",
+        "moduleResolution": "Node",
         "resolveJsonModule": false,
     }
 }

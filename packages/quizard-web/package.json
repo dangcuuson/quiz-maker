@@ -9,11 +9,12 @@
     "devDependencies": {
         "@types/react": "18.2.45",
         "@types/react-dom": "18.2.18",
-        "git-branch": "2.0.1",
         "@vitejs/plugin-react-swc": "3.5.0",
+        "git-branch": "2.0.1",
         "vite": "5.0.10"
     },
     "dependencies": {
+        "@apollo/client": "3.8.8",
         "@aws-amplify/ui-react": "6.0.7",
         "aws-amplify": "6.0.9",
         "react": "18.2.0",

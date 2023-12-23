@@ -1,13 +1,3 @@
-extend type Query {
-  quizList(topic: String!): [Quiz!]!
-  quizItem(id: ID!): Quiz
-  topicList: [String!]!
-}
-
-extend type Mutation {
-  addQuiz(input: QuizInput!): Quiz!
-}
-
 type Quiz {
   quizId: ID!
   topic: String!
