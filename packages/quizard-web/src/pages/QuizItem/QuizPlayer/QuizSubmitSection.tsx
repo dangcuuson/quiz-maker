@@ -6,6 +6,8 @@ import { useMutation } from '@apollo/client';
 import { maybe } from '@utils/dataUtils';
 import { AddScoreMutation } from '@gql/graphql';
 import { useEffectOnce } from '@hooks/hooks';
+import { useNavigate } from 'react-router';
+import { routeConfigs } from '@pages/routeConfig';
 
 const addScoreMutation = gql(/* GraphQL */ `
     mutation addScore($input: ScoreInput!) {
@@ -22,6 +24,7 @@ interface Props {
     onCompleted: () => void;
 }
 const QuizSubmitSection: React.FC<Props> = ({ storedQuiz, onCompleted }) => {
+    const navigate = useNavigate();
     const [error, setError] = React.useState('');
     const [addScoreResult, setAddScoreResult] = React.useState<AddScoreMutation | null>(null);
     const [addScore, addScoreState] = useMutation(addScoreMutation);
@@ -35,7 +38,6 @@ const QuizSubmitSection: React.FC<Props> = ({ storedQuiz, onCompleted }) => {
                 if (addScoreState.called) {
                     return;
                 }
-                console.log('>>ADD SCORE');
                 const result = await addScore({
                     variables: {
                         input: {
@@ -76,7 +78,16 @@ const QuizSubmitSection: React.FC<Props> = ({ storedQuiz, onCompleted }) => {
                     Your score is {addScoreResult.addScore.nCorrect}/{addScoreResult.addScore.nQuestions}
                 </Text>
             )}
-            <Button variation="primary">View scores</Button>
+            <Button
+                variation="primary"
+                onClick={() =>
+                    navigate({
+                        pathname: routeConfigs.scores.getPath(storedQuiz.quizId),
+                    })
+                }
+            >
+                View scores
+            </Button>
         </Flex>
     );
 };

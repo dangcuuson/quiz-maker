@@ -7,6 +7,7 @@ import _ from 'lodash';
 export type StoredQuiz = {
     quizId: string;
     questions: StoredQuizQuestion[];
+    submitted: boolean;
 };
 type StoredQuizQuestion = Omit<QuizItemQuestionFragment, '__typename'> & {
     userSelected: number;
@@ -20,6 +21,7 @@ const pickQuizQuestions = (quizItem: QuizItemFragment): StoredQuiz => {
             ...q,
             userSelected: -1,
         })),
+        submitted: false,
     };
 };
 
@@ -38,10 +40,17 @@ export const useStoredQuizReconcilication = (newQuiz: QuizItemFragment) => {
                         return null;
                     }
                     const storedJson: unknown = JSON.parse(storedStr);
-                    if (!hasStrField(storedJson, 'quizId') || !hasObjField(storedJson, 'questions')) {
+                    if (
+                        !hasStrField(storedJson, 'quizId') ||
+                        !hasObjField(storedJson, 'questions') ||
+                        !hasBoolField(storedJson, 'submitted')
+                    ) {
                         return null;
                     }
                     if (storedJson.quizId !== newQuiz.quizId) {
+                        return null;
+                    }
+                    if (storedJson.submitted) {
                         return null;
                     }
 

@@ -13,7 +13,7 @@ interface Props {
 }
 const QuizPlayer: React.FC<Props> = (props) => {
     const [storedQuiz, setStoredQuiz] = useStoredQuizReconcilication(props.quizItem);
-    const [submitConfirmed, setSubmitComfirmed] = React.useState(false);
+    const [submitConfirmedByUser, setSubmitComfirmedByUser] = React.useState(false);
     const [qIndex, setQIndex] = React.useState(() => {
         return storedQuiz.questions.findIndex((q) => q.userSelected < 0);
     });
@@ -37,14 +37,14 @@ const QuizPlayer: React.FC<Props> = (props) => {
     const nQuestions = storedQuiz.questions.length;
     const isLastQ = qIndex === nQuestions - 1;
 
-    if (submitConfirmed) {
+    if (submitConfirmedByUser) {
         return (
             <QuizSubmitSection
                 storedQuiz={storedQuiz}
                 onCompleted={() =>
                     setStoredQuiz({
-                        quizId: '',
-                        questions: [],
+                        ...storedQuiz,
+                        submitted: true
                     })
                 }
             />
@@ -82,7 +82,7 @@ const QuizPlayer: React.FC<Props> = (props) => {
                 setIndex={setQIndex}
                 nQuestions={nQuestions}
                 isLastQ={isLastQ}
-                onSubmitConfirmed={() => setSubmitComfirmed(true)}
+                onSubmitConfirmed={() => setSubmitComfirmedByUser(true)}
             />
         </Flex>
     );

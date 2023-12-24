@@ -5,6 +5,7 @@ import { RouteProps } from 'react-router-dom';
 const HomePage = React.lazy(() => import('@pages/Home/HomePage'));
 const TopicItemPage = React.lazy(() => import('@pages/TopicItem/TopicItemPage'));
 const QuizItemPage = React.lazy(() => import('@pages/QuizItem/QuizItemPage'));
+const ScoresPage = React.lazy(() => import('@pages/Scores/ScoresPages'));
 
 export interface RouteItemConfig<TGet extends Function = Function> {
     props: RouteProps;
@@ -28,5 +29,9 @@ export const routeConfigs = {
     quizItem: createRouteItemConfig({
         getPath: (quizId: string) => `/quiz/${encodeURIComponent(quizId)}`,
         props: { path: '/quiz/:quizId', element: <QuizItemPage /> }
+    }),
+    scores: createRouteItemConfig({
+        getPath: (quizId: string) => `/scores/${encodeURIComponent(quizId)}`,
+        props: { path: '/scores/:quizId', element: <ScoresPage /> }
     }),
 }

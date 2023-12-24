@@ -60,7 +60,7 @@ const TopicItemPageInner: React.FC<{ quizList: QuizListItemFragment[]; topic: st
                                     variation="link"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        navigate({ pathname: '/' });
+                                        navigate({ pathname: routeConfigs.scores.getPath(quizItem.quizId) });
                                     }}
                                 >
                                     View scores

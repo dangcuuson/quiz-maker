@@ -8,7 +8,7 @@ import { create } from 'zustand';
 //#region ---------- ZUSTAND STORE ----------
 type BreadcrumbsStore = {
     breadcrumbs: BreadcrumbsItem[];
-    setBreadcrumbs: (config: SetBreadcrumbsConfig) => void;
+    setBreadcrumbs: (config: BreadcrumbsConfig) => void;
 };
 
 type BreadcrumbsItem = {
@@ -16,19 +16,23 @@ type BreadcrumbsItem = {
     label: React.ReactNode;
 };
 
-type SetBreadcrumbsConfig = SetHomeBreadcrumbs | SetTopicBreadcrumbs | SetQuizBreadcrumbs;
-type SetHomeBreadcrumbs = {
+type BreadcrumbsConfig = HomeBreadcrumbs | TopicBreadcrumbs | QuizBreadcrumbs | ScoreBreadcrumbs;
+type HomeBreadcrumbs = {
     type: 'home';
 };
-type SetTopicBreadcrumbs = {
+type TopicBreadcrumbs = {
     type: 'topic';
     topic: string;
 };
-type SetQuizBreadcrumbs = {
+type QuizBreadcrumbs = {
     type: 'quiz';
     topic: string;
     quizId: string;
     quizTitle: string;
+};
+type ScoreBreadcrumbs = {
+    type: 'score';
+    quizId: string;
 };
 
 const getBaseBreadcrumbsItems = (): BreadcrumbsItem[] => {
@@ -52,13 +56,23 @@ const useBreadcrumbsStore = create<BreadcrumbsStore>((set) => ({
             });
         };
         switch (config.type) {
+            case 'home': {
+                break;
+            }
             case 'quiz': {
                 addTopicBreadcrumbs(config.topic);
-                addQuizBreadcrumbs(config.quizId, config.quizTitle)
+                addQuizBreadcrumbs(config.quizId, config.quizTitle);
                 break;
             }
             case 'topic': {
                 addTopicBreadcrumbs(config.topic);
+                break;
+            }
+            case 'score': {
+                items.push({
+                    href: routeConfigs.scores.getPath(config.quizId),
+                    label: 'Scores',
+                });
                 break;
             }
         }
@@ -68,7 +82,7 @@ const useBreadcrumbsStore = create<BreadcrumbsStore>((set) => ({
 
 const useBreadcrumbsItems = () => useBreadcrumbsStore((state) => state.breadcrumbs);
 const useSetBreadcrumbs = () => useBreadcrumbsStore((state) => state.setBreadcrumbs);
-export const useSetBreadcrumbsOnMount = (config: SetBreadcrumbsConfig) => {
+export const useSetBreadcrumbsOnMount = (config: BreadcrumbsConfig) => {
     const setBreadcrumbs = useSetBreadcrumbs();
     React.useEffect(() => {
         setBreadcrumbs(config);
@@ -77,13 +91,13 @@ export const useSetBreadcrumbsOnMount = (config: SetBreadcrumbsConfig) => {
 //#endregion
 
 // React router link supports client-side routing so it's better for SPA
-// Another approach could be wrapping amplify Breadcrumbs.Link 
+// Another approach could be wrapping amplify Breadcrumbs.Link
 // and intercept their nav behaviour to support client-side routing
 const QuizBreadcrumbsLink = styled(ReactRouterLink)<{ isCurrent?: boolean }>`
-    color: ${props => props.theme.tokens?.components?.breadcrumbs?.link?.color?.toString()};
+    color: ${(props) => props.theme.tokens?.components?.breadcrumbs?.link?.color?.toString()};
     text-decoration: none;
     :visited {
-        color: ${props => props.theme.tokens?.components?.breadcrumbs?.link?.color?.toString()};
+        color: ${(props) => props.theme.tokens?.components?.breadcrumbs?.link?.color?.toString()};
         text-decoration: none;
     }
 `;
