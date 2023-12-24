@@ -4,7 +4,7 @@ import { LambdaEnv } from '/opt/types';
 import { DBQuiz } from '/opt/models/models';
 import { WriteRequest, batchWriteInChunks, getDDBDocClient } from '/opt/utils';
 import { ScanCommand } from '@aws-sdk/lib-dynamodb';
-import { HSCQuizzes } from './quizList';
+import { HSCQuizzes } from './sampleQuizData';
 
 type TResult = GQLMutation['populateQuizData'];
 

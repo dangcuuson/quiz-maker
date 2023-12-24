@@ -1,10 +1,10 @@
-import { CfnOutput, RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
+import { CfnOutput, Stack, StackProps } from 'aws-cdk-lib';
 import * as ddb from 'aws-cdk-lib/aws-dynamodb';
 import * as appsync from 'aws-cdk-lib/aws-appsync';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
 import { CDKContext } from '../shared/types';
 import { Construct } from 'constructs';
-import { combineGraphqlFilesIntoSchema, buildLambdaResolvers, buildDDBResolvers } from './stacksHelper';
+import { combineGraphqlFilesIntoSchema, buildResolvers } from './stacksHelper';
 import { DBQuizKeys, Quiz_distinctTopicIndex, Quiz_topicIndex } from '../shared/models/models';
 
 export class QuizardStack extends Stack {
@@ -12,10 +12,6 @@ export class QuizardStack extends Stack {
         super(scope, id, props);
 
         const contextId = `${context.appName}-${context.branchName}`;
-        const isProd = context.branchName === 'prod';
-
-        // do not destroy on prod
-        const removalPolicy = isProd ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY;
 
         // DynamoDB
         const quizTableName = `quiz-${contextId}`;
@@ -23,7 +19,6 @@ export class QuizardStack extends Stack {
             tableName: quizTableName,
             billingMode: ddb.BillingMode.PAY_PER_REQUEST,
             partitionKey: { name: DBQuizKeys.quizId, type: ddb.AttributeType.STRING },
-            removalPolicy,
         });
         quizTable.addGlobalSecondaryIndex({
             indexName: Quiz_distinctTopicIndex,
@@ -40,7 +35,6 @@ export class QuizardStack extends Stack {
         const verifyCodeBody = 'Thank you for signing up to Quizard! Your verification code is {####}';
         const userPool = new cognito.UserPool(this, 'UserPool', {
             userPoolName: `userPool-${contextId}`,
-            removalPolicy,
             selfSignUpEnabled: true,
             accountRecovery: cognito.AccountRecovery.PHONE_AND_EMAIL,
             userVerification: {
@@ -74,17 +68,16 @@ export class QuizardStack extends Stack {
                     userPoolConfig: {
                         userPool,
                     },
-                }
+                },
             },
         });
-        // build resolvers from lambda & DDB DataSource
-        buildLambdaResolvers({
+        // build resolvers
+        buildResolvers({
             rootStack: this,
             graphqlApi,
             contextId,
             quizTable,
         });
-        buildDDBResolvers({ graphqlApi, quizTable });
 
         // output for web client
         function asType<T>(value: T): T {
