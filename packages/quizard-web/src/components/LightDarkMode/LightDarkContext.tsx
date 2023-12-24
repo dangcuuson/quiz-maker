@@ -15,8 +15,8 @@ const LightTheme = createTheme({
     tokens: {
         colors: {
             background: {
-                primary: 'var(--amplify-colors-teal-10)',
-                secondary: 'var(--amplify-colors-blue-20)'
+                primary: { value: '{colors.teal.10}' },
+                secondary: { value: '{colors.blue.20}' },
             }
         }
     }

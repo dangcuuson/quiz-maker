@@ -8,30 +8,54 @@ import {
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
-import { fetchAuthSession } from 'aws-amplify/auth';
+import * as Auth from 'aws-amplify/auth';
 import React from 'react';
 
 const useCognitoAuthToken = (): { token: string; ready: boolean } => {
     const [authToken, setAuthToken] = React.useState<string>('');
+    const [tokenExpiry, setTokenExpiry] = React.useState(0);
     const [ready, setReady] = React.useState(false);
-    React.useEffect(() => {
-        fetchAuthSession()
-            .then((data) => {
-                if (data.tokens) {
-                    setAuthToken(`Bearer ${data.tokens.accessToken.toString()}`);
-                } else {
-                    console.warn('Access token not found');
-                    setAuthToken('');
-                }
-            })
-            .catch((err) => {
-                console.error(`Unable to fetch auth session`, err);
+
+    // fetch auth token on mount
+    const fetchAuthToken = async () => {
+        try {
+            await Auth.getCurrentUser();
+            const session = await Auth.fetchAuthSession({ forceRefresh: true });
+            if (session.tokens) {
+                console.log('>>Found tokens');
+                console.log(session.tokens.accessToken.payload.exp);
+                setTokenExpiry(session.tokens.accessToken.payload.exp || 0);
+                setAuthToken(`Bearer ${session.tokens.accessToken.toString()}`);
+            } else {
+                console.warn('Access token not found');
                 setAuthToken('');
-            })
-            .finally(() => {
-                setReady(true);
-            });
+            }
+        } catch (err) {
+            console.error(`Unable to fetch auth session`, err);
+            setAuthToken('');
+        } finally {
+            setReady(true);
+        }
+    };
+    React.useEffect(() => {
+        fetchAuthToken();
     }, []);
+
+    // when token is about to expire, fetch auth token again to keep user connected
+    React.useEffect(() => {
+        if (!tokenExpiry) {
+            return;
+        }
+        const timeToTimeout = tokenExpiry * 1000 - +Date.now();
+        console.log('>>timeToTimeout', timeToTimeout);
+        const timeout = setTimeout(() => {
+            fetchAuthToken();
+        }, timeToTimeout - 10000);
+        return () => {
+            clearTimeout(timeout);
+        };
+    }, [tokenExpiry]);
+
     return { token: authToken, ready };
 };
 

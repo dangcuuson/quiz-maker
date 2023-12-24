@@ -97,15 +97,15 @@ export class QuizardStack extends Stack {
         new CfnOutput(this, asType<ValidKey>('userPoolClientId'), {
             value: userPoolClient.userPoolClientId,
         });
+        new CfnOutput(this, asType<ValidKey>('GraphQLAPIURL'), {
+            value: graphqlApi.graphqlUrl,
+        });
         // do not output graphql api as we only use user pool auth
-        // new CfnOutput(this, asType<ValidKey>('GraphQLAPIURL'), {
-        //     value: graphqlApi.graphqlUrl,
+        // new CfnOutput(this, asType<ValidKey>('GraphQLAPIKey'), {
+        //     value: graphqlApi.apiKey || '',
         // });
-        new CfnOutput(this, asType<ValidKey>('GraphQLAPIKey'), {
-            value: graphqlApi.apiKey || '',
-        });
-        new CfnOutput(this, asType<ValidKey>('GraphQLAPIID'), {
-            value: graphqlApi.apiId,
-        });
+        // new CfnOutput(this, asType<ValidKey>('GraphQLAPIID'), {
+        //     value: graphqlApi.apiId,
+        // });
     }
 }
