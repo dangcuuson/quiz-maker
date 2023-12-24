@@ -3,16 +3,17 @@ import React from 'react';
 import QuizTextParser from './QuizTextParser';
 import _ from 'lodash';
 import { useStoredQuizReconcilication } from './QuizPlayerHooks';
-import { Alert, Flex, Radio, RadioGroupField } from '@aws-amplify/ui-react';
+import { Flex, Message, Radio, RadioGroupField } from '@aws-amplify/ui-react';
 import { maybe } from '@utils/dataUtils';
 import QuizNavigator from './QuizNavigator';
-import QuizSubmitBtn from './QuizSubmitBtn';
+import QuizSubmitSection from './QuizSubmitSection';
 
 interface Props {
     quizItem: QuizItemFragment;
 }
 const QuizPlayer: React.FC<Props> = (props) => {
     const [storedQuiz, setStoredQuiz] = useStoredQuizReconcilication(props.quizItem);
+    const [submitConfirmed, setSubmitComfirmed] = React.useState(false);
     const [qIndex, setQIndex] = React.useState(() => {
         return storedQuiz.questions.findIndex((q) => q.userSelected < 0);
     });
@@ -33,13 +34,27 @@ const QuizPlayer: React.FC<Props> = (props) => {
         }
     }, [curQuestion, storedQuiz.questions.length, setQIndex]);
     if (!curQuestion) {
-        return <Alert variation="error" heading="Question index out of bound" />;
+        return <Message colorTheme="error" heading="Question index out of bound" />;
     }
     const nQuestions = storedQuiz.questions.length;
     const isLastQ = qIndex === nQuestions - 1;
+
+    if (submitConfirmed) {
+        return (
+            <QuizSubmitSection
+                storedQuiz={storedQuiz}
+                onCompleted={() =>
+                    setStoredQuiz({
+                        quizId: '',
+                        questions: [],
+                    })
+                }
+            />
+        );
+    }
     return (
-        // padding to make space of quiz nav, which is fixed bottom
-        <Flex direction="column" paddingBottom="50px">
+        // padding to make space for quiz nav, which is fixed bottom
+        <Flex direction="column" paddingBottom="120px">
             <QuizTextParser text={curQuestion.questionText || ''} />
             <RadioGroupField
                 legend=""
@@ -60,8 +75,13 @@ const QuizPlayer: React.FC<Props> = (props) => {
                     );
                 })}
             </RadioGroupField>
-            {isLastQ && <QuizSubmitBtn />}
-            <QuizNavigator curIndex={qIndex} setIndex={setQIndex} nQuestions={nQuestions} />
+            <QuizNavigator
+                curIndex={qIndex}
+                setIndex={setQIndex}
+                nQuestions={nQuestions}
+                isLastQ={isLastQ}
+                onSubmitConfirmed={() => setSubmitComfirmed(true)}
+            />
         </Flex>
     );
 };

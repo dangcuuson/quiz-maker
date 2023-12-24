@@ -5,7 +5,7 @@ type Score {
     quizId: String!
     nQuestions: Int!
     nCorrect: Int!
-    score: Float!
+    percentage: Float!
 }
 
 type ScoreListResult {

@@ -1,4 +1,4 @@
-import { Alert } from '@aws-amplify/ui-react';
+import { Message } from '@aws-amplify/ui-react';
 import React from 'react';
 
 interface Props {
@@ -31,8 +31,8 @@ export default class ErrorBoundary extends React.Component<Props, State> {
         const errorMessage = import.meta.env.PROD ? 'An error occured when rendering' : this.state.error;
         if (this.state.error) {
             return (
-                <Alert
-                    variation="error"
+                <Message
+                    colorTheme="error"
                     hasIcon={true}
                     heading={errorMessage}
                     isDismissible={true}

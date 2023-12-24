@@ -26,7 +26,7 @@ export interface GQLQuizQuestion {
 
 export interface GQLQuizQuestionOption {
   optionText: string;
-  isCorrect?: boolean;
+  isCorrect: boolean;
 }
 
 export interface GQLQuizInput {
@@ -42,7 +42,7 @@ export interface GQLQuizInputQuestion {
 
 export interface GQLQuizInputQuestionOption {
   optionText: string;
-  isCorrect?: boolean;
+  isCorrect: boolean;
 }
 
 export interface GQLQuery {
@@ -83,7 +83,7 @@ export interface GQLScore {
   quizId: string;
   nQuestions: number;
   nCorrect: number;
-  score: number;
+  percentage: number;
 }
 
 export interface GQLScoreListResult {
@@ -250,7 +250,7 @@ export interface GQLScoreTypeResolver<TParent = any> {
   quizId?: ScoreToQuizIdResolver<TParent>;
   nQuestions?: ScoreToNQuestionsResolver<TParent>;
   nCorrect?: ScoreToNCorrectResolver<TParent>;
-  score?: ScoreToScoreResolver<TParent>;
+  percentage?: ScoreToPercentageResolver<TParent>;
 }
 
 export interface ScoreToUsernameResolver<TParent = any, TResult = any> {
@@ -273,7 +273,7 @@ export interface ScoreToNCorrectResolver<TParent = any, TResult = any> {
   (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
 }
 
-export interface ScoreToScoreResolver<TParent = any, TResult = any> {
+export interface ScoreToPercentageResolver<TParent = any, TResult = any> {
   (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
 }
 

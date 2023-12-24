@@ -12,7 +12,7 @@ type QuizQuestion {
 
 type QuizQuestionOption {
   optionText: String!
-  isCorrect: Boolean
+  isCorrect: Boolean!
 }
 
 input QuizInput {
@@ -28,5 +28,5 @@ input QuizInputQuestion {
 
 input QuizInputQuestionOption {
   optionText: String!
-  isCorrect: Boolean
+  isCorrect: Boolean!
 }

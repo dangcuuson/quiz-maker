@@ -26,7 +26,7 @@ const pickQuizQuestions = (quizItem: QuizItemFragment): StoredQuiz => {
 /**
  * Look for stored data in local storage and try to restore it into `StoredQuiz`
  * If stored quizId is different than newQuizId => always discard stored data
- * If we cannot restore local storage data => use new data and save it back into local storage
+ * If we cannot restore local storage data => use new data (it will be saved back into local storage later)
  */
 export const useStoredQuizReconcilication = (newQuiz: QuizItemFragment) => {
     const [storedQuiz, setStoredQuiz] = useLocalStorage<StoredQuiz>({

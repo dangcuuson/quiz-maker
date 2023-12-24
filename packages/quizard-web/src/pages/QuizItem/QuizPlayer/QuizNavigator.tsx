@@ -1,14 +1,34 @@
-import { Pagination, View } from '@aws-amplify/ui-react';
+import { Button, Flex, Pagination } from '@aws-amplify/ui-react';
 import React from 'react';
 
 interface Props {
     curIndex: number;
     nQuestions: number;
     setIndex: React.Dispatch<React.SetStateAction<number>>;
+    isLastQ: boolean;
+    onSubmitConfirmed: () => void;
 }
-const QuizNavigator: React.FC<Props> = ({ curIndex, nQuestions, setIndex }) => {
+const QuizNavigator: React.FC<Props> = ({ curIndex, nQuestions, setIndex, isLastQ, onSubmitConfirmed }) => {
     return (
-        <View position="fixed" left="50%" bottom="5%" transform="translateX(-50%)" borderRadius="5">
+        <Flex position="fixed" left="50%" bottom="5%" transform="translateX(-50%)" borderRadius="5" direction="column">
+            {!isLastQ && (
+                <Button variation="primary" onClick={() => setIndex((p) => p + 1)}>
+                    Next question
+                </Button>
+            )}
+            {!!isLastQ && (
+                <Button
+                    variation="primary"
+                    onClick={() => {
+                        const ok = confirm(`Submit your answers?`);
+                        if (ok) {
+                            onSubmitConfirmed();
+                        }
+                    }}
+                >
+                    Submit
+                </Button>
+            )}
             <Pagination
                 currentPage={curIndex + 1}
                 totalPages={nQuestions}
@@ -19,8 +39,9 @@ const QuizNavigator: React.FC<Props> = ({ curIndex, nQuestions, setIndex }) => {
                         setIndex(newPage - 1);
                     }
                 }}
+                siblingCount={2}
             />
-        </View>
+        </Flex>
     );
 };
 

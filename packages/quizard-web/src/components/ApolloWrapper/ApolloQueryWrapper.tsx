@@ -1,6 +1,6 @@
 import { ApolloQueryResult, OperationVariables, QueryResult } from '@apollo/client';
 import { Query, QueryComponentOptions } from '@apollo/client/react/components';
-import { Alert, Placeholder } from '@aws-amplify/ui-react';
+import { Message, Loader } from '@aws-amplify/ui-react';
 import _ from 'lodash';
 import React from 'react';
 
@@ -42,8 +42,7 @@ function ApolloQueryWrapper<TData, TVariables extends OperationVariables>(
                 const { data, loading, error, refetch } = typedResult;
 
                 if (loading) {
-                    // PlaceHolder is default loadingEl
-                    return props.loadingEl || <Placeholder />;
+                    return props.loadingEl || <Loader variation="linear" />;
                 }
 
                 const getErrorEl = () => {
@@ -61,7 +60,7 @@ function ApolloQueryWrapper<TData, TVariables extends OperationVariables>(
                     return props.errorEl ? (
                         props.errorEl(errorMessage, refetch)
                     ) : (
-                        <Alert variation="error" hasIcon={true} heading={errorMessage} />
+                        <Message colorTheme="error" hasIcon={true} heading={errorMessage} />
                     );
                 };
 
