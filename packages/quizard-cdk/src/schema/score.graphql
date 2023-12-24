@@ -20,7 +20,13 @@ input ScoreInput {
     nCorrect: Int!
 }
 
-input ScoreListFilter {
-    quizId: String!
-    exclusiveStartKey: AWSJSON
+# exactly one of these flags must be raised
+input ScoreListIndexSelector {
+    quizId_createdAt: Boolean
+    quizId_percentage: Boolean
+    user_createdAt: Boolean
+    user_quizId: Boolean
+
+    # defined when quizId_* flag is raised
+    quizId: String
 }

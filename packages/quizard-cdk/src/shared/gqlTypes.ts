@@ -50,7 +50,6 @@ export interface GQLQuery {
   quizList: Array<GQLQuiz>;
   topicList: Array<string>;
   scoreList: GQLScoreListResult;
-  bestScore?: GQLScore;
 }
 
 export interface GQLMutation {
@@ -98,9 +97,11 @@ export interface GQLScoreInput {
   nCorrect: number;
 }
 
-export interface GQLScoreListFilter {
-  quizId: string;
-  exclusiveStartKey?: GQLAWSJSON;
+export interface GQLScoreListIndexSelector {
+  quizId_createdAt?: boolean;
+  quizId_percentage?: boolean;
+  user_createdAt?: boolean;
+  user_quizId?: boolean;
 }
 
 /*********************************
@@ -185,7 +186,6 @@ export interface GQLQueryTypeResolver<TParent = any> {
   quizList?: QueryToQuizListResolver<TParent>;
   topicList?: QueryToTopicListResolver<TParent>;
   scoreList?: QueryToScoreListResolver<TParent>;
-  bestScore?: QueryToBestScoreResolver<TParent>;
 }
 
 export interface QueryToQuizItemArgs {
@@ -207,18 +207,12 @@ export interface QueryToTopicListResolver<TParent = any, TResult = any> {
 }
 
 export interface QueryToScoreListArgs {
-  filter: GQLScoreListFilter;
+  index: GQLScoreListIndexSelector;
+  limit: number;
+  exclusiveStartKey?: GQLAWSJSON;
 }
 export interface QueryToScoreListResolver<TParent = any, TResult = any> {
   (parent: TParent, args: QueryToScoreListArgs, context: any, info: GraphQLResolveInfo): TResult;
-}
-
-export interface QueryToBestScoreArgs {
-  username: string;
-  quizId: string;
-}
-export interface QueryToBestScoreResolver<TParent = any, TResult = any> {
-  (parent: TParent, args: QueryToBestScoreArgs, context: any, info: GraphQLResolveInfo): TResult;
 }
 
 export interface GQLMutationTypeResolver<TParent = any> {

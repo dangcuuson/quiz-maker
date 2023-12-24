@@ -8,7 +8,7 @@ import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as appsync from 'aws-cdk-lib/aws-appsync';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { LambdaEnv } from '../shared/types';
-import { DBQuizKeys, Quiz_topicIndex } from '../shared/models/models';
+import { DBQuizKeys, Quiz_topic_GSI } from '../shared/models/models';
 import { GQLQuiz, GQLResolver, QueryToQuizItemArgs } from '../shared/gqlTypes';
 
 // quickly define a value in a type-safed way
@@ -139,14 +139,13 @@ export const buildResolvers = (buildArgs: BuildResolversArgs) => {
             type: 'ddb',
             requestMappingTemplate: appsync.MappingTemplate.dynamoDbQuery(
                 appsync.KeyCondition.eq(DBQuizKeys.topic, asType<keyof GQLQuiz>('topic')),
-                Quiz_topicIndex,
+                Quiz_topic_GSI,
             ),
             responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultList(),
         },
         topicList: { type: 'lambda', fileName: 'quiz/topicListResolver.ts' },
 
         // score
-        bestScore: { type: 'lambda', fileName: 'TODO.ts' },
         scoreList: { type: 'lambda', fileName: 'TODO.ts' },
     };
     const MutationTypeResolverMap: StrictResolversMap<'Mutation'> = {

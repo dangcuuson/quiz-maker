@@ -10,8 +10,7 @@ type Query {
   topicList: [String!]!
 
   # score
-  scoreList(filter: ScoreListFilter!): ScoreListResult!
-  bestScore(username: String! quizId: String!): Score
+  scoreList(index: ScoreListIndexSelector!, limit: Int!, exclusiveStartKey: AWSJSON): ScoreListResult!
 }
 
 type Mutation {

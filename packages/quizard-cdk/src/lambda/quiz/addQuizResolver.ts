@@ -2,7 +2,7 @@ import { AppSyncResolverHandler } from 'aws-lambda';
 import type { GQLMutation, MutationToAddQuizArgs } from '/opt/gqlTypes';
 import { getDDBDocClient } from '/opt/utils';
 import { LambdaEnv } from '/opt/types';
-import { DBQuiz, DBQuizKeys, Quiz_distinctTopicIndex } from '/opt/models/models';
+import { DBQuiz, DBQuizKeys, Quiz_distinctTopic_GSI } from '/opt/models/models';
 import { QueryCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
 
 type TResult = GQLMutation['addQuiz'];
@@ -23,7 +23,7 @@ export const handler: AppSyncResolverHandler<TArgs, TResult> = async (event) => 
         const result = await db.send(
             new QueryCommand({
                 TableName: env.QUIZ_TABLE_NAME,
-                IndexName: Quiz_distinctTopicIndex,
+                IndexName: Quiz_distinctTopic_GSI,
                 KeyConditionExpression: `${DBQuizKeys.dTopic} = :topic`,
                 ExpressionAttributeValues: {
                     ':topic': input.topic,
