@@ -5,6 +5,7 @@ import { gql } from '@gql/gql';
 import { useMutation } from '@apollo/client';
 import { maybe } from '@utils/dataUtils';
 import { AddScoreMutation } from '@gql/graphql';
+import { useEffectOnce } from '@hooks/hooks';
 
 const addScoreMutation = gql(/* GraphQL */ `
     mutation addScore($input: ScoreInput!) {
@@ -25,33 +26,37 @@ const QuizSubmitSection: React.FC<Props> = ({ storedQuiz, onCompleted }) => {
     const [addScoreResult, setAddScoreResult] = React.useState<AddScoreMutation | null>(null);
     const [addScore, addScoreState] = useMutation(addScoreMutation);
 
-    const uploadScore = React.useCallback(async () => {
-        try {
-            if (storedQuiz.questions.length === 0) {
-                return;
-            }
-            const result = await addScore({
-                variables: {
-                    input: {
-                        quizId: storedQuiz.quizId,
-                        nQuestions: storedQuiz.questions.length,
-                        nCorrect: storedQuiz.questions.filter((q) => {
-                            const selectedOption = maybe(q.options[q.userSelected]);
-                            return selectedOption?.isCorrect;
-                        }).length,
+    useEffectOnce(() => {
+        const uploadScore = async () => {
+            try {
+                if (storedQuiz.questions.length === 0) {
+                    return;
+                }
+                if (addScoreState.called) {
+                    return;
+                }
+                console.log('>>ADD SCORE');
+                const result = await addScore({
+                    variables: {
+                        input: {
+                            quizId: storedQuiz.quizId,
+                            nQuestions: storedQuiz.questions.length,
+                            nCorrect: storedQuiz.questions.filter((q) => {
+                                const selectedOption = maybe(q.options[q.userSelected]);
+                                return selectedOption?.isCorrect;
+                            }).length,
+                        },
                     },
-                },
-            });
-            setAddScoreResult(result.data || null);
-            onCompleted();
-        } catch (err) {
-            console.error(err);
-            setError(`An error occured when trying to submit your answers :(`);
-        }
-    }, []);
-    React.useEffect(() => {
+                });
+                setAddScoreResult(result.data || null);
+                onCompleted();
+            } catch (err) {
+                console.error(err);
+                setError(`An error occured when trying to submit your answers :(`);
+            }
+        };
         uploadScore();
-    }, []);
+    });
     if (addScoreState.loading || !addScoreState.called) {
         return (
             <View>

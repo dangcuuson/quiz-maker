@@ -16,7 +16,7 @@ export class QuizardStack extends Stack {
         const removalPolicy = isProd ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY;
 
         // DynamoDB
-        const quizTableName = `quiz-${contextId}`;
+        const quizTableName = `${contextId}-quiz`;
         const quizTable = new ddb.Table(this, 'quizTable', {
             tableName: quizTableName,
             billingMode: ddb.BillingMode.PAY_PER_REQUEST,
@@ -34,12 +34,12 @@ export class QuizardStack extends Stack {
             projectionType: ddb.ProjectionType.ALL,
         });
 
-        const scoreTableName = `score-${contextId}`;
+        const scoreTableName = `${contextId}-score`;
         const scoreTable = new ddb.Table(this, 'scoreTable', {
             tableName: scoreTableName,
             billingMode: ddb.BillingMode.PAY_PER_REQUEST,
             partitionKey: { name: DBScoreKeys.username, type: ddb.AttributeType.STRING },
-            sortKey: { name: DBScoreKeys.quizId, type: ddb.AttributeType.STRING },
+            sortKey: { name: DBScoreKeys.createdAt, type: ddb.AttributeType.STRING },
             removalPolicy,
         });
 

@@ -28,3 +28,20 @@ export function useLocalStorage<T = string>(args: {
 
     return [valueState, setValueState];
 }
+
+// useEffect with empty dependecy array can still be called twice due to React strict mode
+// this hook will ensure the effectCallback is only called once
+export function useEffectOnce(effectCallback: React.EffectCallback) {
+    const calledRef = React.useRef(false);
+    React.useEffect(
+        () => {
+            const called = calledRef.current;
+            if (called) {
+                return;
+            }
+            calledRef.current = true;
+            return effectCallback();
+        },
+        []
+    )
+}
