@@ -1,24 +1,19 @@
-import { Accordion, Autocomplete, Button, Card, Collection, Text } from '@aws-amplify/ui-react';
-import { generateClient } from 'aws-amplify/api';
+import { Autocomplete, Collection } from '@aws-amplify/ui-react';
 import ApolloQueryWrapper from '@components/ApolloWrapper/ApolloQueryWrapper';
 import { gql } from '@gql/gql';
 import React from 'react';
-import Fuse from 'fuse.js';
-
-const client = generateClient();
-
-const quizListItemFragment = gql(/* GraphQL */ `
-    fragment QuizListItem on Quiz {
-        quizId
-        title
-    }
-`);
+import TopicItem from './TopicItem';
 
 const quizListQuery = gql(/* GraphQL */ `
     query quizList($topic: String!) {
         quizList(topic: $topic) {
             ...QuizListItem
         }
+    }
+
+    fragment QuizListItem on Quiz {
+        quizId
+        title
     }
 `);
 
@@ -48,59 +43,22 @@ const TopicList: React.FC<Props> = ({ topicList }) => {
             />
             {!selectedTopic && (
                 <Collection type="list" items={topicList} direction="row" wrap="wrap" padding="small">
-                    {(topic) => {
-                        return (
-                            <Card
-                                key={topic}
-                                borderRadius="medium"
-                                variation="elevated"
-                                backgroundColor="background.info"
-                                grow="1"
-                            >
-                                <Text variation="primary">{topic}</Text>
-                            </Card>
-                        );
-                    }}
+                    {(topic) => <TopicItem key={topic} topic={topic} onClick={() => setSearchAndTopic(topic)} />}
                 </Collection>
+            )}
+            {!!selectedTopic && (
+                <ApolloQueryWrapper
+                    query={quizListQuery}
+                    variables={{
+                        topic: selectedTopic,
+                    }}
+                >
+                    {({ data }) => {
+                        return <div>{data.quizList.length}</div>;
+                    }}
+                </ApolloQueryWrapper>
             )}
         </React.Fragment>
     );
 };
-
-interface ItemProps {
-    topic: string;
-}
-const TopicListItem: React.FC<ItemProps> = ({ topic }) => {
-    const [fetchItem, setFetchItem] = React.useState(false);
-    return (
-        <Accordion.Item value={topic}>
-            <Accordion.Trigger onClick={() => setFetchItem(true)}>
-                <Text variation="primary" isTruncated={true} fontSize="1.2em">
-                    {topic}
-                </Text>
-                <Accordion.Icon />
-            </Accordion.Trigger>
-            <Accordion.Content>
-                {!!fetchItem && (
-                    <ApolloQueryWrapper
-                        query={quizListQuery}
-                        variables={{
-                            topic,
-                        }}
-                    >
-                        {({ data }) => {
-                            return <div>{data.quizList.length}</div>;
-                        }}
-                    </ApolloQueryWrapper>
-                )}
-            </Accordion.Content>
-        </Accordion.Item>
-    );
-    return (
-        <Card padding="small" variation="elevated">
-            <Text>{topic}</Text>
-        </Card>
-    );
-};
-
 export default TopicList;
