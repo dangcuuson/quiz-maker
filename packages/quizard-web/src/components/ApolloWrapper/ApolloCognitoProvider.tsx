@@ -17,10 +17,10 @@ const useCognitoAuthToken = (): { token: string; ready: boolean } => {
     const [ready, setReady] = React.useState(false);
 
     // fetch auth token on mount
-    const fetchAuthToken = async () => {
+    const fetchAuthToken = async (forceRefresh: boolean) => {
         try {
             await Auth.getCurrentUser();
-            const session = await Auth.fetchAuthSession({ forceRefresh: true });
+            const session = await Auth.fetchAuthSession({ forceRefresh });
             if (session.tokens) {
                 console.log('>>Found tokens');
                 console.log(session.tokens.accessToken.payload.exp);
@@ -38,7 +38,7 @@ const useCognitoAuthToken = (): { token: string; ready: boolean } => {
         }
     };
     React.useEffect(() => {
-        fetchAuthToken();
+        fetchAuthToken(false);
     }, []);
 
     // when token is about to expire, fetch auth token again to keep user connected
@@ -49,7 +49,7 @@ const useCognitoAuthToken = (): { token: string; ready: boolean } => {
         const timeToTimeout = tokenExpiry * 1000 - +Date.now();
         console.log('>>timeToTimeout', timeToTimeout);
         const timeout = setTimeout(() => {
-            fetchAuthToken();
+            fetchAuthToken(true);
         }, timeToTimeout - 10000);
         return () => {
             clearTimeout(timeout);

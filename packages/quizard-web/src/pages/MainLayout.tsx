@@ -1,8 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { routeConfigs } from './routeConfig';
-import { Button, Flex, View, useTheme } from '@aws-amplify/ui-react';
+import { Button, Flex, View, Text, useTheme } from '@aws-amplify/ui-react';
 import ErrorBoundary from '@components/ErrorBoundary/ErrorBoundary';
+import QuizBreadcrumbs from '@components/QuizBreadcrumbs/QuizBreadcrumbs';
 
 const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
     const navigate = useNavigate();
@@ -24,13 +25,15 @@ const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
                         <Flex display="flex" flex="1" justifyContent="flex-start">
                             <Button
                                 size="large"
+                                variation="link"
                                 onClick={() => navigate(routeConfigs.home.getPath())}
-                                children={"Quizard"}
+                                children={'Quizard'}
                             />
                             {/* <NightModeToggle /> */}
                         </Flex>
                         <View padding="relative.medium" width="100%">
-                            {children}
+                            <QuizBreadcrumbs />
+                            <View padding="relative.small">{children}</View>
                         </View>
                     </React.Suspense>
                 </View>
