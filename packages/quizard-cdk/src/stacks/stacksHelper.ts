@@ -132,7 +132,7 @@ export const buildResolvers = (buildArgs: BuildResolversArgs) => {
             ),
             responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultList(),
         },
-        topicList: { type: 'lambda', fileName: 'topicListResolver.ts' },
+        topicList: { type: 'lambda', fileName: 'quiz/topicListResolver.ts' },
 
         // score
         bestScore: { type: 'lambda', fileName: 'TODO.ts' },
@@ -140,10 +140,10 @@ export const buildResolvers = (buildArgs: BuildResolversArgs) => {
     };
     const MutationTypeResolverMap: StrictResolversMap<'Mutation'> = {
         // quiz + topic
-        addQuiz: { type: 'lambda', fileName: 'addQuizResolver.ts' },
+        addQuiz: { type: 'lambda', fileName: 'quiz/addQuizResolver.ts' },
         populateQuizData: {
             type: 'lambda',
-            fileName: 'populateQuizResolver.ts',
+            fileName: 'quiz/populateQuizResolver.ts',
             timeout: Duration.millis(20000),
         },
 
