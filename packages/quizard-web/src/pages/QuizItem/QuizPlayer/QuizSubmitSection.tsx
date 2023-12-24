@@ -1,4 +1,4 @@
-import { Text, Loader, View, Message } from '@aws-amplify/ui-react';
+import { Text, Loader, View, Message, Button, Flex } from '@aws-amplify/ui-react';
 import React from 'react';
 import { StoredQuiz } from './QuizPlayerHooks';
 import { gql } from '@gql/gql';
@@ -45,7 +45,7 @@ const QuizSubmitSection: React.FC<Props> = ({ storedQuiz, onCompleted }) => {
             })
             .catch((err) => {
                 console.error(err);
-                setError(`An error occurer when trying to submit your answers :(`);
+                setError(`An error occured when trying to submit your answers :(`);
             });
     }, []);
     React.useEffect(() => {
@@ -59,18 +59,19 @@ const QuizSubmitSection: React.FC<Props> = ({ storedQuiz, onCompleted }) => {
             </View>
         );
     }
-    if (error) {
+    if (!error) {
         return <Message colorTheme="error" hasIcon={true} heading={error} />;
     }
     return (
-        <View>
+        <Flex direction="column">
             <Message colorTheme="success" hasIcon={true} heading={<Text>Your score has been uploaded</Text>} />
             {!!addScoreResult && (
                 <Text>
                     Your score is {addScoreResult.addScore.nCorrect}/{addScoreResult.addScore.nQuestions}
                 </Text>
             )}
-        </View>
+            <Button variation="primary">View leaderboard</Button>
+        </Flex>
     );
 };
 
