@@ -109,15 +109,11 @@ export const buildResolvers = (buildArgs: BuildResolversArgs) => {
     /**
      * Here we declare how we want to map graphql datasources
      */
-    const QueryTypeResolverMap: StrictResolversMap<'Query'> = {
-        quizList: { type: 'lambda', fileName: 'TODO.ts' },
-        topicList: { type: 'lambda', fileName: 'topicListResolver.ts' },
-    };
 
     const topicGql: keyof GQLQuiz = 'topic';
     const topicDB: keyof DBQuiz = 'topic';
-    const MutationTypeResolverMap: StrictResolversMap<'Mutation'> = {
-        addQuiz: {
+    const QueryTypeResolverMap: StrictResolversMap<'Query'> = {
+        quizList: {
             type: 'ddb',
             requestMappingTemplate: appsync.MappingTemplate.dynamoDbQuery(
                 // 1st topic = dynamo db name, 2st topic = graphql name
@@ -126,6 +122,10 @@ export const buildResolvers = (buildArgs: BuildResolversArgs) => {
             ),
             responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultList(),
         },
+        topicList: { type: 'lambda', fileName: 'topicListResolver.ts' },
+    };
+    const MutationTypeResolverMap: StrictResolversMap<'Mutation'> = {
+        addQuiz: { type: 'lambda', fileName: 'addQuizResolver.ts' },
         populateQuizData: {
             type: 'lambda',
             fileName: 'populateQuizResolver.ts',
