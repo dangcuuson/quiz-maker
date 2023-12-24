@@ -1,4 +1,4 @@
-import { GQLQuiz } from '../gqlTypes';
+import { GQLQuiz, GQLScore } from '../gqlTypes';
 
 type KeyedObj<T> = {
     [K in keyof T]-?: K;
@@ -24,4 +24,16 @@ export const DBQuizKeys: KeyedObj<DBQuiz> = {
     quizId: 'quizId',
     title: 'title',
     topic: 'topic'
+}
+
+export type DBScore = GQLScore;
+
+export const DBScoreKeys: KeyedObj<DBScore> = {
+    createdAt: 'createdAt',
+    nCorrect: 'nCorrect',
+    nQuestions: 'nQuestions',
+    percentage: 'percentage',
+    quizId: 'quizId',
+    username: 'username',
+    userNickname: 'userNickname'
 }

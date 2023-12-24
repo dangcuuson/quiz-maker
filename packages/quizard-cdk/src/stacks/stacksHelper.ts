@@ -1,7 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import * as iam from 'aws-cdk-lib/aws-iam';
-import { Duration, Stack } from 'aws-cdk-lib';
+import * as cdk from 'aws-cdk-lib';
+import * as cognito from 'aws-cdk-lib/aws-cognito';
 import * as ddb from 'aws-cdk-lib/aws-dynamodb';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as appsync from 'aws-cdk-lib/aws-appsync';
@@ -44,7 +45,7 @@ export const combineGraphqlFilesIntoSchema = () => {
 };
 
 const setupLambda = (args: BuildResolversArgs): { lambdaRole: iam.Role; lambdaLayer: lambda.LayerVersion } => {
-    const { rootStack, contextId, quizTable } = args;
+    const { rootStack, contextId, quizTable, scoreTable, userPool } = args;
 
     const lambdaRole = new iam.Role(rootStack, 'lambdaRole', {
         roleName: `lambda-role-${contextId}`,
@@ -64,9 +65,16 @@ const setupLambda = (args: BuildResolversArgs): { lambdaRole: iam.Role; lambdaLa
                         'logs:CreateLogStream',
                         'logs:DescribeLogGroups',
                         'logs:DescribeLogStreams',
-                        'logs:PutLogEvents',
+                        'logs:PutLogEvents'
                     ],
                 }),
+                new iam.PolicyStatement({
+                    effect: iam.Effect.ALLOW,
+                    resources: [`arn:aws:cognito-idp:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:userpool/${userPool.userPoolId}`],
+                    actions: [
+                        'cognito-idp:AdminGetUser'
+                    ],
+                })
             ],
         }),
     );
@@ -77,15 +85,18 @@ const setupLambda = (args: BuildResolversArgs): { lambdaRole: iam.Role; lambdaLa
         description: `Lambda Layer for ${contextId}`,
     });
     quizTable.grantReadWriteData(lambdaRole);
+    scoreTable.grantReadWriteData(lambdaRole);
 
     return { lambdaRole, lambdaLayer };
 };
 
 type BuildResolversArgs = {
-    rootStack: Stack;
+    rootStack: cdk.Stack;
     graphqlApi: appsync.GraphqlApi;
     contextId: string;
     quizTable: ddb.Table;
+    scoreTable: ddb.Table;
+    userPool: cognito.UserPool
 };
 
 export const buildResolvers = (buildArgs: BuildResolversArgs) => {
@@ -95,7 +106,7 @@ export const buildResolvers = (buildArgs: BuildResolversArgs) => {
     type LambdaConfig2 = {
         type: 'lambda';
         fileName: string;
-        timeout?: Duration;
+        timeout?: cdk.Duration;
     };
 
     type DDBConfig2 = {
@@ -144,11 +155,11 @@ export const buildResolvers = (buildArgs: BuildResolversArgs) => {
         populateQuizData: {
             type: 'lambda',
             fileName: 'quiz/populateQuizResolver.ts',
-            timeout: Duration.millis(20000),
+            timeout: cdk.Duration.millis(20000),
         },
 
         // score
-        addScore: { type: 'lambda', fileName: 'TODO.ts' },
+        addScore: { type: 'lambda', fileName: 'score/addScoreResolver.ts' },
     };
 
     /**
@@ -161,13 +172,15 @@ export const buildResolvers = (buildArgs: BuildResolversArgs) => {
         typeName: TypeName,
         resolverMap: ResolverMap<TypeName>,
     ) {
-        const { rootStack, graphqlApi, contextId, quizTable } = buildArgs;
+        const { rootStack, graphqlApi, contextId, quizTable, scoreTable, userPool } = buildArgs;
         const registerLambdaDatasource = (fieldName: string, config: LambdaConfig2) => {
             // define lambda function
             const { fileName, timeout } = config;
             const functionName = `${contextId}-${typeName}-${fieldName.toString()}`;
             const environment: LambdaEnv = {
                 QUIZ_TABLE_NAME: quizTable.tableName,
+                SCORE_TABLE_NAME: scoreTable.tableName,
+                USER_POOL_ID: userPool.userPoolId
             };
             const lambdaFunction = new NodejsFunction(rootStack, `${typeName}-${fieldName}-lambda`, {
                 functionName,

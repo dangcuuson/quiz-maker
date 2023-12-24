@@ -22,8 +22,6 @@ const useCognitoAuthToken = (): { token: string; ready: boolean } => {
             await Auth.getCurrentUser();
             const session = await Auth.fetchAuthSession({ forceRefresh });
             if (session.tokens) {
-                console.log('>>Found tokens');
-                console.log(session.tokens.accessToken.payload.exp);
                 setTokenExpiry(session.tokens.accessToken.payload.exp || 0);
                 setAuthToken(`Bearer ${session.tokens.accessToken.toString()}`);
             } else {
@@ -47,7 +45,6 @@ const useCognitoAuthToken = (): { token: string; ready: boolean } => {
             return;
         }
         const timeToTimeout = tokenExpiry * 1000 - +Date.now();
-        console.log('>>timeToTimeout', timeToTimeout);
         const timeout = setTimeout(() => {
             fetchAuthToken(true);
         }, timeToTimeout - 10000);

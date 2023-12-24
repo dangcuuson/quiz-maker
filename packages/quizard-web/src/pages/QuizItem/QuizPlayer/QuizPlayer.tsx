@@ -33,9 +33,7 @@ const QuizPlayer: React.FC<Props> = (props) => {
             setQIndex(0);
         }
     }, [curQuestion, storedQuiz.questions.length, setQIndex]);
-    if (!curQuestion) {
-        return <Message colorTheme="error" heading="Question index out of bound" />;
-    }
+    
     const nQuestions = storedQuiz.questions.length;
     const isLastQ = qIndex === nQuestions - 1;
 
@@ -51,6 +49,10 @@ const QuizPlayer: React.FC<Props> = (props) => {
                 }
             />
         );
+    }
+
+    if (!curQuestion) {
+        return <Message colorTheme="error" heading="Question index out of bound" />;
     }
     return (
         // padding to make space for quiz nav, which is fixed bottom

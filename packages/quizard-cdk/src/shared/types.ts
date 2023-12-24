@@ -5,4 +5,6 @@ export type CDKContext = {
 
 export type LambdaEnv = {
     QUIZ_TABLE_NAME: string;
+    SCORE_TABLE_NAME: string;
+    USER_POOL_ID: string;
 };

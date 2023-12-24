@@ -1,5 +1,6 @@
 type Score {
-    username: String! #pk
+    username: AWSEmail! #pk
+    userNickname: String! # for displaying while user should be masked (because it's email)
     createdAt: AWSDateTime! #sk
 
     quizId: String!

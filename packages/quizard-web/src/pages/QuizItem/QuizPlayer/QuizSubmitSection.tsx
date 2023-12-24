@@ -9,7 +9,6 @@ import { AddScoreMutation } from '@gql/graphql';
 const addScoreMutation = gql(/* GraphQL */ `
     mutation addScore($input: ScoreInput!) {
         addScore(input: $input) {
-            username
             percentage
             nCorrect
             nQuestions
@@ -26,27 +25,29 @@ const QuizSubmitSection: React.FC<Props> = ({ storedQuiz, onCompleted }) => {
     const [addScoreResult, setAddScoreResult] = React.useState<AddScoreMutation | null>(null);
     const [addScore, addScoreState] = useMutation(addScoreMutation);
 
-    const uploadScore = React.useCallback(() => {
-        return addScore({
-            variables: {
-                input: {
-                    quizId: storedQuiz.quizId,
-                    nQuestions: storedQuiz.questions.length,
-                    nCorrect: storedQuiz.questions.filter((q) => {
-                        const selectedOption = maybe(q.options[q.userSelected]);
-                        return selectedOption?.isCorrect;
-                    }).length,
+    const uploadScore = React.useCallback(async () => {
+        try {
+            if (storedQuiz.questions.length === 0) {
+                return;
+            }
+            const result = await addScore({
+                variables: {
+                    input: {
+                        quizId: storedQuiz.quizId,
+                        nQuestions: storedQuiz.questions.length,
+                        nCorrect: storedQuiz.questions.filter((q) => {
+                            const selectedOption = maybe(q.options[q.userSelected]);
+                            return selectedOption?.isCorrect;
+                        }).length,
+                    },
                 },
-            },
-        })
-            .then((result) => {
-                setAddScoreResult(result.data || null);
-                onCompleted();
-            })
-            .catch((err) => {
-                console.error(err);
-                setError(`An error occured when trying to submit your answers :(`);
             });
+            setAddScoreResult(result.data || null);
+            onCompleted();
+        } catch (err) {
+            console.error(err);
+            setError(`An error occured when trying to submit your answers :(`);
+        }
     }, []);
     React.useEffect(() => {
         uploadScore();
@@ -59,7 +60,7 @@ const QuizSubmitSection: React.FC<Props> = ({ storedQuiz, onCompleted }) => {
             </View>
         );
     }
-    if (!error) {
+    if (error) {
         return <Message colorTheme="error" hasIcon={true} heading={error} />;
     }
     return (
@@ -70,7 +71,7 @@ const QuizSubmitSection: React.FC<Props> = ({ storedQuiz, onCompleted }) => {
                     Your score is {addScoreResult.addScore.nCorrect}/{addScoreResult.addScore.nQuestions}
                 </Text>
             )}
-            <Button variation="primary">View leaderboard</Button>
+            <Button variation="primary">View scores</Button>
         </Flex>
     );
 };

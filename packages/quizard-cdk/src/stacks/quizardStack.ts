@@ -1,17 +1,19 @@
-import { CfnOutput, Stack, StackProps } from 'aws-cdk-lib';
+import { CfnOutput, RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
 import * as ddb from 'aws-cdk-lib/aws-dynamodb';
 import * as appsync from 'aws-cdk-lib/aws-appsync';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
 import { CDKContext } from '../shared/types';
 import { Construct } from 'constructs';
 import { combineGraphqlFilesIntoSchema, buildResolvers, asType } from './stacksHelper';
-import { DBQuizKeys, Quiz_distinctTopicIndex, Quiz_topicIndex } from '../shared/models/models';
+import { DBQuizKeys, DBScoreKeys, Quiz_distinctTopicIndex, Quiz_topicIndex } from '../shared/models/models';
 
 export class QuizardStack extends Stack {
     constructor(scope: Construct, id: string, props: StackProps, context: CDKContext) {
         super(scope, id, props);
 
         const contextId = `${context.appName}-${context.branchName}`;
+        const isProd = context.branchName === 'prod';
+        const removalPolicy = isProd ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY;
 
         // DynamoDB
         const quizTableName = `quiz-${contextId}`;
@@ -19,6 +21,7 @@ export class QuizardStack extends Stack {
             tableName: quizTableName,
             billingMode: ddb.BillingMode.PAY_PER_REQUEST,
             partitionKey: { name: DBQuizKeys.quizId, type: ddb.AttributeType.STRING },
+            removalPolicy,
         });
         quizTable.addGlobalSecondaryIndex({
             indexName: Quiz_distinctTopicIndex,
@@ -29,6 +32,15 @@ export class QuizardStack extends Stack {
             indexName: Quiz_topicIndex,
             partitionKey: { name: DBQuizKeys.topic, type: ddb.AttributeType.STRING },
             projectionType: ddb.ProjectionType.ALL,
+        });
+
+        const scoreTableName = `score-${contextId}`;
+        const scoreTable = new ddb.Table(this, 'scoreTable', {
+            tableName: scoreTableName,
+            billingMode: ddb.BillingMode.PAY_PER_REQUEST,
+            partitionKey: { name: DBScoreKeys.username, type: ddb.AttributeType.STRING },
+            sortKey: { name: DBScoreKeys.quizId, type: ddb.AttributeType.STRING },
+            removalPolicy,
         });
 
         // Cognito
@@ -47,9 +59,12 @@ export class QuizardStack extends Stack {
             standardAttributes: {
                 email: {
                     required: true,
-                    mutable: true,
+                },
+                nickname: {
+                    required: true,
                 },
             },
+            removalPolicy,
         });
 
         const userPoolClient = new cognito.UserPoolClient(this, 'UserPoolClient', {
@@ -77,6 +92,8 @@ export class QuizardStack extends Stack {
             graphqlApi,
             contextId,
             quizTable,
+            scoreTable,
+            userPool,
         });
 
         // output for web client

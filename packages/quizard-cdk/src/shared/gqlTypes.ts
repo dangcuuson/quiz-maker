@@ -78,7 +78,8 @@ export type GQLAWSURL = string;
 export type GQLAWSIPAddress = string;
 
 export interface GQLScore {
-  username: string;
+  username: GQLAWSEmail;
+  userNickname: string;
   createdAt: GQLAWSDateTime;
   quizId: string;
   nQuestions: number;
@@ -246,6 +247,7 @@ export interface MutationToAddScoreResolver<TParent = any, TResult = any> {
 
 export interface GQLScoreTypeResolver<TParent = any> {
   username?: ScoreToUsernameResolver<TParent>;
+  userNickname?: ScoreToUserNicknameResolver<TParent>;
   createdAt?: ScoreToCreatedAtResolver<TParent>;
   quizId?: ScoreToQuizIdResolver<TParent>;
   nQuestions?: ScoreToNQuestionsResolver<TParent>;
@@ -254,6 +256,10 @@ export interface GQLScoreTypeResolver<TParent = any> {
 }
 
 export interface ScoreToUsernameResolver<TParent = any, TResult = any> {
+  (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
+}
+
+export interface ScoreToUserNicknameResolver<TParent = any, TResult = any> {
   (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
 }
 

@@ -18,6 +18,7 @@ Amplify.configure({
             userPoolClientId: import.meta.env.VITE_userPoolClientId,
             userAttributes: {
                 email: { required: true },
+                nickname: { required: true }
             },
             loginWith: {
                 email: true,
