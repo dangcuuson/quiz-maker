@@ -24,7 +24,7 @@ const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
                         <Flex display="flex" flex="1" justifyContent="flex-start">
                             <Button
                                 size="large"
-                                onClick={() => navigate(routeConfigs.home.get())}
+                                onClick={() => navigate(routeConfigs.home.getPath())}
                                 children={"Quizard"}
                             />
                             {/* <NightModeToggle /> */}

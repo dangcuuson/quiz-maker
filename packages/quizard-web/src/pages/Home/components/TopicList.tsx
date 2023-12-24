@@ -1,32 +1,19 @@
-import { Autocomplete, Collection } from '@aws-amplify/ui-react';
-import ApolloQueryWrapper from '@components/ApolloWrapper/ApolloQueryWrapper';
-import { gql } from '@gql/gql';
+import { Autocomplete, Card, Collection, View, Text } from '@aws-amplify/ui-react';
+import { routeConfigs } from '@pages/routeConfig';
 import React from 'react';
-import TopicItem from './TopicItem';
-
-const quizListQuery = gql(/* GraphQL */ `
-    query quizList($topic: String!) {
-        quizList(topic: $topic) {
-            ...QuizListItem
-        }
-    }
-
-    fragment QuizListItem on Quiz {
-        quizId
-        title
-    }
-`);
+import { useNavigate } from 'react-router';
+import styled from 'styled-components';
 
 interface Props {
     topicList: string[];
 }
 const TopicList: React.FC<Props> = ({ topicList }) => {
-    const [searchKey, setSearchKey] = React.useState('');
-    const [selectedTopic, setSelectedTopic] = React.useState('');
-    const setSearchAndTopic = (v: string) => {
-        setSearchKey(v);
-        setSelectedTopic(v);
-    };
+    const navigate = useNavigate();
+    const selectTopic = (topic: string) => {
+        navigate({
+            pathname: routeConfigs.topicItem.getPath(topic)
+        });
+    }
     return (
         <React.Fragment>
             <Autocomplete
@@ -35,30 +22,50 @@ const TopicList: React.FC<Props> = ({ topicList }) => {
                 size="large"
                 options={topicList.map((topic) => ({ id: topic, label: topic }))}
                 placeholder="Search topic or select one from below"
-                value={searchKey}
-                onChange={(e) => setSearchKey(e.target.value)}
-                onSelect={(v) => setSearchAndTopic(v.id)}
-                onClear={() => setSearchAndTopic('')}
+                onSelect={(v) => selectTopic(v.id)}
                 variation="quiet"
             />
-            {!selectedTopic && (
-                <Collection type="list" items={topicList} direction="row" wrap="wrap" padding="small">
-                    {(topic) => <TopicItem key={topic} topic={topic} onClick={() => setSearchAndTopic(topic)} />}
-                </Collection>
-            )}
-            {!!selectedTopic && (
-                <ApolloQueryWrapper
-                    query={quizListQuery}
-                    variables={{
-                        topic: selectedTopic,
-                    }}
-                >
-                    {({ data }) => {
-                        return <div>{data.quizList.length}</div>;
-                    }}
-                </ApolloQueryWrapper>
-            )}
+            <Collection type="list" items={topicList} direction="row" wrap="wrap" padding="small">
+                {(topic) => <TopicItem key={topic} topic={topic} onClick={() => selectTopic(topic)} />}
+            </Collection>
         </React.Fragment>
     );
 };
+
+const TopicCard = styled(Card)`
+    /* border-radius: var(--amplify-radii-medium); */
+    flex-grow: 1;
+    background-color: var(--amplify-colors-background-info);
+    padding: 0;
+    :hover {
+        cursor: pointer;
+        background-color: var(--amplify-colors-background-secondary);
+    }
+    text-align: center;
+`;
+
+const TopicCardContent = styled(View)`
+    padding: var(--amplify-space-small);
+    :hover {
+        cursor: pointer;
+        background-color: var(--amplify-colors-background-secondary);
+    }
+`;
+
+interface ItemProps {
+    topic: string;
+    onClick: () => void;
+}
+const TopicItem: React.FC<ItemProps> = ({ topic, onClick }) => {
+    return (
+        <TopicCard variation="elevated" onClick={onClick}>
+            <TopicCardContent>
+                <Text variation="primary" fontSize="1.2em">
+                    {topic}
+                </Text>
+            </TopicCardContent>
+        </TopicCard>
+    );
+};
+
 export default TopicList;
