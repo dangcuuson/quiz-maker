@@ -102,6 +102,7 @@ export interface GQLScoreListIndexSelector {
   quizId_percentage?: boolean;
   user_createdAt?: boolean;
   user_quizId?: boolean;
+  quizId?: string;
 }
 
 /*********************************

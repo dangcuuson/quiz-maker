@@ -143,22 +143,22 @@ export const buildResolvers = (buildArgs: BuildResolversArgs) => {
             ),
             responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultList(),
         },
-        topicList: { type: 'lambda', fileName: 'quiz/topicListResolver.ts' },
+        topicList: { type: 'lambda', fileName: 'quiz/topicListQueryResolver.ts' },
 
         // score
-        scoreList: { type: 'lambda', fileName: 'TODO.ts' },
+        scoreList: { type: 'lambda', fileName: 'score/scoreListQueryResolver.ts' },
     };
     const MutationTypeResolverMap: StrictResolversMap<'Mutation'> = {
         // quiz + topic
-        addQuiz: { type: 'lambda', fileName: 'quiz/addQuizResolver.ts' },
+        addQuiz: { type: 'lambda', fileName: 'quiz/addQuizMutationResolver.ts' },
         populateQuizData: {
             type: 'lambda',
-            fileName: 'quiz/populateQuizResolver.ts',
+            fileName: 'quiz/populateQuizMutationResolver.ts',
             timeout: cdk.Duration.millis(20000),
         },
 
         // score
-        addScore: { type: 'lambda', fileName: 'score/addScoreResolver.ts' },
+        addScore: { type: 'lambda', fileName: 'score/addScoreMutationResolver.ts' },
     };
 
     /**
