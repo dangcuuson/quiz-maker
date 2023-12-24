@@ -127,7 +127,7 @@ export const buildResolvers = (buildArgs: BuildResolversArgs) => {
         quizList: {
             type: 'ddb',
             requestMappingTemplate: appsync.MappingTemplate.dynamoDbQuery(
-                appsync.KeyCondition.eq(DBQuizKeys.quizId, asType<keyof GQLQuiz>('topic')),
+                appsync.KeyCondition.eq(DBQuizKeys.topic, asType<keyof GQLQuiz>('topic')),
                 Quiz_topicIndex,
             ),
             responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultList(),
