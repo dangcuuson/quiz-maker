@@ -7,8 +7,13 @@ import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as appsync from 'aws-cdk-lib/aws-appsync';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { LambdaEnv } from '../shared/types';
-import { DBQuiz, Quiz_topicIndex } from '../shared/models/models';
-import { GQLQuiz, GQLResolver } from '../shared/gqlTypes';
+import { DBQuizKeys, Quiz_topicIndex } from '../shared/models/models';
+import { GQLQuiz, GQLResolver, QueryToQuizItemArgs } from '../shared/gqlTypes';
+
+// quickly define a value in a type-safed way
+export function asType<T>(value: T): T {
+    return value;
+}
 
 export const combineGraphqlFilesIntoSchema = () => {
     // recursively look through schema folder and grab files ended with .graphql
@@ -107,30 +112,43 @@ export const buildResolvers = (buildArgs: BuildResolversArgs) => {
     type StrictResolversMap<TypeName extends keyof GQLResolver> = Required<ResolverMap<TypeName>>;
 
     /**
-     * Here we declare how we want to map graphql datasources
+     * Here we declare how we want to map graphql resolver datasources
      */
-
-    const topicGql: keyof GQLQuiz = 'topic';
-    const topicDB: keyof DBQuiz = 'topic';
     const QueryTypeResolverMap: StrictResolversMap<'Query'> = {
+        // quiz + topic
+        quizItem: {
+            type: 'ddb',
+            requestMappingTemplate: appsync.MappingTemplate.dynamoDbGetItem(
+                DBQuizKeys.quizId,
+                asType<keyof QueryToQuizItemArgs>('quizId'),
+            ),
+            responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultItem(),
+        },
         quizList: {
             type: 'ddb',
             requestMappingTemplate: appsync.MappingTemplate.dynamoDbQuery(
-                // 1st topic = dynamo db name, 2st topic = graphql name
-                appsync.KeyCondition.eq(topicGql, topicDB),
+                appsync.KeyCondition.eq(DBQuizKeys.quizId, asType<keyof GQLQuiz>('topic')),
                 Quiz_topicIndex,
             ),
             responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultList(),
         },
         topicList: { type: 'lambda', fileName: 'topicListResolver.ts' },
+
+        // score
+        bestScore: { type: 'lambda', fileName: 'TODO.ts' },
+        scoreList: { type: 'lambda', fileName: 'TODO.ts' },
     };
     const MutationTypeResolverMap: StrictResolversMap<'Mutation'> = {
+        // quiz + topic
         addQuiz: { type: 'lambda', fileName: 'addQuizResolver.ts' },
         populateQuizData: {
             type: 'lambda',
             fileName: 'populateQuizResolver.ts',
             timeout: Duration.millis(20000),
         },
+
+        // score
+        addScore: { type: 'lambda', fileName: 'TODO.ts' },
     };
 
     /**

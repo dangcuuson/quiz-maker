@@ -4,7 +4,7 @@ import * as appsync from 'aws-cdk-lib/aws-appsync';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
 import { CDKContext } from '../shared/types';
 import { Construct } from 'constructs';
-import { combineGraphqlFilesIntoSchema, buildResolvers } from './stacksHelper';
+import { combineGraphqlFilesIntoSchema, buildResolvers, asType } from './stacksHelper';
 import { DBQuizKeys, Quiz_distinctTopicIndex, Quiz_topicIndex } from '../shared/models/models';
 
 export class QuizardStack extends Stack {
@@ -80,9 +80,6 @@ export class QuizardStack extends Stack {
         });
 
         // output for web client
-        function asType<T>(value: T): T {
-            return value;
-        }
         type ValidKey = keyof CDKOutputJSON;
         new CfnOutput(this, asType<ValidKey>('userPoolId'), {
             value: userPool.userPoolId,

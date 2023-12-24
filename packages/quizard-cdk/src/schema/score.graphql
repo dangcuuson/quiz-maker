@@ -1,3 +1,25 @@
 type Score {
-    dummy: String
+    username: String! #pk
+    createdAt: AWSDateTime! #sk
+
+    quizId: String!
+    nQuestions: Int!
+    nCorrect: Int!
+    score: Float!
+}
+
+type ScoreListResult {
+    scores: [Score!]!
+    lastEvaluatedKey: AWSJSON
+}
+
+input ScoreInput {
+    quizId: String!
+    nQuestions: Int!
+    nCorrect: Int!
+}
+
+input ScoreListFilter {
+    quizId: String!
+    exclusiveStartKey: AWSJSON
 }

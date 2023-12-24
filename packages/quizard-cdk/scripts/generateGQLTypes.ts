@@ -7,7 +7,19 @@ const OUTPUT_PATH = path.resolve('src/shared', 'gqlTypes.ts');
 generateTypeScriptTypes(
     SRC_DIR,
     OUTPUT_PATH,
-    {},
+    {
+        customScalarType: {
+            AWSDate: 'string',
+            AWSTime: 'string',
+            AWSDateTime: 'string',
+            AWSTimestamp: 'number',
+            AWSEmail: 'string',
+            AWSJSON: 'unknown',
+            AWSPhone: 'string',
+            AWSURL: 'string',
+            AWSIPAddress: 'string'
+        }
+    },
     {
         assumeValidSDL: true,
         assumeValid: true,

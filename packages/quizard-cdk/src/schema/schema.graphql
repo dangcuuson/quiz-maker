@@ -4,11 +4,31 @@ schema {
 }
 
 type Query {
+  # quiz + topic
+  quizItem(quizId: ID!): Quiz!
   quizList(topic: String!): [Quiz!]!
   topicList: [String!]!
+
+  # score
+  scoreList(filter: ScoreListFilter!): ScoreListResult!
+  bestScore(username: String! quizId: String!): Score
 }
 
 type Mutation {
+  # quiz + topic
   addQuiz(input: QuizInput!): Quiz!
   populateQuizData: Int!
+
+  # score
+  addScore(input: ScoreInput!): Score!
 }
+
+scalar AWSDate
+scalar AWSTime
+scalar AWSDateTime
+scalar AWSTimestamp
+scalar AWSEmail
+scalar AWSJSON
+scalar AWSPhone
+scalar AWSURL
+scalar AWSIPAddress
