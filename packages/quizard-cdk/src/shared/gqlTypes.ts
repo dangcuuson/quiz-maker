@@ -21,10 +21,10 @@ export interface GQLQuiz {
 
 export interface GQLQuizQuestion {
   questionText: string;
-  options: Array<GQLQuizQuestionOptions | null>;
+  options: Array<GQLQuizQuestionOption>;
 }
 
-export interface GQLQuizQuestionOptions {
+export interface GQLQuizQuestionOption {
   optionText: string;
   isCorrect?: boolean;
 }
@@ -37,10 +37,10 @@ export interface GQLQuizInput {
 
 export interface GQLQuizInputQuestion {
   questionText: string;
-  options: Array<GQLQuizInputQuestionOptions | null>;
+  options: Array<GQLQuizInputQuestionOption>;
 }
 
-export interface GQLQuizInputQuestionOptions {
+export interface GQLQuizInputQuestionOption {
   optionText: string;
   isCorrect?: boolean;
 }
@@ -115,7 +115,7 @@ export interface GQLScoreListFilter {
 export interface GQLResolver {
   Quiz?: GQLQuizTypeResolver;
   QuizQuestion?: GQLQuizQuestionTypeResolver;
-  QuizQuestionOptions?: GQLQuizQuestionOptionsTypeResolver;
+  QuizQuestionOption?: GQLQuizQuestionOptionTypeResolver;
   Query?: GQLQueryTypeResolver;
   Mutation?: GQLMutationTypeResolver;
   AWSDate?: GraphQLScalarType;
@@ -166,16 +166,16 @@ export interface QuizQuestionToOptionsResolver<TParent = any, TResult = any> {
   (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
 }
 
-export interface GQLQuizQuestionOptionsTypeResolver<TParent = any> {
-  optionText?: QuizQuestionOptionsToOptionTextResolver<TParent>;
-  isCorrect?: QuizQuestionOptionsToIsCorrectResolver<TParent>;
+export interface GQLQuizQuestionOptionTypeResolver<TParent = any> {
+  optionText?: QuizQuestionOptionToOptionTextResolver<TParent>;
+  isCorrect?: QuizQuestionOptionToIsCorrectResolver<TParent>;
 }
 
-export interface QuizQuestionOptionsToOptionTextResolver<TParent = any, TResult = any> {
+export interface QuizQuestionOptionToOptionTextResolver<TParent = any, TResult = any> {
   (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
 }
 
-export interface QuizQuestionOptionsToIsCorrectResolver<TParent = any, TResult = any> {
+export interface QuizQuestionOptionToIsCorrectResolver<TParent = any, TResult = any> {
   (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
 }
 

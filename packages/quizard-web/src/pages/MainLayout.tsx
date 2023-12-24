@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { routeConfigs } from './routeConfig';
-import { Button, Flex, View, Text, useTheme } from '@aws-amplify/ui-react';
+import { Button, Flex, View, useTheme } from '@aws-amplify/ui-react';
 import ErrorBoundary from '@components/ErrorBoundary/ErrorBoundary';
 import QuizBreadcrumbs from '@components/QuizBreadcrumbs/QuizBreadcrumbs';
 

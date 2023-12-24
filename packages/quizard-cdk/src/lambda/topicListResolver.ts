@@ -4,6 +4,7 @@ import { LambdaEnv } from '/opt/types';
 import { DBQuizKeys, Quiz_distinctTopicIndex } from '/opt/models/models';
 import { getDDBDocClient } from '/opt/utils';
 import { ScanCommand } from '@aws-sdk/lib-dynamodb';
+import _ from 'lodash';
 
 type TResult = GQLQuery['topicList'];
 
@@ -18,5 +19,5 @@ export const handler: AppSyncResolverHandler<unknown, TResult> = async () => {
         }),
     );
 
-    return (result.Items || []).map(i => i[DBQuizKeys.dTopic] + '').sort();
+    return _.uniq((result.Items || []).map(i => i[DBQuizKeys.dTopic] + '').sort());
 };

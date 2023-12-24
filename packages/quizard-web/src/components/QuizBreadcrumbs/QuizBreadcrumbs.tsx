@@ -27,7 +27,8 @@ type SetTopicBreadcrumbs = {
 type SetQuizBreadcrumbs = {
     type: 'quiz';
     topic: string;
-    quiz: string;
+    quizId: string;
+    quizTitle: string;
 };
 
 const getBaseBreadcrumbsItems = (): BreadcrumbsItem[] => {
@@ -38,22 +39,26 @@ const useBreadcrumbsStore = create<BreadcrumbsStore>((set) => ({
     breadcrumbs: getBaseBreadcrumbsItems(),
     setBreadcrumbs: (config) => {
         const items = getBaseBreadcrumbsItems();
-        const addTopic = (topic: string) => {
+        const addTopicBreadcrumbs = (topic: string) => {
             items.push({
                 href: routeConfigs.topicItem.getPath(topic),
                 label: topic,
             });
         };
-        const addQuiz = (quiz: string) => {
-            // TODO
+        const addQuizBreadcrumbs = (quizId: string, quizTitle: string) => {
+            items.push({
+                href: routeConfigs.quizItem.getPath(quizId),
+                label: quizTitle,
+            });
         };
         switch (config.type) {
             case 'quiz': {
-                addTopic(config.topic);
+                addTopicBreadcrumbs(config.topic);
+                addQuizBreadcrumbs(config.quizId, config.quizTitle)
                 break;
             }
             case 'topic': {
-                addTopic(config.topic);
+                addTopicBreadcrumbs(config.topic);
                 break;
             }
         }
@@ -75,10 +80,10 @@ export const useSetBreadcrumbsOnMount = (config: SetBreadcrumbsConfig) => {
 // Another approach could be wrapping amplify Breadcrumbs.Link 
 // and intercept their nav behaviour to support client-side routing
 const QuizBreadcrumbsLink = styled(ReactRouterLink)<{ isCurrent?: boolean }>`
-    color: var(--amplify-components-breadcrumbs-link-color);
+    color: ${props => props.theme.tokens?.components?.breadcrumbs?.link?.color?.toString()};
     text-decoration: none;
     :visited {
-        color: var(--amplify-components-breadcrumbs-link-color);
+        color: ${props => props.theme.tokens?.components?.breadcrumbs?.link?.color?.toString()};
         text-decoration: none;
     }
 `;

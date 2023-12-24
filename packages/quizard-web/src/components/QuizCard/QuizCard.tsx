@@ -2,25 +2,23 @@ import { Card, View, Text } from '@aws-amplify/ui-react';
 import styled from 'styled-components';
 
 export const QuizCard = styled(Card)`
-    /* border-radius: var(--amplify-radii-medium); */
     flex-grow: 1;
-    background-color: var(--amplify-colors-background-info);
+    background-color: ${props => props.theme.tokens?.colors?.background?.info?.toString()};
     padding: 0;
     :hover {
         cursor: pointer;
-        background-color: var(--amplify-colors-background-secondary);
+        background-color: ${props => props.theme.tokens?.colors?.background?.secondary?.toString()};
     }
     text-align: center;
 `;
 
 export const QuizCardContent = styled(View)`
-    padding: var(--amplify-space-small);
+    padding: ${props => props.theme.tokens?.space?.small?.toString()};
     display: flex;
     align-items: center;
     justify-content: center;
     :hover {
         cursor: pointer;
-        background-color: var(--amplify-colors-background-secondary);
     }
 `;
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { ThemeProvider, createTheme } from '@aws-amplify/ui-react';
 import { useLocalStorage } from '@hooks/hooks';
+import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 
 type LightDarkContextType = {
     isDarkMode: boolean;
@@ -17,10 +18,10 @@ const LightTheme = createTheme({
             background: {
                 primary: { value: '{colors.teal.10}' },
                 secondary: { value: '{colors.blue.20}' },
-            }
-        }
-    }
-})
+            },
+        },
+    },
+});
 
 export const LightDarkContext = React.createContext<LightDarkContextType>({
     isDarkMode: false,
@@ -49,7 +50,9 @@ export const LightDarkContextThemeProvider: React.FC<{ children: React.ReactNode
                 setIsDarkMode,
             }}
         >
-            <ThemeProvider theme={LightTheme} colorMode={isDarkMode ? 'dark' : 'light'}>{props.children}</ThemeProvider>
+            <ThemeProvider theme={LightTheme} colorMode={isDarkMode ? 'dark' : 'light'}>
+                <StyledThemeProvider theme={LightTheme as any}>{props.children}</StyledThemeProvider>
+            </ThemeProvider>
         </LightDarkContext.Provider>
     );
 };

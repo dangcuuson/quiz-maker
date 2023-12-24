@@ -7,10 +7,10 @@ type Quiz {
 
 type QuizQuestion {
   questionText: String!
-  options: [QuizQuestionOptions]!
+  options: [QuizQuestionOption!]!
 }
 
-type QuizQuestionOptions {
+type QuizQuestionOption {
   optionText: String!
   isCorrect: Boolean
 }
@@ -23,10 +23,10 @@ input QuizInput {
 
 input QuizInputQuestion {
   questionText: String!
-  options: [QuizInputQuestionOptions]!
+  options: [QuizInputQuestionOption!]!
 }
 
-input QuizInputQuestionOptions {
+input QuizInputQuestionOption {
   optionText: String!
   isCorrect: Boolean
 }
