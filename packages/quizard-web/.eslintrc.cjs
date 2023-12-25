@@ -20,6 +20,6 @@ module.exports = {
         ],
     },
     plugins: ['@typescript-eslint', 'import'],
-    ignorePatterns: ['.eslintrc.cjs', 'node_modules', 'cdk.out'],
+    ignorePatterns: ['.eslintrc.cjs', 'node_modules', 'cdk.out', 'src/gql'],
     root: true
 };

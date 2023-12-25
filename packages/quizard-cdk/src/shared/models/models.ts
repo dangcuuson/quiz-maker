@@ -37,7 +37,9 @@ export const DBScoreKeys: KeyedObj<DBScore> = {
     percentage: 'percentage',
     quizCode: 'quizCode',
     username: 'username',
-    userNickname: 'userNickname'
+    userNickname: 'userNickname',
+    title: 'title',
+    topic: 'topic'
 }
 export const Score_quizCode_createdAt_GSI = 'quizCode_createdAt_gsi';
 export const Score_quizCode_percentage_GSI = 'quizCode_percentage_gsi'

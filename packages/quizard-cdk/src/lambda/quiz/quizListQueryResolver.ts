@@ -13,6 +13,7 @@ export const handler: AppSyncResolverHandler<TArgs, TResult> = async (event) => 
 
     const db = getDDBDocClient();
 
+    const exclusiveStartKey = event.arguments.pagination?.exclusiveStartKey;
     const queryCommand = new QueryCommand({
         ...buildQueryCommandInput({
             condition: event.arguments.cond,
@@ -22,7 +23,7 @@ export const handler: AppSyncResolverHandler<TArgs, TResult> = async (event) => 
         TableName: env.QUIZ_TABLE_NAME,
         Limit: event.arguments.pagination?.limit,
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        ExclusiveStartKey: event.arguments.pagination?.exclusiveStartKey
+        ExclusiveStartKey: exclusiveStartKey ? JSON.parse(exclusiveStartKey) : undefined,
     })
     
     const result = await db.send(queryCommand);
@@ -30,6 +31,6 @@ export const handler: AppSyncResolverHandler<TArgs, TResult> = async (event) => 
     const dbItems = (result.Items || []) as DBQuiz[];
     return {
         items: dbItems,
-        lastEvaluatedKey: result.LastEvaluatedKey
+        lastEvaluatedKey: result.LastEvaluatedKey ? JSON.stringify(result.LastEvaluatedKey) : undefined,
     }
 };
