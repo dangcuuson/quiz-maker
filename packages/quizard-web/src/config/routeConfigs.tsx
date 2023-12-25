@@ -17,25 +17,27 @@ const createRouteItemConfig = <TGet extends TGetFunc>(config: RouteItemConfig<TG
     return config;
 };
 
+const baseUrl = import.meta.env.BASE_URL;
+
 export const routeConfigs = {
     home: createRouteItemConfig({
-        getPath: () => '/',
-        props: { path: '/', element: <HomePage /> }
+        getPath: () => baseUrl,
+        props: { path: baseUrl, element: <HomePage /> }
     }),
     quizList: createRouteItemConfig({
-        getPath: (topic: string) => `/${decodeURIComponent(topic)}`,
-        props: { path: '/:topic', element: <QuizList /> }
+        getPath: (topic: string) => `${baseUrl}${decodeURIComponent(topic)}`,
+        props: { path: `${baseUrl}:topic`, element: <QuizList /> }
     }),
     quizItem: createRouteItemConfig({
-        getPath: (topic: string, title: string) => `/${encodeURIComponent(topic)}/${encodeURIComponent(title)}`,
-        props: { path: '/:topic/:title', element: <QuizItemPage /> }
+        getPath: (topic: string, title: string) => `${baseUrl}${encodeURIComponent(topic)}/${encodeURIComponent(title)}`,
+        props: { path: `${baseUrl}:topic/:title`, element: <QuizItemPage /> }
     }),
     myScores: createRouteItemConfig({
-        getPath: () => `/Scores`,
-        props: { path: '/Scores', element: <ScoresPage filterMode="user" /> }
+        getPath: () => `${baseUrl}Scores`,
+        props: { path: `${baseUrl}Scores`, element: <ScoresPage filterMode="user" /> }
     }),
     scores: createRouteItemConfig({
-        getPath: (quizCode: string) => `/Scores/${encodeURIComponent(quizCode)}`,
-        props: { path: '/Scores/:quizCode', element: <ScoresPage filterMode="quizCode" /> }
+        getPath: (quizCode: string) => `${baseUrl}Scores/${encodeURIComponent(quizCode)}`,
+        props: { path: `${baseUrl}Scores/:quizCode`, element: <ScoresPage filterMode="quizCode" /> }
     }),
 }
