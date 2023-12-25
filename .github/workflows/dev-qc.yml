@@ -1,4 +1,4 @@
-name: Typecheck, lint, and test (no test yet)
+name: Typecheck, lint, and test
 on:
     push:
         branches:

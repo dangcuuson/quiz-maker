@@ -1,8 +1,8 @@
 name: Build and deploy
 on:
-    push:
-        branches:
-            - staging
+    workflows: ["Typecheck, lint, and test"]
+    branches:
+      - dev
 
 permissions:
     contents: read
