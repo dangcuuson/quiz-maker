@@ -5,8 +5,11 @@ on:
             - staging
 
 jobs:
-    build:
+    deploy:
         runs-on: ubuntu-latest
+
+        environment:
+            name: deploy-staging
 
         steps:
             - name: Checkout 🛎️
@@ -25,14 +28,15 @@ jobs:
                   npm install
                   npm run build-gql
 
-            - name: Configure AWS Credentials
+            - name: Set up AWS CLI
               uses: aws-actions/configure-aws-credentials@v4
               with:
-                  role-to-assume: arn:aws:iam::123456789100:role/my-github-actions-role
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                   aws-region: ap-southeast-2
 
             - name: Deploy Back end
-              run: npm run deploy
+              run: npm run deploy -- --require-approval never
               working-directory: ./packages/quizard-cdk
 
             - name: Build Web
