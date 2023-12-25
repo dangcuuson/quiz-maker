@@ -18,7 +18,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Setup
-              uses: setup.yml
+              uses: ./setup.yml
 
             - name: QC 🏗️
               run: |
@@ -33,7 +33,7 @@ jobs:
 
         steps:
             - name: Setup
-              uses: setup.yml
+              uses: ./setup.yml
 
             - name: Set up AWS CLI
               uses: aws-actions/configure-aws-credentials@v4
