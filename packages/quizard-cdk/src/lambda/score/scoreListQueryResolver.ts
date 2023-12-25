@@ -8,7 +8,7 @@ import {
     Score_quizCode_percentage_GSI,
     Score_user_quizCode_LSI,
 } from '/opt/models/models';
-import { buildQueryCommandInput, getDDBDocClient, getExactOneDefinedField } from '/opt/utils';
+import { buildQueryCommandInput, getCognitoUser, getDDBDocClient, getExactOneDefinedField } from '/opt/utils';
 import { QueryCommand } from '@aws-sdk/lib-dynamodb';
 
 type TResult = GQLQuery['scoreList'];
@@ -23,7 +23,15 @@ export const handler: AppSyncResolverHandler<TArgs, TResult> = async (event) => 
         throw Error('Exceeded maximum limit of 100');
     }
 
-    const getPkSkAndIndex = (): { pkName: string; skName: string | null; IndexName: string | undefined } => {
+    // in case of user_* index, query the cognito user and inject them into pk
+    const injectCognitoUserToPkValue = async () => {
+        const user = await getCognitoUser(event.identity, env);
+        event.arguments.cond.pk = {
+            string: user.Username
+        }
+    }
+
+    const getPkSkAndIndex = async (): Promise<{ pkName: string; skName: string | null; IndexName: string | undefined }> => {
         const indexConfig = getExactOneDefinedField(event.arguments.indexConfig, 'indexConfig');
         switch (indexConfig.key) {
             case 'quizCode_createdAt': {
@@ -41,9 +49,11 @@ export const handler: AppSyncResolverHandler<TArgs, TResult> = async (event) => 
                 };
             }
             case 'user_createdAt': {
+                await injectCognitoUserToPkValue();
                 return { pkName: DBScoreKeys.username, skName: DBScoreKeys.createdAt, IndexName: undefined };
             }
             case 'user_quizCode': {
+                await injectCognitoUserToPkValue();
                 return {
                     pkName: DBScoreKeys.username,
                     skName: DBScoreKeys.quizCode,
@@ -53,7 +63,7 @@ export const handler: AppSyncResolverHandler<TArgs, TResult> = async (event) => 
         }
     };
 
-    const { pkName, skName, IndexName } = getPkSkAndIndex();
+    const { pkName, skName, IndexName } = await getPkSkAndIndex();
 
     const exclusiveStartKey = event.arguments.pagination?.exclusiveStartKey;
     const queryCommand = new QueryCommand({
@@ -65,6 +75,7 @@ export const handler: AppSyncResolverHandler<TArgs, TResult> = async (event) => 
         IndexName,
         TableName: env.SCORE_TABLE_NAME,
         Limit: event.arguments.pagination?.limit,
+        ScanIndexForward: !event.arguments.descSort,
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         ExclusiveStartKey: exclusiveStartKey ? JSON.parse(exclusiveStartKey) : undefined,
     });
