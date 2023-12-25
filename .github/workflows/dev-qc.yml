@@ -4,6 +4,10 @@ on:
         branches:
             - dev
 
+concurrency:
+    group: 'dev-qc'
+    cancel-in-progress: true
+
 jobs:
     build:
         runs-on: ubuntu-latest

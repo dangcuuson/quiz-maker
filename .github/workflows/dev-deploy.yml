@@ -1,13 +1,17 @@
 name: Build and deploy
 on:
-    workflows: ["Typecheck, lint, and test"]
+    workflows: ['Typecheck, lint, and test']
     branches:
-      - dev
+        - dev
 
 permissions:
     contents: read
     pages: write
     id-token: write
+
+concurrency:
+    group: 'dev-deploy'
+    cancel-in-progress: true
 
 jobs:
     deploy:
