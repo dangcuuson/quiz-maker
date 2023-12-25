@@ -1,30 +1,27 @@
 import fs from 'fs';
 import path from 'path';
-import gitBranch from 'git-branch';
 
-const start = async () => {
-    const branchName = await gitBranch();
-    const inputFile = path.resolve('../cdk-outputs.json');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const cdkOutput: { [K: string]: Record<string, string> }
-        = JSON.parse(fs.readFileSync(inputFile, { encoding: 'utf-8' }));
-    const stackName = `quizard-stack-${branchName}`;
-    const jsonData = cdkOutput[stackName];
-    if (!jsonData) {
-        throw Error(`Unable to find ${stackName} in ${inputFile}. Please make sure stack name is correct`);
-    }
+const inputFile = path.resolve('../../cdk-outputs.json');
 
-    const lines = Object.keys(jsonData)
-        .map(key => {
-            return `VITE_${key}=${jsonData[key]}`
-        })
-        .join('\n');
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+const cdkJsonOutput: { [K: string]: Record<string, string> } = JSON.parse(
+    fs.readFileSync(inputFile, { encoding: 'utf-8' }),
+);
 
-    const outputFile = path.resolve('.env');
-    fs.writeFileSync(outputFile, lines, 'utf-8');
+const keys = Object.keys(cdkJsonOutput);
+if (keys.length > 1) {
+    throw Error(`Found multiple stacks`);
+}
+if (keys.length === 0) {
+    throw Error(`No stack found`);
 }
 
-start().catch(err => {
-    console.error(err);
-    process.exit(1);
-})
+const jsonData = cdkJsonOutput[keys[0]];
+const lines = Object.keys(jsonData)
+    .map((key) => {
+        return `VITE_${key}=${jsonData[key]}`;
+    })
+    .join('\n');
+
+const outputFile = path.resolve('.env');
+fs.writeFileSync(outputFile, lines, 'utf-8');

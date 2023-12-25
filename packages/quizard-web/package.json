@@ -4,7 +4,7 @@
     "scripts": {
         "tsc": "tsc -p ./tsconfig.json",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-        "build-gql": "graphql-codegen -c ./scripts/generateTypesFromGQL.ts",
+        "build-gql": "graphql-codegen -c ./scripts/graphql-codegen.ts",
         "build-gql:watch": "npm run build-gql -- --watch",
         "build-env": "ts-node -P ../../tsconfig.node.json ./scripts/buildEnv.ts",
         "predev": "npm run build-env && npm run build-gql",
