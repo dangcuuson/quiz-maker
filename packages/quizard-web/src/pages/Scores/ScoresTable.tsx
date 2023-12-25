@@ -8,7 +8,7 @@ interface Props {
 const ScoresTable: React.FC<Props> = ({ items }) => {
     return (
         <Table caption="" highlightOnHover={false}>
-            <TableHead>
+            <TableHead backgroundColor="background.quaternary">
                 <TableRow>
                     <TableCell as="th">User</TableCell>
                     <TableCell as="th">Score</TableCell>
@@ -16,7 +16,7 @@ const ScoresTable: React.FC<Props> = ({ items }) => {
                     <TableCell as="th">Quiz</TableCell>
                 </TableRow>
             </TableHead>
-            <TableBody>
+            <TableBody backgroundColor="background.secondary">
                 {items.map((row, index) => {
                     return <ScoresTableRow key={index} data={row} />;
                 })}

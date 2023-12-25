@@ -1,6 +1,5 @@
 import React from 'react';
-import { ThemeProvider, createTheme, defaultTheme } from '@aws-amplify/ui-react';
-// import { defaultTheme } from '@aws-amplify/ui';
+import { ThemeProvider, createTheme } from '@aws-amplify/ui-react';
 import { useLocalStorage } from '@hooks/hooks';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 
@@ -9,21 +8,23 @@ type LightDarkContextType = {
     setIsDarkMode: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-// TODO: design dark theme
-
-const LightTheme = createTheme({
-    name: 'light_theme',
-    cssText: 'light',
-    breakpoints: defaultTheme.breakpoints,
+const MyTheme = createTheme({
+    name: 'my-theme',
     tokens: {
         colors: {
             background: {
                 primary: { value: '{colors.teal.10}' },
-                secondary: { value: '{colors.blue.20}' },
+                secondary: { value: '{colors.blue.10}' },
             },
         },
-        // borderWidths: 'required'
+        components: {
+            card: {
+                backgroundColor: { value: '{colors.teal.20}' },
+            }
+        }
     },
+    primaryColor: 'teal',
+    secondaryColor: 'neutral'
 });
 
 export const LightDarkContext = React.createContext<LightDarkContextType>({
@@ -51,8 +52,8 @@ export const LightDarkContextThemeProvider: React.FC<{ children: React.ReactNode
                 setIsDarkMode,
             }}
         >
-            <ThemeProvider theme={LightTheme} colorMode={isDarkMode ? 'dark' : 'light'}>
-                <StyledThemeProvider theme={LightTheme}>{props.children}</StyledThemeProvider>
+            <ThemeProvider theme={MyTheme} colorMode={isDarkMode ? 'dark' : 'light'}>
+                <StyledThemeProvider theme={MyTheme}>{props.children}</StyledThemeProvider>
             </ThemeProvider>
         </LightDarkContext.Provider>
     );

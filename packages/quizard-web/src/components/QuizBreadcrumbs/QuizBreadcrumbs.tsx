@@ -8,12 +8,8 @@ import styled from 'styled-components';
 // Another approach could be wrapping amplify Breadcrumbs.Link
 // and intercept their nav behaviour to support client-side routing
 const QuizBreadcrumbsLink = styled(ReactRouterLink)<{ isCurrent?: boolean }>`
-    color: ${(props) => props.theme.tokens?.components?.breadcrumbs?.link?.color?.toString()};
+    color: ${(props) => props.theme.tokens.components.breadcrumbs.link.color.value};
     text-decoration: none;
-    :visited {
-        color: ${(props) => props.theme.tokens?.components?.breadcrumbs?.link?.color?.toString()};
-        text-decoration: none;
-    }
 `;
 
 const QuizBreadcrumbs: React.FC = () => {
