@@ -36,13 +36,14 @@ function ApolloQueryWrapper<TData, TVariables extends OperationVariables>(
     const { children, loadingEl, errorEl, ...queryProps } = props;
     return (
         // any should be TVariables but it gives type error
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         <Query<TData, any> {...queryProps}>
             {(_result: QueryResult) => {
                 const typedResult = _result as QueryResult<TData, TVariables>;
                 const { data, loading, error, refetch } = typedResult;
 
                 if (loading) {
-                    return props.loadingEl || <Loader variation="linear" />;
+                    return loadingEl || <Loader variation="linear" />;
                 }
 
                 const getErrorEl = () => {
@@ -57,8 +58,8 @@ function ApolloQueryWrapper<TData, TVariables extends OperationVariables>(
                         return error.message;
                     };
                     const errorMessage = getErrorMessage();
-                    return props.errorEl ? (
-                        props.errorEl(errorMessage, refetch)
+                    return errorEl ? (
+                        errorEl(errorMessage, refetch)
                     ) : (
                         <Message colorTheme="error" hasIcon={true} heading={errorMessage} />
                     );
@@ -75,10 +76,8 @@ function ApolloQueryWrapper<TData, TVariables extends OperationVariables>(
                     return getErrorEl();
                 }
 
-                const children = _.isFunction(props.children)
-                    ? props.children({ ...typedResult, data })
-                    : props.children || null;
-                return <React.Fragment>{children}</React.Fragment>;
+                const childrenNode = _.isFunction(children) ? children({ ...typedResult, data }) : children || null;
+                return <React.Fragment>{childrenNode}</React.Fragment>;
             }}
         </Query>
     );

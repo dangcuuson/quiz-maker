@@ -12,20 +12,20 @@ type MutationWrapperProps<TData, TVariables> = MutationComponentOptions<TData, T
     getSuccessMessage?: (data: TData) => string;
     // will show error message whether it's defined or not
     getErrorMessage?: () => string;
-    mutateOnMount?: boolean;
 };
 
 function ApolloMutationWrapper<TData, TVariables extends OperationVariables>(
     props: MutationWrapperProps<TData, TVariables>,
 ): React.ReactNode {
     const setMessage = useSetMessage();
-    const { getSuccessMessage, getErrorMessage, mutateOnMount, ...mutationProps } = props;
+    const { getSuccessMessage, getErrorMessage, ...mutationProps } = props;
     return (
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         <Mutation<any, any>
             {...mutationProps}
             onCompleted={(data: TData) => {
-                if (props.getSuccessMessage) {
-                    const content = props.getSuccessMessage(data);
+                if (getSuccessMessage) {
+                    const content = getSuccessMessage(data);
                     setMessage({ color: 'success', content });
                 }
                 if (props.onCompleted) {
@@ -36,7 +36,7 @@ function ApolloMutationWrapper<TData, TVariables extends OperationVariables>(
                 const defaultErrorMessage = import.meta.env.PROD
                     ? `There was an error occured :(`
                     : error.message.replace(/GraphQL error:/g, '');
-                const errorMessage = props.getErrorMessage ? props.getErrorMessage() : defaultErrorMessage;
+                const errorMessage = getErrorMessage ? getErrorMessage() : defaultErrorMessage;
                 console.error(error);
                 setMessage({ color: 'error', content: errorMessage });
                 if (props.onError) {

@@ -7,6 +7,7 @@ export default defineConfig({
     plugins: [react()],
     envDir: path.resolve('./'),
     resolve: {
+        // path mapping. Need to repeat this config in tsconfig.json aswell
         alias: [
             {
                 find: '@gql',

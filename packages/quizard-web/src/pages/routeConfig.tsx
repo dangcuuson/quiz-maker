@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React from 'react';
 import { RouteProps } from 'react-router-dom';
 
@@ -7,12 +6,14 @@ const QuizList = React.lazy(() => import('@pages/QuizList/QuizListPage'));
 const QuizItemPage = React.lazy(() => import('@pages/QuizItem/QuizItemPage'));
 const ScoresPage = React.lazy(() => import('@pages/Scores/ScoresPages'));
 
-export interface RouteItemConfig<TGet extends Function = Function> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type TGetFunc = (...args: any[]) => string;
+export interface RouteItemConfig<TGet extends TGetFunc = TGetFunc> {
     props: RouteProps;
     getPath: TGet;
 }
 
-const createRouteItemConfig = <TGet extends Function>(config: RouteItemConfig<TGet>): RouteItemConfig<TGet> => {
+const createRouteItemConfig = <TGet extends TGetFunc>(config: RouteItemConfig<TGet>): RouteItemConfig<TGet> => {
     return config;
 };
 

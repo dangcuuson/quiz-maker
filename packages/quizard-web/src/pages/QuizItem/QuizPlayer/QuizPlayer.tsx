@@ -1,7 +1,6 @@
 import { QuizItemFragment } from '@gql/graphql';
 import React from 'react';
 import QuizTextParser from './QuizTextParser';
-import _ from 'lodash';
 import { useStoredQuizReconcilication } from './QuizPlayerHooks';
 import { Flex, Message, Radio, RadioGroupField } from '@aws-amplify/ui-react';
 import { maybe } from '@utils/dataUtils';

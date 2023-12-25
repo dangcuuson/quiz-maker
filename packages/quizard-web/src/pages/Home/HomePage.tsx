@@ -22,7 +22,7 @@ const HomePage: React.FC<Props> = () => {
                     return (
                         <View>
                             <Text>There's no quiz data</Text>
-                            <PopulateDataBtn onCompleted={refetch} />
+                            <PopulateDataBtn onCompleted={() =>void refetch()} />
                         </View>
                     );
                 }

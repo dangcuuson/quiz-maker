@@ -57,7 +57,7 @@ const QuizSubmitSection: React.FC<Props> = ({ storedQuiz, onCompleted }) => {
                 setError(`An error occured when trying to submit your answers :(`);
             }
         };
-        uploadScore();
+        void uploadScore();
     });
     if (addScoreState.loading || !addScoreState.called) {
         return (

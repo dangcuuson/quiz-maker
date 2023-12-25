@@ -5,7 +5,6 @@ import { gql } from '@gql/gql';
 import { QuizItemFragment } from '@gql/graphql';
 import React from 'react';
 import { useParams } from 'react-router';
-import _ from 'lodash';
 import QuizPlayer from './QuizPlayer/QuizPlayer';
 
 const quizItemQuery = gql(/* GraphQL */ `
@@ -37,7 +36,8 @@ const quizItemQuery = gql(/* GraphQL */ `
     }
 `);
 
-const QuizItemPage: React.FC<{}> = () => {
+interface Props {}
+const QuizItemPage: React.FC<Props> = () => {
     const { topic, title } = useParams();
     if (!topic) {
         return <Alert variation="error" hasIcon={true} heading="Missing topic" />;

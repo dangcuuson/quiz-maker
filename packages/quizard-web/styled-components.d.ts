@@ -1,14 +1,14 @@
-import type { CSSProp } from "styled-components";
-import type { Theme as AmplifyTheme } from '@aws-amplify/ui-react';
+import type { CSSProp } from 'styled-components';
+import type { WebTheme } from '@aws-amplify/ui';
 
 // connect amplify Theme to styled component themes
 
-declare module "styled-components" {
- export interface DefaultTheme extends AmplifyTheme {}
+declare module 'styled-components' {
+    export interface DefaultTheme extends WebTheme {}
 }
 
-declare module "react" {
- interface DOMAttributes<T> {
-   css?: CSSProp;
- }
+declare module 'react' {
+    interface DOMAttributes {
+        css?: CSSProp;
+    }
 }

@@ -1,10 +1,15 @@
 {
-    "extends": ["../../tsconfig.json"],
+    "extends": ["../../tsconfig.base.json"],
     "compilerOptions": {
         "types": [
             "vite/client",
             "./styled-components.d.ts"
         ],
+        "jsx": "react-jsx",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+
+        // path mapping. Need to repeat this config in vite.config.cjs aswell
         "baseUrl": "./src", // This is to avoid adding the ./src prefix to each path below.
         "paths": {
             "@gql/*": ["gql/*"],
@@ -13,5 +18,11 @@
             "@hooks/*": ["hooks/*"],
             "@utils/*": ["utils/*"]
         }
-    }
+    },
+    "include": [
+        "vite.config.ts",
+        "src",
+        "scripts",
+        "../../globalTypes.d.ts"
+    ]
 }

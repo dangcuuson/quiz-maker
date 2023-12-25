@@ -3,17 +3,17 @@ import styled from 'styled-components';
 
 export const QuizCard = styled(Card)`
     flex-grow: 1;
-    background-color: ${props => props.theme.tokens?.colors?.background?.info?.toString()};
+    background-color: ${props => String.apply(props.theme.tokens?.colors?.background?.info)};
     padding: 0;
     :hover {
         cursor: pointer;
-        background-color: ${props => props.theme.tokens?.colors?.background?.secondary?.toString()};
+        background-color: ${props => String.apply(props.theme.tokens?.colors?.background?.secondary)};
     }
     text-align: center;
 `;
 
 export const QuizCardContent = styled(View)`
-    padding: ${props => props.theme.tokens?.space?.small?.toString()};
+    padding: ${props => String.apply(props.theme.tokens?.space?.small)};
     display: flex;
     align-items: center;
     justify-content: center;

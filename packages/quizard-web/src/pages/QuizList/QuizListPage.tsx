@@ -25,7 +25,8 @@ const quizListQuery = gql(/* GraphQL */ `
     }
 `);
 
-const TopicItemPage: React.FC<{}> = () => {
+interface Props {}
+const TopicItemPage: React.FC<Props> = () => {
     const { topic } = useParams();
 
     if (!topic) {

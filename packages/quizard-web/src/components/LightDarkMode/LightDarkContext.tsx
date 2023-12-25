@@ -31,7 +31,7 @@ export const LightDarkContext = React.createContext<LightDarkContextType>({
 export const LightDarkContextThemeProvider: React.FC<{ children: React.ReactNode }> = (props) => {
     // const prefersDarkMode: boolean = useMediaQuery('(prefers-color-scheme: dark)');
 
-    const [_isDarkMode, setIsDarkMode] = useLocalStorage<boolean>({
+    const [isDarkMode, setIsDarkMode] = useLocalStorage<boolean>({
         key: 'dark_mode',
         getInitValue: (v) => {
             // if (!v) {
@@ -41,8 +41,6 @@ export const LightDarkContextThemeProvider: React.FC<{ children: React.ReactNode
         },
     });
 
-    const isDarkMode = true;
-
     return (
         <LightDarkContext.Provider
             value={{
@@ -51,7 +49,7 @@ export const LightDarkContextThemeProvider: React.FC<{ children: React.ReactNode
             }}
         >
             <ThemeProvider theme={LightTheme} colorMode={isDarkMode ? 'dark' : 'light'}>
-                <StyledThemeProvider theme={LightTheme as any}>{props.children}</StyledThemeProvider>
+                <StyledThemeProvider theme={LightTheme}>{props.children}</StyledThemeProvider>
             </ThemeProvider>
         </LightDarkContext.Provider>
     );

@@ -7,12 +7,6 @@
             "DOM",
             "DOM.Iterable"
         ],
-        "module": "ESNext",
-        "jsx": "react-jsx",
-        "moduleResolution": "bundler",
-        "types": [
-            "vite/client"
-        ],
         "resolveJsonModule": true,
         "skipLibCheck": true,
         "allowImportingTsExtensions": true,
@@ -24,11 +18,5 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "noFallthroughCasesInSwitch": true
-    },
-    "include": [
-        "./packages/*/vite.config.ts",
-        "./packages/*/src",
-        "./packages/*/scripts",
-        "globalTypes.d.ts"
-    ]
+    }
 }

@@ -36,7 +36,7 @@ const useCognitoAuthToken = (): { token: string; ready: boolean } => {
         }
     };
     React.useEffect(() => {
-        fetchAuthToken(false);
+        void fetchAuthToken(false);
     }, []);
 
     // when token is about to expire, fetch auth token again to keep user connected
@@ -46,7 +46,7 @@ const useCognitoAuthToken = (): { token: string; ready: boolean } => {
         }
         const timeToTimeout = tokenExpiry * 1000 - +Date.now();
         const timeout = setTimeout(() => {
-            fetchAuthToken(true);
+            void fetchAuthToken(true);
         }, timeToTimeout - 10000);
         return () => {
             clearTimeout(timeout);

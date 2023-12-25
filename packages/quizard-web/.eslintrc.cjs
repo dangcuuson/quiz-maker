@@ -1,11 +1,9 @@
-// workaround for a bug where eslint report error on editor (but not on cli)
-// looks like we have to add .eslintrc in every package folder
 module.exports = {
     settings: {
         'import/resolver': {
             'typescript': {
                 'project': [
-                    // './tsconfig.json',
+                    './tsconfig.json',
                 ]
             }
         }
@@ -18,7 +16,7 @@ module.exports = {
     parserOptions: {
         tsconfigRootDir: __dirname,
         project: [
-            // './tsconfig.json', 
+            './tsconfig.json', 
         ],
     },
     plugins: ['@typescript-eslint', 'import'],

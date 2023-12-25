@@ -34,7 +34,7 @@ export const restoreArr = <T>(args: {
     return null;
 };
 
-type Obj = Record<string, any>;
+type Obj = Record<string, unknown>;
 export const hasObjField = <T extends string>(val: unknown, key: T): val is Record<T, Obj> => {
     if (!isObj(val)) {
         return false;
