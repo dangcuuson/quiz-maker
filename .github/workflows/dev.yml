@@ -1,8 +1,8 @@
-name: Build and deploy
+name: Test, build, and deploy (dev)
 on:
-    workflows: ['Typecheck, lint, and test']
-    branches:
-        - dev
+    push:
+        branches:
+            - dev
 
 permissions:
     contents: read
@@ -10,17 +10,12 @@ permissions:
     id-token: write
 
 concurrency:
-    group: 'dev-deploy'
+    group: 'dev'
     cancel-in-progress: true
 
 jobs:
-    deploy:
+    QC:
         runs-on: ubuntu-latest
-
-        environment:
-            name: deploy-staging
-            url: ${{ steps.deployment.outputs.page_url }}
-
         steps:
             - name: Checkout 🛎️
               uses: actions/checkout@master
@@ -36,8 +31,20 @@ jobs:
             - name: Install 🔧
               run: |
                   npm install
-                  npm run build-gql
 
+            - name: QC 🏗️
+              run: |
+                  npm run build-gql
+                  npm run lint
+                  npm run tsc
+
+    deploy:
+        runs-on: ubuntu-latest
+        environment:
+            name: deploy-staging # TODO change env name later
+            url: ${{ steps.deployment.outputs.page_url }}
+
+        steps:
             - name: Set up AWS CLI
               uses: aws-actions/configure-aws-credentials@v4
               with:
