@@ -17,21 +17,8 @@ jobs:
     QC:
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout 🛎️
-              uses: actions/checkout@master
-              with:
-                  persist-credentials: false
-
-            - name: Use Node.js 20.x
-              uses: actions/setup-node@v3
-              with:
-                  node-version: 20.x
-                  cache: 'npm'
-
-            - name: Install 🔧
-              run: |
-                  npm install
-                  npm run build-gql
+            - name: Setup
+              uses: setup.yml
 
             - name: QC 🏗️
               run: |
@@ -45,21 +32,8 @@ jobs:
             url: ${{ steps.deployment.outputs.page_url }}
 
         steps:
-            - name: Checkout 🛎️
-              uses: actions/checkout@master
-              with:
-                  persist-credentials: false
-
-            - name: Use Node.js 20.x
-              uses: actions/setup-node@v3
-              with:
-                  node-version: 20.x
-                  cache: 'npm'
-
-            - name: Install 🔧
-              run: |
-                  npm install
-                  npm run build-gql
+            - name: Setup
+              uses: setup.yml
 
             - name: Set up AWS CLI
               uses: aws-actions/configure-aws-credentials@v4
