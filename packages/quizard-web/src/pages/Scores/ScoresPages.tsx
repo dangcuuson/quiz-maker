@@ -1,24 +1,23 @@
-import { Alert, Button, Loader, View } from '@aws-amplify/ui-react';
+import { Alert, Button, Loader, SelectField, View, Text } from '@aws-amplify/ui-react';
 import React from 'react';
 import { useParams } from 'react-router';
 import ApolloQueryWrapper from '@components/ApolloWrapper/ApolloQueryWrapper';
 import { gql } from '@gql/gql';
 import ScoresTable from './ScoresTable';
+import { asType, isTuple } from '@utils/dataUtils';
 
 const scoresOfQuizQuery = gql(`
-    query scoresOfQuiz($quizCode: String!, $sortByTime: Boolean, $sortByPercentage: Boolean, $sortCursor: String) {
+    query scoresOfQuiz($pk: String!, $indexConfig: ScoreIndexConfig!, $sortCursor: String) {
         scoreList(
             cond: { 
-                pk: { string: $quizCode }
+                pk: { string: $pk }
             }, 
-            indexConfig: {
-                quizCode_createdAt: $sortByTime,
-                quizCode_percentage: $sortByPercentage
-            } , 
+            indexConfig: $indexConfig , 
             pagination: { 
-                limit: 2, 
+                limit: 10, 
                 exclusiveStartKey: $sortCursor 
-            }
+            },
+            descSort: true
         ) {
             items {
                 ...ScoreListItem
@@ -32,58 +31,99 @@ const scoresOfQuizQuery = gql(`
         userNickname
         createdAt
         quizCode
-        title
-        topic
         percentage
         nQuestions
         nCorrect
     }
 `);
 
-interface Props {}
-const ScoresPage: React.FC<Props> = () => {
+const sortModes = ['Time', 'Score'] as const;
+type SortMode = (typeof sortModes)[number];
+
+interface Props {
+    // quizCode: query scores of a quiz code
+    // user: query scores from the logged in user
+    // when filterMode = 'user', only sort by time by default
+    filterMode: 'quizCode' | 'user';
+}
+const ScoresPage: React.FC<Props> = ({ filterMode }) => {
     const { quizCode } = useParams();
-    if (!quizCode) {
+    const [sortMode, setSortMode] = React.useState<SortMode>('Time');
+    if (!quizCode && filterMode === 'quizCode') {
         return <Alert variation="error" hasIcon={true} heading="Missing quiz code" />;
     }
 
     return (
         <ApolloQueryWrapper
+            fetchPolicy='network-only'
             notifyOnNetworkStatusChange={true}
             query={scoresOfQuizQuery}
             variables={{
-                quizCode: quizCode,
-                sortByPercentage: true,
-                sortByTime: undefined,
+                pk: quizCode || '',
+                indexConfig: {
+                    quizCode_createdAt: (filterMode === 'quizCode' && sortMode === 'Time') || undefined,
+                    quizCode_percentage: (filterMode === 'quizCode' && sortMode === 'Score') || undefined,
+                    user_createdAt: filterMode === 'user' || undefined,
+                },
             }}
         >
             {({ data, fetchMore, loading }) => {
                 const hasMore = !!data.scoreList.lastEvaluatedKey;
                 return (
                     <View>
-                        <ScoresTable items={data.scoreList.items} />
-                        <Button
-                            disabled={!hasMore}
-                            onClick={() => {
-                                void fetchMore({
-                                    variables: {
-                                        sortCursor: data.scoreList.lastEvaluatedKey,
-                                    },
-                                    updateQuery: (prev, { fetchMoreResult }) => {
-                                        return {
-                                            ...prev,
-                                            scoreList: {
-                                                ...prev.scoreList,
-                                                items: [...prev.scoreList.items, ...fetchMoreResult.scoreList.items],
-                                                lastEvaluatedKey: fetchMoreResult.scoreList.lastEvaluatedKey,
-                                            },
-                                        };
-                                    },
-                                });
-                            }}
-                        >
-                            {data.scoreList.items.length}
-                        </Button>
+                        {filterMode === 'quizCode' && (
+                            <SelectField
+                                label="Sort by"
+                                size="small"
+                                variation="quiet"
+                                value={sortMode}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (isTuple(value, sortModes)) {
+                                        setSortMode(value);
+                                    }
+                                }}
+                            >
+                                <option value={asType<SortMode>('Time')}>Time</option>
+                                <option value={asType<SortMode>('Score')}>Score</option>
+                            </SelectField>
+                        )}
+                        {filterMode === 'user' && <Text fontSize="1.25rem">My scores</Text>}
+
+                        <ScoresTable
+                            items={data.scoreList.items}
+                            showQuizColumn={filterMode === 'user'}
+                            showUserColumn={filterMode === 'quizCode'}
+                        />
+                        {!!hasMore && (
+                            <Button
+                                disabled={!hasMore}
+                                size="small"
+                                variation="link"
+                                onClick={() => {
+                                    void fetchMore({
+                                        variables: {
+                                            sortCursor: data.scoreList.lastEvaluatedKey,
+                                        },
+                                        updateQuery: (prev, { fetchMoreResult }) => {
+                                            return {
+                                                ...prev,
+                                                scoreList: {
+                                                    ...prev.scoreList,
+                                                    items: [
+                                                        ...prev.scoreList.items,
+                                                        ...fetchMoreResult.scoreList.items,
+                                                    ],
+                                                    lastEvaluatedKey: fetchMoreResult.scoreList.lastEvaluatedKey,
+                                                },
+                                            };
+                                        },
+                                    });
+                                }}
+                            >
+                                Load more items
+                            </Button>
+                        )}
                         {!!loading && <Loader variation="linear" />}
                     </View>
                 );

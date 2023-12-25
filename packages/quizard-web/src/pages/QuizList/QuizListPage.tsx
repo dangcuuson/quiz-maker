@@ -1,6 +1,6 @@
 import { Alert, Button, Collection } from '@aws-amplify/ui-react';
 import ApolloQueryWrapper from '@components/ApolloWrapper/ApolloQueryWrapper';
-import { QuizCard, QuizCardContent, QuizCardText } from '@components/QuizCard/QuizCard';
+import { QuizCard, QuizCardContent, QuizCardText } from '@components/Widgets/QuizCard';
 import { gql } from '@gql/gql';
 import { QuizListItemFragment } from '@gql/graphql';
 import { routeConfigs } from '@config/routeConfigs';
