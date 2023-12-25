@@ -4,8 +4,8 @@
     "scripts": {
         "tsc": "tsc -p ./tsconfig.json",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+        "prebuild": "build-env",
         "build": "vite build",
-        "preview": "vite preview",
         "build-gql": "graphql-codegen -c ./scripts/graphql-codegen.ts",
         "build-gql:watch": "npm run build-gql -- --watch",
         "build-env": "ts-node -P ../../tsconfig.node.json ./scripts/buildEnv.ts",
