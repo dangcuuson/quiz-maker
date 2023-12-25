@@ -13,9 +13,19 @@ const config: CodegenConfig = {
             presetConfig: {
                 gqlTagName: 'gql',
                 // https://github.com/dotansimha/graphql-code-generator/discussions/8859
-                fragmentMasking: false
+                fragmentMasking: false,
             },
         },
+    },
+    pluckConfig: {
+        // this config help working with Apollo GraphQL extension (auto complete)
+        modules: [
+            {
+                name: '@apollo/client',
+                identifier: 'gql',
+            },
+        ],
+        gqlMagicComment: ''
     },
 };
 

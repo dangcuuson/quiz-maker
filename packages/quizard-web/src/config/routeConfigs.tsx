@@ -30,8 +30,12 @@ export const routeConfigs = {
         getPath: (topic: string, title: string) => `/${encodeURIComponent(topic)}/${encodeURIComponent(title)}`,
         props: { path: '/:topic/:title', element: <QuizItemPage /> }
     }),
+    myScores: createRouteItemConfig({
+        getPath: (quizCode: string) => `/scores/${encodeURIComponent(quizCode)}`,
+        props: { path: '/Scores', element: <ScoresPage /> }
+    }),
     scores: createRouteItemConfig({
         getPath: (quizCode: string) => `/scores/${encodeURIComponent(quizCode)}`,
-        props: { path: '/scores/:quizCode', element: <ScoresPage /> }
+        props: { path: '/Scores/:quizCode', element: <ScoresPage /> }
     }),
 }

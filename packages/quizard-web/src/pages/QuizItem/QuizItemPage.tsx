@@ -5,7 +5,7 @@ import React from 'react';
 import { useParams } from 'react-router';
 import QuizPlayer from './QuizPlayer/QuizPlayer';
 
-const quizItemQuery = gql(/* GraphQL */ `
+const quizItemQuery = gql(`
     query quizItem($topic: String!, $title: String!) {
         quizList(cond: { pk: { string: $topic }, sk: { eq: { string: $title } } }, pagination: { limit: 1 }) {
             items {

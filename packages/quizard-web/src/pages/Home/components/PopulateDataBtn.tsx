@@ -3,7 +3,7 @@ import { gql } from '@gql/index';
 import { Button } from '@aws-amplify/ui-react';
 import ApolloMutationWrapper from '@components/ApolloWrapper/ApolloMutationWrapper';
 
-const populateQuizMutation = gql(/* GraphQL */ `
+const populateQuizMutation = gql(`
     mutation populateQuizData {
         populateQuizData
     }

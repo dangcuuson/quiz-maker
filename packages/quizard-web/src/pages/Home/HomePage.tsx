@@ -5,7 +5,7 @@ import { View, Text } from '@aws-amplify/ui-react';
 import TopicList from './components/TopicList';
 import PopulateDataBtn from './components/PopulateDataBtn';
 
-const topicListQuery = gql(/* GraphQL */ `
+const topicListQuery = gql(`
     query topicList {
         topicList
     }

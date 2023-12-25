@@ -9,7 +9,7 @@ import { useEffectOnce } from '@hooks/hooks';
 import { useNavigate } from 'react-router';
 import { routeConfigs } from '@config/routeConfigs';
 
-const addScoreMutation = gql(/* GraphQL */ `
+const addScoreMutation = gql(`
     mutation addScore($input: ScoreInput!) {
         addScore(input: $input) {
             percentage

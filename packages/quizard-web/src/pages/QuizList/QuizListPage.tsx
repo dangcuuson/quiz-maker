@@ -8,7 +8,7 @@ import _ from 'lodash';
 import React from 'react';
 import { useNavigate, useParams } from 'react-router';
 
-const quizListQuery = gql(/* GraphQL */ `
+const quizListQuery = gql(`
     query quizList($topic: String!) {
         quizList(cond: { pk: { string: $topic } }) {
             items {
