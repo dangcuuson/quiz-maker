@@ -1,5 +1,6 @@
 import path from 'path';
 import { generateTypeScriptTypes } from 'graphql-schema-typescript';
+import { combineGraphqlFilesIntoSchema } from '../src/stacks/stacksHelper';
 
 const SRC_DIR = path.resolve('src/schema');
 const OUTPUT_PATH = path.resolve('src/shared', 'gqlTypes.ts');
@@ -14,11 +15,11 @@ generateTypeScriptTypes(
             AWSDateTime: 'string',
             AWSTimestamp: 'number',
             AWSEmail: 'string',
-            AWSJSON: 'any',
+            AWSJSON: 'string',
             AWSPhone: 'string',
             AWSURL: 'string',
-            AWSIPAddress: 'string'
-        }
+            AWSIPAddress: 'string',
+        },
     },
     {
         assumeValidSDL: true,
@@ -30,3 +31,6 @@ generateTypeScriptTypes(
         console.error(err);
         process.exit(1);
     });
+
+// combie into big file for apollo.config.js
+combineGraphqlFilesIntoSchema();

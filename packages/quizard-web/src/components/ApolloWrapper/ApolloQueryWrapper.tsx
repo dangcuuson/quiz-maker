@@ -42,7 +42,11 @@ function ApolloQueryWrapper<TData, TVariables extends OperationVariables>(
                 const typedResult = _result as QueryResult<TData, TVariables>;
                 const { data, loading, error, refetch } = typedResult;
 
-                if (loading) {
+                const isNoData = !data || _.isEmpty(data);
+
+                // only render loadingEl when no error & no data
+                // as fetchMore could make loading=true but data is defined
+                if (loading && isNoData && !error) {
                     return loadingEl || <Loader variation="linear" />;
                 }
 
@@ -72,7 +76,7 @@ function ApolloQueryWrapper<TData, TVariables extends OperationVariables>(
                 }
 
                 // no data can happen when errorPolicy = 'ignore'
-                if (!data || _.isEmpty(data)) {
+                if (isNoData) {
                     return getErrorEl();
                 }
 

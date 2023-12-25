@@ -19,7 +19,7 @@ type QuizQuestionOption {
 
 type QuizListResult {
     items: [Quiz!]!
-    lastEvaluatedKey: AWSJSON
+    lastEvaluatedKey: String
 }
 
 input QuizInput {

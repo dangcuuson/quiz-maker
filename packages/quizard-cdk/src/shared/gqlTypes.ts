@@ -12,6 +12,24 @@ import { GraphQLResolveInfo, GraphQLScalarType } from 'graphql';
  *          TYPE DEFS          *
  *                             *
  *******************************/
+export type GQLAWSDate = string;
+
+export type GQLAWSTime = string;
+
+export type GQLAWSDateTime = string;
+
+export type GQLAWSTimestamp = number;
+
+export type GQLAWSEmail = string;
+
+export type GQLAWSJSON = string;
+
+export type GQLAWSURL = string;
+
+export type GQLAWSPhone = string;
+
+export type GQLAWSIPAddress = string;
+
 export interface GQLQuiz {
   topic: string;
   title: string;
@@ -31,7 +49,7 @@ export interface GQLQuizQuestionOption {
 
 export interface GQLQuizListResult {
   items: Array<GQLQuiz>;
-  lastEvaluatedKey?: GQLAWSJSON;
+  lastEvaluatedKey?: string;
 }
 
 export interface GQLQuizInput {
@@ -60,34 +78,16 @@ export interface GQLMutation {
   
   /**
    * 
-   * @deprecated No longer supported
+   * @deprecated
    */
   addQuiz: GQLQuiz;
   populateQuizData: number;
   addScore: GQLScore;
 }
 
-export type GQLAWSDate = string;
-
-export type GQLAWSTime = string;
-
-export type GQLAWSDateTime = string;
-
-export type GQLAWSTimestamp = number;
-
-export type GQLAWSEmail = string;
-
-export type GQLAWSJSON = any;
-
-export type GQLAWSPhone = string;
-
-export type GQLAWSURL = string;
-
-export type GQLAWSIPAddress = string;
-
 export interface GQLDDBPagination {
   limit: number;
-  exclusiveStartKey?: GQLAWSJSON;
+  exclusiveStartKey?: string;
 }
 
 export interface GQLKeyValue {
@@ -117,10 +117,12 @@ export interface GQLSKBetweenConditionExpression {
 }
 
 export interface GQLScore {
-  username: GQLAWSEmail;
+  username: string;
   userNickname: string;
   createdAt: GQLAWSDateTime;
   quizCode: string;
+  title: string;
+  topic: string;
   nQuestions: number;
   nCorrect: number;
   percentage: number;
@@ -128,11 +130,13 @@ export interface GQLScore {
 
 export interface GQLScoreListResult {
   items: Array<GQLScore>;
-  lastEvaluatedKey?: GQLAWSJSON;
+  lastEvaluatedKey?: string;
 }
 
 export interface GQLScoreInput {
   quizCode: string;
+  title: string;
+  topic: string;
   nQuestions: number;
   nCorrect: number;
 }
@@ -155,21 +159,21 @@ export interface GQLScoreIndexConfig {
  * However, you can still use other generated interfaces to make your resolver type-safed
  */
 export interface GQLResolver {
-  Quiz?: GQLQuizTypeResolver;
-  QuizQuestion?: GQLQuizQuestionTypeResolver;
-  QuizQuestionOption?: GQLQuizQuestionOptionTypeResolver;
-  QuizListResult?: GQLQuizListResultTypeResolver;
-  Query?: GQLQueryTypeResolver;
-  Mutation?: GQLMutationTypeResolver;
   AWSDate?: GraphQLScalarType;
   AWSTime?: GraphQLScalarType;
   AWSDateTime?: GraphQLScalarType;
   AWSTimestamp?: GraphQLScalarType;
   AWSEmail?: GraphQLScalarType;
   AWSJSON?: GraphQLScalarType;
-  AWSPhone?: GraphQLScalarType;
   AWSURL?: GraphQLScalarType;
+  AWSPhone?: GraphQLScalarType;
   AWSIPAddress?: GraphQLScalarType;
+  Quiz?: GQLQuizTypeResolver;
+  QuizQuestion?: GQLQuizQuestionTypeResolver;
+  QuizQuestionOption?: GQLQuizQuestionOptionTypeResolver;
+  QuizListResult?: GQLQuizListResultTypeResolver;
+  Query?: GQLQueryTypeResolver;
+  Mutation?: GQLMutationTypeResolver;
   Score?: GQLScoreTypeResolver;
   ScoreListResult?: GQLScoreListResultTypeResolver;
 }
@@ -291,6 +295,8 @@ export interface GQLScoreTypeResolver<TParent = any> {
   userNickname?: ScoreToUserNicknameResolver<TParent>;
   createdAt?: ScoreToCreatedAtResolver<TParent>;
   quizCode?: ScoreToQuizCodeResolver<TParent>;
+  title?: ScoreToTitleResolver<TParent>;
+  topic?: ScoreToTopicResolver<TParent>;
   nQuestions?: ScoreToNQuestionsResolver<TParent>;
   nCorrect?: ScoreToNCorrectResolver<TParent>;
   percentage?: ScoreToPercentageResolver<TParent>;
@@ -309,6 +315,14 @@ export interface ScoreToCreatedAtResolver<TParent = any, TResult = any> {
 }
 
 export interface ScoreToQuizCodeResolver<TParent = any, TResult = any> {
+  (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
+}
+
+export interface ScoreToTitleResolver<TParent = any, TResult = any> {
+  (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
+}
+
+export interface ScoreToTopicResolver<TParent = any, TResult = any> {
   (parent: TParent, args: {}, context: any, info: GraphQLResolveInfo): TResult;
 }
 

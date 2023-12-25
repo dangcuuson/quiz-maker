@@ -55,6 +55,7 @@ export const handler: AppSyncResolverHandler<TArgs, TResult> = async (event) => 
 
     const { pkName, skName, IndexName } = getPkSkAndIndex();
 
+    const exclusiveStartKey = event.arguments.pagination?.exclusiveStartKey;
     const queryCommand = new QueryCommand({
         ...buildQueryCommandInput({
             condition: event.arguments.cond,
@@ -65,14 +66,26 @@ export const handler: AppSyncResolverHandler<TArgs, TResult> = async (event) => 
         TableName: env.SCORE_TABLE_NAME,
         Limit: event.arguments.pagination?.limit,
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        ExclusiveStartKey: event.arguments.pagination?.exclusiveStartKey,
+        ExclusiveStartKey: exclusiveStartKey ? JSON.parse(exclusiveStartKey) : undefined,
     });
 
     const result = await db.send(queryCommand);
 
     const dbScores = (result.Items || []) as DBScore[];
     return {
-        items: dbScores,
-        lastEvaluatedKey: result.LastEvaluatedKey,
+        items: dbScores.map((score) => ({
+            ...score,
+            // masking useremail
+            username: score.username
+                .split('@')
+                .map((part) => {
+                    if (part.length === 2) {
+                        return part;
+                    }
+                    return part.slice(0, 1) + '*'.repeat(part.length - 2) + part.slice(-1);
+                })
+                .join('@'),
+        })),
+        lastEvaluatedKey: result.LastEvaluatedKey ? JSON.stringify(result.LastEvaluatedKey) : undefined,
     };
 };

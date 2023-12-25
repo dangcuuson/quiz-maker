@@ -6,6 +6,8 @@ import _ from 'lodash';
 // expected data shape of quiz item that was stored in local storaged
 export type StoredQuiz = {
     quizCode: string;
+    topic: string;
+    title: string;
     questions: StoredQuizQuestion[];
     submitted: boolean;
 };
@@ -16,7 +18,7 @@ type StoredQuizQuestion = Omit<QuizItemQuestionFragment, '__typename'> & {
 const pickQuizQuestions = (quizItem: QuizItemFragment): StoredQuiz => {
     const questions = _.shuffle(quizItem.questions).slice(0, 10);
     return {
-        quizCode: quizItem.quizCode,
+        ...quizItem,
         questions: questions.map((q) => ({
             ...q,
             userSelected: -1,
@@ -42,6 +44,8 @@ export const useStoredQuizReconcilication = (newQuiz: QuizItemFragment) => {
                     const storedJson: unknown = JSON.parse(storedStr);
                     if (
                         !hasStrField(storedJson, 'quizCode') ||
+                        !hasStrField(storedJson, 'topic') ||
+                        !hasStrField(storedJson, 'title') ||
                         !hasObjField(storedJson, 'questions') ||
                         !hasBoolField(storedJson, 'submitted')
                     ) {

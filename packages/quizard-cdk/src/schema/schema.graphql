@@ -14,27 +14,16 @@ type Query {
 
 type Mutation {
   # quiz
-  addQuiz(input: QuizInput!): Quiz! @deprecated
+  addQuiz(input: QuizInput!): Quiz! @deprecated(reason: "")
   populateQuizData: Int!
 
   # score
   addScore(input: ScoreInput!): Score!
 }
 
-# define it again for codegen
-scalar AWSDate
-scalar AWSTime
-scalar AWSDateTime
-scalar AWSTimestamp
-scalar AWSEmail
-scalar AWSJSON
-scalar AWSPhone
-scalar AWSURL
-scalar AWSIPAddress
-
 input DDBPagination {
   limit: Int!
-  exclusiveStartKey: AWSJSON
+  exclusiveStartKey: String
 }
 
 # generic input to help shaping the query command

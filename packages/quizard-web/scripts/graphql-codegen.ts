@@ -15,6 +15,19 @@ const config: CodegenConfig = {
                 // https://github.com/dotansimha/graphql-code-generator/discussions/8859
                 fragmentMasking: false,
             },
+            config: {
+                scalars: {
+                    AWSDate: 'string',
+                    AWSTime: 'string',
+                    AWSDateTime: 'string',
+                    AWSTimestamp: 'number',
+                    AWSEmail: 'string',
+                    AWSJSON: 'string',
+                    AWSPhone: 'string',
+                    AWSURL: 'string',
+                    AWSIPAddress: 'string',
+                },
+            },
         },
     },
     pluckConfig: {
@@ -25,7 +38,7 @@ const config: CodegenConfig = {
                 identifier: 'gql',
             },
         ],
-        gqlMagicComment: ''
+        gqlMagicComment: '',
     },
 };
 

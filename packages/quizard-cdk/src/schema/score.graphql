@@ -1,9 +1,12 @@
 type Score {
-    username: AWSEmail! #pk
+    username: String! #pk
     userNickname: String! # for displaying while user should be masked (because it's email)
     createdAt: AWSDateTime! #sk
 
+    # data copied from quiz
     quizCode: String!
+    title: String!
+    topic: String!
 
     nQuestions: Int!
     nCorrect: Int!
@@ -12,11 +15,13 @@ type Score {
 
 type ScoreListResult {
     items: [Score!]!
-    lastEvaluatedKey: AWSJSON
+    lastEvaluatedKey: String
 }
 
 input ScoreInput {
     quizCode: String!
+    title: String!
+    topic: String!
     
     nQuestions: Int!
     nCorrect: Int!

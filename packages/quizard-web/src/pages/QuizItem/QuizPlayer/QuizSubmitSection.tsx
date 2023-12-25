@@ -42,6 +42,8 @@ const QuizSubmitSection: React.FC<Props> = ({ storedQuiz, onCompleted }) => {
                     variables: {
                         input: {
                             quizCode: storedQuiz.quizCode,
+                            title: storedQuiz.title,
+                            topic: storedQuiz.topic,
                             nQuestions: storedQuiz.questions.length,
                             nCorrect: storedQuiz.questions.filter((q) => {
                                 const selectedOption = maybe(q.options[q.userSelected]);
