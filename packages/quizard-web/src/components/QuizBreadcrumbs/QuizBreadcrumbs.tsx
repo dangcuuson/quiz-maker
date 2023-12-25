@@ -7,11 +7,10 @@ import { useLocation } from 'react-router-dom';
 const QuizBreadcrumbs: React.FC = () => {
     const { pathname } = useLocation();
     
-    const baseUrl = import.meta.env.BASE_URL;
-    const uriComponents = pathname.replace(baseUrl, '').split('/').filter((v) => !!v);
+    const uriComponents = pathname.split('/').filter((v) => !!v);
     const breadcrumbsConfig = uriComponents.map((uri, index) => {
         const label = decodeURIComponent(uri);
-        const pathname = baseUrl + uriComponents.slice(0, index + 1).join('/');
+        const pathname = uriComponents.slice(0, index + 1).join('/');
         return { label, pathname };
     });
     return (

@@ -38,7 +38,7 @@ const App: React.FC<Props> = () => {
         <LightDarkContextThemeProvider>
             <ApolloCognitoProvider>
                 <ApolloMutationResultMessagePopup />
-                <BrowserRouter>
+                <BrowserRouter basename={import.meta.env.BASE_URL}>
                     <MainLayout>
                         <Routes>{renderRoutes(routeConfigs)}</Routes>
                     </MainLayout>
