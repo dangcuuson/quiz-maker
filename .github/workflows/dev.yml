@@ -29,8 +29,7 @@ jobs:
                   cache: 'npm'
 
             - name: Install 🔧
-              run: |
-                  npm install
+              run: npm install
 
             - name: QC 🏗️
               run: |
@@ -39,6 +38,7 @@ jobs:
                   npm run tsc
 
     deploy:
+        needs: QC
         runs-on: ubuntu-latest
         environment:
             name: deploy-staging # TODO change env name later
