@@ -10,7 +10,8 @@
         "build-gql:watch": "npm run build-gql -- --watch",
         "build-env": "ts-node -P ../../tsconfig.node.json ./scripts/buildEnv.ts",
         "predev": "npm run build-env && npm run build-gql",
-        "dev": "vite --port 8000"
+        "dev": "vite --port 8000",
+        "vite": "vite"
     },
     "devDependencies": {
         "@parcel/watcher": "2.3.0",

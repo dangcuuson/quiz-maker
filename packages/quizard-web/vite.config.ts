@@ -9,6 +9,10 @@ export default defineConfig({
     envDir: path.resolve('./'),
     build: {
         rollupOptions: {
+            input: {
+                'main': 'index.html',
+                '404': '404.html',
+            },
             output: {
                 manualChunks: {
                     lodash: ['lodash'],
@@ -17,7 +21,7 @@ export default defineConfig({
                     'aws-amplify-ui-react': ['@aws-amplify/ui-react'],
                     'styled-components': ['styled-components'],
                     'react-router': ['react-router', 'react-router-dom'],
-                    'apollo-client': ['@apollo/client']
+                    'apollo-client': ['@apollo/client'],
                 },
             },
         },
