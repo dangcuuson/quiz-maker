@@ -29,16 +29,16 @@ jobs:
                   cache: 'npm'
 
             - name: Install 🔧
-              run: npm install
+              run: |
+                  npm install
+                  npm run build-gql
 
             - name: QC 🏗️
               run: |
-                  npm run build-gql
                   npm run lint
                   npm run tsc
 
     deploy:
-        needs: QC
         runs-on: ubuntu-latest
         environment:
             name: deploy-staging # TODO change env name later
@@ -57,7 +57,10 @@ jobs:
                   cache: 'npm'
 
             - name: Install 🔧
-              run: npm install
+              run: |
+                  npm install
+                  npm run build-gql
+
             - name: Set up AWS CLI
               uses: aws-actions/configure-aws-credentials@v4
               with:
