@@ -21,7 +21,9 @@ jobs:
                   cache: 'npm'
 
             - name: Install 🔧
-              run: npm install
+              run: |
+                  npm install
+                  npm run build-gql
 
             - name: Configure AWS Credentials
               uses: aws-actions/configure-aws-credentials@v4
