@@ -1,6 +1,5 @@
 import { Alert, Button, Collection } from '@aws-amplify/ui-react';
 import ApolloQueryWrapper from '@components/ApolloWrapper/ApolloQueryWrapper';
-import { useSetBreadcrumbsOnMount } from '@components/QuizBreadcrumbs/QuizBreadcrumbs';
 import { QuizCard, QuizCardContent, QuizCardText } from '@components/QuizCard/QuizCard';
 import { gql } from '@gql/gql';
 import { QuizListItemFragment } from '@gql/graphql';
@@ -35,14 +34,13 @@ const TopicItemPage: React.FC<Props> = () => {
     return (
         <ApolloQueryWrapper query={quizListQuery} variables={{ topic }}>
             {({ data }) => {
-                return <TopicItemPageInner quizList={data.quizList.items} topic={topic} />;
+                return <TopicItemPageInner quizList={data.quizList.items} />;
             }}
         </ApolloQueryWrapper>
     );
 };
 
-const TopicItemPageInner: React.FC<{ quizList: QuizListItemFragment[]; topic: string }> = ({ quizList, topic }) => {
-    useSetBreadcrumbsOnMount({ type: 'topic', topic });
+const TopicItemPageInner: React.FC<{ quizList: QuizListItemFragment[] }> = ({ quizList }) => {
     const sortedQuizList = React.useMemo(() => {
         return _.reverse(_.sortBy(quizList, (q) => q.title));
     }, [quizList]);

@@ -1,8 +1,6 @@
 import { Alert } from '@aws-amplify/ui-react';
 import ApolloQueryWrapper from '@components/ApolloWrapper/ApolloQueryWrapper';
-import { useSetBreadcrumbsOnMount } from '@components/QuizBreadcrumbs/QuizBreadcrumbs';
 import { gql } from '@gql/gql';
-import { QuizItemFragment } from '@gql/graphql';
 import React from 'react';
 import { useParams } from 'react-router';
 import QuizPlayer from './QuizPlayer/QuizPlayer';
@@ -59,22 +57,10 @@ const QuizItemPage: React.FC<Props> = () => {
                 if (!quizItem) {
                     return <Alert variation="error" hasIcon={true} heading="Unable to find quiz item" />;
                 }
-                return <QuizItemPageInner quizItem={quizItem} />;
+                return <QuizPlayer quizItem={quizItem} />
             }}
         </ApolloQueryWrapper>
     );
-};
-
-interface InnerProps {
-    quizItem: QuizItemFragment;
-}
-const QuizItemPageInner: React.FC<InnerProps> = ({ quizItem }) => {
-    useSetBreadcrumbsOnMount({
-        type: 'quiz',
-        title: quizItem.title,
-        topic: quizItem.topic
-    });
-    return <QuizPlayer quizItem={quizItem} />;
 };
 
 export default QuizItemPage;
