@@ -10,10 +10,10 @@
   "license": "MIT",
   "scripts": {
     "reset-modules": "rm -rf node_modules/ packages/*/node_modules",
-    "test-all": "lerna run test --stream --scope quizard-web",
-    "typecheck": "tsc",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "build-gql": "lerna run build-gql --stream --scope quizard-web --scope quizard-cdk"
+    "test": "lerna run test",
+    "tsc": "lerna run tsc",
+    "lint": "lerna run lint",
+    "build-gql": "lerna run build-gql --scope quizard-web --scope quizard-cdk"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "5.0.0",

@@ -4,7 +4,6 @@ import { LambdaEnv } from '/opt/types';
 import { DBQuiz, DBQuizKeys } from '/opt/models/models';
 import { buildQueryCommandInput, getDDBDocClient } from '/opt/utils';
 import { QueryCommand } from '@aws-sdk/lib-dynamodb';
-import _ from 'lodash';
 
 type TResult = GQLQuery['quizList'];
 type TArgs = QueryToQuizListArgs;

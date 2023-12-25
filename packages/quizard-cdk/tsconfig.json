@@ -8,5 +8,10 @@
                 "src/shared/*"
             ]
         }
-    }
+    },
+    "include": [
+        "src",
+        "scripts",
+        "../../globalTypes.d.ts"
+    ]
 }

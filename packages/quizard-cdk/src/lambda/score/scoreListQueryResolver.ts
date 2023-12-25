@@ -72,7 +72,7 @@ export const handler: AppSyncResolverHandler<TArgs, TResult> = async (event) => 
 
     const dbScores = (result.Items || []) as DBScore[];
     return {
-        scores: dbScores,
+        items: dbScores,
         lastEvaluatedKey: result.LastEvaluatedKey,
     };
 };
