@@ -9,13 +9,16 @@ import _ from 'lodash';
 import QuizPlayer from './QuizPlayer/QuizPlayer';
 
 const quizItemQuery = gql(/* GraphQL */ `
-    query quizItem($quizId: ID!) {
-        quizItem(quizId: $quizId) {
-            ...QuizItem
+    query quizItem($topic: String!, $title: String!) {
+        quizList(cond: { pk: { string: $topic }, sk: { eq: { string: $title } } }, pagination: { limit: 1 }) {
+            items {
+                ...QuizItem
+            }
+            lastEvaluatedKey
         }
     }
     fragment QuizItem on Quiz {
-        quizId
+        quizCode
         topic
         title
         questions {
@@ -35,33 +38,41 @@ const quizItemQuery = gql(/* GraphQL */ `
 `);
 
 const QuizItemPage: React.FC<{}> = () => {
-    const { quizId } = useParams();
-    if (!quizId) {
-        return <Alert variation="error" hasIcon={true} heading="Missing quizId" />;
+    const { topic, title } = useParams();
+    if (!topic) {
+        return <Alert variation="error" hasIcon={true} heading="Missing topic" />;
+    }
+    if (!title) {
+        return <Alert variation="error" hasIcon={true} heading="Missing title" />;
     }
 
     return (
         <ApolloQueryWrapper
             query={quizItemQuery}
             variables={{
-                quizId,
+                topic,
+                title,
             }}
         >
-            {({ data }) => <QuizItemPageInner quizId={quizId} quizItem={data.quizItem} />}
+            {({ data }) => {
+                const quizItem = data.quizList.items[0];
+                if (!quizItem) {
+                    return <Alert variation="error" hasIcon={true} heading="Unable to find quiz item" />;
+                }
+                return <QuizItemPageInner quizItem={quizItem} />;
+            }}
         </ApolloQueryWrapper>
     );
 };
 
 interface InnerProps {
-    quizId: string;
     quizItem: QuizItemFragment;
 }
-const QuizItemPageInner: React.FC<InnerProps> = ({ quizId, quizItem }) => {
+const QuizItemPageInner: React.FC<InnerProps> = ({ quizItem }) => {
     useSetBreadcrumbsOnMount({
         type: 'quiz',
-        quizId,
-        quizTitle: quizItem.title,
-        topic: quizItem.topic,
+        title: quizItem.title,
+        topic: quizItem.topic
     });
     return <QuizPlayer quizItem={quizItem} />;
 };

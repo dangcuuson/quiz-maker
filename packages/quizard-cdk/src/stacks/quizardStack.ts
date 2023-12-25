@@ -5,12 +5,12 @@ import * as cognito from 'aws-cdk-lib/aws-cognito';
 import { CDKContext } from '../shared/types';
 import { Construct } from 'constructs';
 import { combineGraphqlFilesIntoSchema, buildResolvers, asType } from './stacksHelper';
-import { DBQuizKeys, Quiz_distinctTopic_GSI, Quiz_topic_GSI } from '../shared/models/models';
+import { DBQuizKeys, Quiz_distinctTopic_GSI } from '../shared/models/models';
 import {
     DBScoreKeys,
-    Score_quizId_createdAt_GSI,
-    Score_quizId_percentage_GSI,
-    Score_user_quizId_LSI,
+    Score_user_quizCode_LSI,
+    Score_quizCode_createdAt_GSI,
+    Score_quizCode_percentage_GSI
 } from '../shared/models/models';
 
 export class QuizardStack extends Stack {
@@ -27,18 +27,14 @@ export class QuizardStack extends Stack {
         const quizTable = new ddb.Table(this, 'quizTable', {
             tableName: quizTableName,
             billingMode: ddb.BillingMode.PAY_PER_REQUEST,
-            partitionKey: { name: DBQuizKeys.quizId, type: ddb.AttributeType.STRING },
+            partitionKey: { name: DBQuizKeys.topic, type: ddb.AttributeType.STRING },
+            sortKey: { name: DBQuizKeys.title, type: ddb.AttributeType.STRING },
             removalPolicy,
         });
         quizTable.addGlobalSecondaryIndex({
             indexName: Quiz_distinctTopic_GSI,
             partitionKey: { name: DBQuizKeys.dTopic, type: ddb.AttributeType.STRING },
             projectionType: ddb.ProjectionType.KEYS_ONLY,
-        });
-        quizTable.addGlobalSecondaryIndex({
-            indexName: Quiz_topic_GSI,
-            partitionKey: { name: DBQuizKeys.topic, type: ddb.AttributeType.STRING },
-            projectionType: ddb.ProjectionType.ALL,
         });
 
         // score
@@ -50,23 +46,24 @@ export class QuizardStack extends Stack {
             sortKey: { name: DBScoreKeys.createdAt, type: ddb.AttributeType.STRING },
             removalPolicy,
         });
+        scoreTable.addLocalSecondaryIndex({
+            indexName: Score_user_quizCode_LSI,
+            sortKey: { name: DBScoreKeys.quizCode, type: ddb.AttributeType.STRING },
+            projectionType: ddb.ProjectionType.ALL,
+        });
         scoreTable.addGlobalSecondaryIndex({
-            indexName: Score_quizId_createdAt_GSI,
-            partitionKey: { name: DBScoreKeys.quizId, type: ddb.AttributeType.STRING },
+            indexName: Score_quizCode_createdAt_GSI,
+            partitionKey: { name: DBScoreKeys.quizCode, type: ddb.AttributeType.STRING },
             sortKey: { name: DBScoreKeys.createdAt, type: ddb.AttributeType.STRING },
             projectionType: ddb.ProjectionType.ALL,
         });
         scoreTable.addGlobalSecondaryIndex({
-            indexName: Score_quizId_percentage_GSI,
-            partitionKey: { name: DBScoreKeys.quizId, type: ddb.AttributeType.STRING },
+            indexName: Score_quizCode_percentage_GSI,
+            partitionKey: { name: DBScoreKeys.quizCode, type: ddb.AttributeType.STRING },
             sortKey: { name: DBScoreKeys.percentage, type: ddb.AttributeType.NUMBER },
             projectionType: ddb.ProjectionType.ALL,
         });
-        scoreTable.addLocalSecondaryIndex({
-            indexName: Score_user_quizId_LSI,
-            sortKey: { name: DBScoreKeys.quizId, type: ddb.AttributeType.STRING },
-            projectionType: ddb.ProjectionType.ALL,
-        });
+        
 
         // Cognito
         const verifyCodeBody = 'Thank you for signing up to Quizard! Your verification code is {####}';

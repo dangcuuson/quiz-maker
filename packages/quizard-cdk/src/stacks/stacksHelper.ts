@@ -8,8 +8,7 @@ import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as appsync from 'aws-cdk-lib/aws-appsync';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { LambdaEnv } from '../shared/types';
-import { DBQuizKeys, Quiz_topic_GSI } from '../shared/models/models';
-import { GQLQuiz, GQLResolver, QueryToQuizItemArgs } from '../shared/gqlTypes';
+import { GQLResolver } from '../shared/gqlTypes';
 
 // quickly define a value in a type-safed way
 export function asType<T>(value: T): T {
@@ -65,16 +64,16 @@ const setupLambda = (args: BuildResolversArgs): { lambdaRole: iam.Role; lambdaLa
                         'logs:CreateLogStream',
                         'logs:DescribeLogGroups',
                         'logs:DescribeLogStreams',
-                        'logs:PutLogEvents'
+                        'logs:PutLogEvents',
                     ],
                 }),
                 new iam.PolicyStatement({
                     effect: iam.Effect.ALLOW,
-                    resources: [`arn:aws:cognito-idp:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:userpool/${userPool.userPoolId}`],
-                    actions: [
-                        'cognito-idp:AdminGetUser'
+                    resources: [
+                        `arn:aws:cognito-idp:${cdk.Aws.REGION}:${cdk.Aws.ACCOUNT_ID}:userpool/${userPool.userPoolId}`,
                     ],
-                })
+                    actions: ['cognito-idp:AdminGetUser'],
+                }),
             ],
         }),
     );
@@ -96,29 +95,26 @@ type BuildResolversArgs = {
     contextId: string;
     quizTable: ddb.Table;
     scoreTable: ddb.Table;
-    userPool: cognito.UserPool
+    userPool: cognito.UserPool;
 };
 
 export const buildResolvers = (buildArgs: BuildResolversArgs) => {
     /**
      * Type helpers to register datasource resolver in a declarative way
      */
-    type LambdaConfig2 = {
+    type LambdaConfig = {
         type: 'lambda';
         fileName: string;
         timeout?: cdk.Duration;
     };
 
-    type DDBConfig2 = {
+    type DDBConfig = {
         type: 'ddb';
         requestMappingTemplate?: appsync.MappingTemplate;
         responseMappingTemplate?: appsync.MappingTemplate;
     };
 
-    type ResolverMap<TypeName extends keyof GQLResolver, Type = GQLResolver[TypeName]> = {
-        [FieldName in keyof Type]: LambdaConfig2 | DDBConfig2;
-    };
-
+    type ResolverMap<TypeName extends keyof GQLResolver, Type = GQLResolver[TypeName]> = Record<keyof Type, LambdaConfig | DDBConfig>;
     // StrictResolversMap ensures all fields must have a defined resolver
     type StrictResolversMap<TypeName extends keyof GQLResolver> = Required<ResolverMap<TypeName>>;
 
@@ -126,30 +122,15 @@ export const buildResolvers = (buildArgs: BuildResolversArgs) => {
      * Here we declare how we want to map graphql resolver datasources
      */
     const QueryTypeResolverMap: StrictResolversMap<'Query'> = {
-        // quiz + topic
-        quizItem: {
-            type: 'ddb',
-            requestMappingTemplate: appsync.MappingTemplate.dynamoDbGetItem(
-                DBQuizKeys.quizId,
-                asType<keyof QueryToQuizItemArgs>('quizId'),
-            ),
-            responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultItem(),
-        },
-        quizList: {
-            type: 'ddb',
-            requestMappingTemplate: appsync.MappingTemplate.dynamoDbQuery(
-                appsync.KeyCondition.eq(DBQuizKeys.topic, asType<keyof GQLQuiz>('topic')),
-                Quiz_topic_GSI,
-            ),
-            responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultList(),
-        },
+        // quiz
+        quizList: { type: 'lambda', fileName: 'quiz/quizListQueryResolver.ts' },
         topicList: { type: 'lambda', fileName: 'quiz/topicListQueryResolver.ts' },
 
         // score
         scoreList: { type: 'lambda', fileName: 'score/scoreListQueryResolver.ts' },
     };
     const MutationTypeResolverMap: StrictResolversMap<'Mutation'> = {
-        // quiz + topic
+        // quiz
         addQuiz: { type: 'lambda', fileName: 'quiz/addQuizMutationResolver.ts' },
         populateQuizData: {
             type: 'lambda',
@@ -172,14 +153,14 @@ export const buildResolvers = (buildArgs: BuildResolversArgs) => {
         resolverMap: ResolverMap<TypeName>,
     ) {
         const { rootStack, graphqlApi, contextId, quizTable, scoreTable, userPool } = buildArgs;
-        const registerLambdaDatasource = (fieldName: string, config: LambdaConfig2) => {
+        const registerLambdaDatasource = (fieldName: string, config: LambdaConfig) => {
             // define lambda function
             const { fileName, timeout } = config;
             const functionName = `${contextId}-${typeName}-${fieldName.toString()}`;
             const environment: LambdaEnv = {
                 QUIZ_TABLE_NAME: quizTable.tableName,
                 SCORE_TABLE_NAME: scoreTable.tableName,
-                USER_POOL_ID: userPool.userPoolId
+                USER_POOL_ID: userPool.userPoolId,
             };
             const lambdaFunction = new NodejsFunction(rootStack, `${typeName}-${fieldName}-lambda`, {
                 functionName,
@@ -200,7 +181,7 @@ export const buildResolvers = (buildArgs: BuildResolversArgs) => {
                 });
         };
 
-        const registerDDBDatasource = (fieldName: string, config: DDBConfig2) => {
+        const registerDDBDatasource = (fieldName: string, config: DDBConfig) => {
             const { requestMappingTemplate, responseMappingTemplate } = config;
             graphqlApi
                 .addDynamoDbDataSource(`${typeName}-${fieldName}-DS`, quizTable)

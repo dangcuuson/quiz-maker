@@ -1,7 +1,9 @@
 type Quiz {
-  quizId: ID!
-  topic: String!
-  title: String!
+  topic: String! #pk
+  title: String! #sk
+
+  # concatiate topic + title
+  quizCode: String!
   questions: [QuizQuestion!]!
 }
 
@@ -13,6 +15,11 @@ type QuizQuestion {
 type QuizQuestionOption {
   optionText: String!
   isCorrect: Boolean!
+}
+
+type QuizListResult {
+    items: [Quiz!]!
+    lastEvaluatedKey: AWSJSON
 }
 
 input QuizInput {

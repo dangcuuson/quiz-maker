@@ -11,13 +11,16 @@ import { useNavigate, useParams } from 'react-router';
 
 const quizListQuery = gql(/* GraphQL */ `
     query quizList($topic: String!) {
-        quizList(topic: $topic) {
-            ...QuizListItem
+        quizList(cond: { pk: { string: $topic } }) {
+            items {
+                ...QuizListItem
+            }
         }
     }
 
     fragment QuizListItem on Quiz {
-        quizId
+        quizCode
+        topic
         title
     }
 `);
@@ -31,7 +34,7 @@ const TopicItemPage: React.FC<{}> = () => {
     return (
         <ApolloQueryWrapper query={quizListQuery} variables={{ topic }}>
             {({ data }) => {
-                return <TopicItemPageInner quizList={data.quizList} topic={topic} />;
+                return <TopicItemPageInner quizList={data.quizList.items} topic={topic} />;
             }}
         </ApolloQueryWrapper>
     );
@@ -49,9 +52,9 @@ const TopicItemPageInner: React.FC<{ quizList: QuizListItemFragment[]; topic: st
                 {(quizItem) => {
                     return (
                         <QuizCard
-                            key={quizItem.quizId}
+                            key={quizItem.quizCode}
                             onClick={() => {
-                                navigate({ pathname: routeConfigs.quizItem.getPath(quizItem.quizId) });
+                                navigate({ pathname: routeConfigs.quizItem.getPath(quizItem.topic, quizItem.title) });
                             }}
                         >
                             <QuizCardContent>
@@ -60,7 +63,7 @@ const TopicItemPageInner: React.FC<{ quizList: QuizListItemFragment[]; topic: st
                                     variation="link"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        navigate({ pathname: routeConfigs.scores.getPath(quizItem.quizId) });
+                                        navigate({ pathname: routeConfigs.scores.getPath(quizItem.quizCode) });
                                     }}
                                 >
                                     View scores

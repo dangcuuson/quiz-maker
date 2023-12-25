@@ -41,7 +41,7 @@ const QuizSubmitSection: React.FC<Props> = ({ storedQuiz, onCompleted }) => {
                 const result = await addScore({
                     variables: {
                         input: {
-                            quizId: storedQuiz.quizId,
+                            quizCode: storedQuiz.quizCode,
                             nQuestions: storedQuiz.questions.length,
                             nCorrect: storedQuiz.questions.filter((q) => {
                                 const selectedOption = maybe(q.options[q.userSelected]);
@@ -82,7 +82,7 @@ const QuizSubmitSection: React.FC<Props> = ({ storedQuiz, onCompleted }) => {
                 variation="primary"
                 onClick={() =>
                     navigate({
-                        pathname: routeConfigs.scores.getPath(storedQuiz.quizId),
+                        pathname: routeConfigs.scores.getPath(storedQuiz.quizCode),
                     })
                 }
             >

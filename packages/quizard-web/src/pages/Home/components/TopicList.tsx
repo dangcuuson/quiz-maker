@@ -11,7 +11,7 @@ const TopicList: React.FC<Props> = ({ topicList }) => {
     const navigate = useNavigate();
     const selectTopic = (topic: string) => {
         navigate({
-            pathname: routeConfigs.topicItem.getPath(topic),
+            pathname: routeConfigs.quizList.getPath(topic),
         });
     };
     return (

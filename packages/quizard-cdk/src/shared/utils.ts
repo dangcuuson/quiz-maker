@@ -1,5 +1,11 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { BatchWriteCommand, BatchWriteCommandInput, DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
+import {
+    BatchWriteCommand,
+    BatchWriteCommandInput,
+    DynamoDBDocumentClient,
+    QueryCommandInput,
+} from '@aws-sdk/lib-dynamodb';
+import { GQLKeyConditionExpression } from './gqlTypes';
 
 // Get Document Client
 export const getDDBDocClient = (): DynamoDBDocumentClient => {
@@ -46,4 +52,96 @@ export const batchWriteInChunks = async (args: {
     });
 
     await Promise.all(writePromises);
+};
+
+/**
+ * e.g: type A = { field1?: number, field2?: string, field3?: boolean };
+ * this function will make sure that exactly one field in the type is defined
+ * @returns the defined key and value
+ */
+export function getExactOneDefinedField<T extends object, K extends keyof T>(
+    input: T,
+    inputName: string,
+): {
+    key: K;
+    value: NonNullable<T[K]>;
+} {
+    const keys = Object.keys(input) as K[];
+    if (keys.length !== 1) {
+        throw Error(`Expect input: ${inputName} to have one field, received: ${keys.length}`);
+    }
+    const definedField = keys[0];
+    const definedValue = input[definedField];
+    if (definedValue === null || definedValue === undefined) {
+        throw Error(`Input: ${inputName} has defined field ${definedField.toString()} but its value is undefined`);
+    }
+    return {
+        key: definedField,
+        value: definedValue,
+    };
+}
+
+export const buildQueryCommandInput = (args:{
+    condition: GQLKeyConditionExpression,
+    pkName: string,
+    skName: string | null,
+}): Pick<QueryCommandInput, 'KeyConditionExpression' | 'ExpressionAttributeNames' | 'ExpressionAttributeValues'> => {
+    const { condition, pkName, skName  } = args;
+    const { pk, sk } = condition;
+    let conditionExpr: string = `#pk = :pk`;
+    const attributeNames: Record<string, string> = {
+        '#pk': pkName,
+    };
+    const attributeValues: QueryCommandInput['ExpressionAttributeValues'] = {
+        ':pk': getExactOneDefinedField(pk, 'pk').value,
+    };
+    if (sk) {
+        if (!skName) {
+            throw Error(`Unable to build QueryCommand: missing skName`);
+        }
+        attributeNames['#sk'] = skName;
+
+        const skExpr = getExactOneDefinedField(sk, 'sk');
+        const buildSKCondExpr = (): string => {
+            switch (skExpr.key) {
+                case 'eq': {
+                    attributeValues[':sk'] = getExactOneDefinedField(skExpr.value, 'sk.eq').value;
+                    return '#sk = :sk';
+                }
+                case 'lt': {
+                    attributeValues[':sk'] = getExactOneDefinedField(skExpr.value, 'sk.lt').value;
+                    return '#sk < :sk';
+                }
+                case 'lte': {
+                    attributeValues[':sk'] = getExactOneDefinedField(skExpr.value, 'sk.lte').value;
+                    return '#sk <= :sk';
+                }
+                case 'gt': {
+                    attributeValues[':sk'] = getExactOneDefinedField(skExpr.value, 'sk.gt').value;
+                    return '#sk > :sk';
+                }
+                case 'gte': {
+                    attributeValues[':sk'] = getExactOneDefinedField(skExpr.value, 'sk.gte').value;
+                    return '#sk >= :sk';
+                }
+                case 'beginsWith': {
+                    attributeValues[':sk'] = getExactOneDefinedField(skExpr.value, 'sk.beginsWith').value;
+                    return 'begins_with(#sk, :sk)';
+                }
+                case 'between': {
+                    const skValue = sk[skExpr.key]!;
+                    attributeValues[':sk1'] = getExactOneDefinedField(skValue.from, 'sk.between.from').value;
+                    attributeValues[':sk2'] = getExactOneDefinedField(skValue.to, 'sk.between.to').value;
+                    return '#sk BETWEEN :sk1 AND :sk2';
+                }
+            }
+        };
+        conditionExpr += ` AND ${buildSKCondExpr()}`;
+    }
+
+    return {
+        KeyConditionExpression: conditionExpr,
+        ExpressionAttributeNames: attributeNames,
+        ExpressionAttributeValues: attributeValues,
+    };
 };

@@ -1,6 +1,6 @@
 import { DBQuiz } from '/opt/models/models';
 
-export const HSCQuizzes: Omit<DBQuiz, 'quizId'>[] = [
+export const HSCQuizzes: Omit<DBQuiz, 'quizCode'>[] = [
     {
         topic: 'Business Studies',
         title: 'HSC Examination 2010',

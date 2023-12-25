@@ -32,11 +32,9 @@ export const handler: AppSyncResolverHandler<TArgs, TResult> = async (event) => 
 
     const db = getDDBDocClient();
     const dbScore: DBScore = {
+        ...input,
         createdAt: new Date().toISOString(),
-        nCorrect: input.nCorrect,
-        nQuestions: input.nQuestions,
         percentage: +((input.nCorrect / input.nQuestions) * 100).toFixed(2),
-        quizId: input.quizId,
         username,
         userNickname: nickname,
     };

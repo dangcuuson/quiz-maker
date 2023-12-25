@@ -17,14 +17,13 @@ export type DBQuiz = GQLQuiz & {
     dTopic?: string;
 }
 export const Quiz_distinctTopic_GSI = 'distinct_topic_gsi';
-export const Quiz_topic_GSI = 'topic_gsi';
 
 export const DBQuizKeys: KeyedObj<DBQuiz> = {
+    topic: 'topic',
+    title: 'title',
     dTopic: 'dTopic',
     questions:  'questions',
-    quizId: 'quizId',
-    title: 'title',
-    topic: 'topic'
+    quizCode: 'quizCode',
 }
 //#endregion
 
@@ -36,15 +35,14 @@ export const DBScoreKeys: KeyedObj<DBScore> = {
     nCorrect: 'nCorrect',
     nQuestions: 'nQuestions',
     percentage: 'percentage',
-    quizId: 'quizId',
+    quizCode: 'quizCode',
     username: 'username',
-    userNickname: 'userNickname'
+    userNickname: 'userNickname',
+    title: 'title',
+    topic: 'topic'
 }
-// query list of scores of a quiz sorted by time
-export const Score_quizId_createdAt_GSI = 'quizId_createdAt_gsi';
-// query list of scores of a quiz sorted performance
-export const Score_quizId_percentage_GSI = 'quizId_percentage_gsi'
-// query list of scores of a user on a certain quiz
-export const Score_user_quizId_LSI = 'user_quizId_lsi';
+export const Score_quizCode_createdAt_GSI = 'quizCode_createdAt_gsi';
+export const Score_quizCode_percentage_GSI = 'quizCode_percentage_gsi'
+export const Score_user_quizCode_LSI = 'user_quizCode_lsi';
 
 //#endregion

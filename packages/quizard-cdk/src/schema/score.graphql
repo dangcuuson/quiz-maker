@@ -3,30 +3,29 @@ type Score {
     userNickname: String! # for displaying while user should be masked (because it's email)
     createdAt: AWSDateTime! #sk
 
-    quizId: String!
+    quizCode: String!
+
     nQuestions: Int!
     nCorrect: Int!
     percentage: Float!
 }
 
 type ScoreListResult {
-    scores: [Score!]!
+    items: [Score!]!
     lastEvaluatedKey: AWSJSON
 }
 
 input ScoreInput {
-    quizId: String!
+    quizCode: String!
+    
     nQuestions: Int!
     nCorrect: Int!
 }
 
-# exactly one of these flags must be raised
-input ScoreListIndexSelector {
-    quizId_createdAt: Boolean
-    quizId_percentage: Boolean
+input ScoreIndexConfig {
+    # exactly one of these flags must be raised
+    quizCode_createdAt: Boolean
+    quizCode_percentage: Boolean
     user_createdAt: Boolean
-    user_quizId: Boolean
-
-    # defined when quizId_* flag is raised
-    quizId: String
+    user_quizCode: Boolean
 }

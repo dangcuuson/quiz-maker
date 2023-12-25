@@ -14,7 +14,7 @@ generateTypeScriptTypes(
             AWSDateTime: 'string',
             AWSTimestamp: 'number',
             AWSEmail: 'string',
-            AWSJSON: 'unknown',
+            AWSJSON: 'any',
             AWSPhone: 'string',
             AWSURL: 'string',
             AWSIPAddress: 'string'

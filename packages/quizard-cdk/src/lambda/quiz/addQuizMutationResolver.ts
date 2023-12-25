@@ -15,7 +15,7 @@ export const handler: AppSyncResolverHandler<TArgs, TResult> = async (event) => 
     const db = getDDBDocClient();
 
     const dbQuiz: DBQuiz = {
-        quizId: `${input.topic}#${input.title}`,
+        quizCode: `${input.topic}#${input.title}`,
         ...event.arguments.input,
     };
 
@@ -24,7 +24,10 @@ export const handler: AppSyncResolverHandler<TArgs, TResult> = async (event) => 
             new QueryCommand({
                 TableName: env.QUIZ_TABLE_NAME,
                 IndexName: Quiz_distinctTopic_GSI,
-                KeyConditionExpression: `${DBQuizKeys.dTopic} = :topic`,
+                KeyConditionExpression: `#pk = :topic`,
+                ExpressionAttributeNames: {
+                    '#pk': DBQuizKeys.dTopic
+                },
                 ExpressionAttributeValues: {
                     ':topic': input.topic,
                 },

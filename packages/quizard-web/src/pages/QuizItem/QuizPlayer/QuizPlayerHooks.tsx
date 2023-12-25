@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 // expected data shape of quiz item that was stored in local storaged
 export type StoredQuiz = {
-    quizId: string;
+    quizCode: string;
     questions: StoredQuizQuestion[];
     submitted: boolean;
 };
@@ -16,7 +16,7 @@ type StoredQuizQuestion = Omit<QuizItemQuestionFragment, '__typename'> & {
 const pickQuizQuestions = (quizItem: QuizItemFragment): StoredQuiz => {
     const questions = _.shuffle(quizItem.questions).slice(0, 10);
     return {
-        quizId: quizItem.quizId,
+        quizCode: quizItem.quizCode,
         questions: questions.map((q) => ({
             ...q,
             userSelected: -1,
@@ -27,7 +27,7 @@ const pickQuizQuestions = (quizItem: QuizItemFragment): StoredQuiz => {
 
 /**
  * Look for stored data in local storage and try to restore it into `StoredQuiz`
- * If stored quizId is different than newQuizId => always discard stored data
+ * If stored quizCode is different than newQuizCode => always discard stored data
  * If we cannot restore local storage data => use new data (it will be saved back into local storage later)
  */
 export const useStoredQuizReconcilication = (newQuiz: QuizItemFragment) => {
@@ -41,13 +41,13 @@ export const useStoredQuizReconcilication = (newQuiz: QuizItemFragment) => {
                     }
                     const storedJson: unknown = JSON.parse(storedStr);
                     if (
-                        !hasStrField(storedJson, 'quizId') ||
+                        !hasStrField(storedJson, 'quizCode') ||
                         !hasObjField(storedJson, 'questions') ||
                         !hasBoolField(storedJson, 'submitted')
                     ) {
                         return null;
                     }
-                    if (storedJson.quizId !== newQuiz.quizId) {
+                    if (storedJson.quizCode !== newQuiz.quizCode) {
                         return null;
                     }
                     if (storedJson.submitted) {

@@ -7,8 +7,9 @@ import { ScanCommand } from '@aws-sdk/lib-dynamodb';
 import _ from 'lodash';
 
 type TResult = GQLQuery['topicList'];
+type TArgs = never;
 
-export const handler: AppSyncResolverHandler<unknown, TResult> = async () => {
+export const handler: AppSyncResolverHandler<TArgs, TResult> = async () => {
     const env = process.env as LambdaEnv;
 
     const db = getDDBDocClient();

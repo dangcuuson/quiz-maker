@@ -3,7 +3,7 @@ import React from 'react';
 import { RouteProps } from 'react-router-dom';
 
 const HomePage = React.lazy(() => import('@pages/Home/HomePage'));
-const TopicItemPage = React.lazy(() => import('@pages/TopicItem/TopicItemPage'));
+const QuizList = React.lazy(() => import('@pages/QuizList/QuizListPage'));
 const QuizItemPage = React.lazy(() => import('@pages/QuizItem/QuizItemPage'));
 const ScoresPage = React.lazy(() => import('@pages/Scores/ScoresPages'));
 
@@ -22,16 +22,16 @@ export const routeConfigs = {
         getPath: () => '/',
         props: { path: '/', element: <HomePage /> }
     }),
-    topicItem: createRouteItemConfig({
-        getPath: (topic: string) => `/topic/${decodeURIComponent(topic)}`,
-        props: { path: '/topic/:topic', element: <TopicItemPage /> }
+    quizList: createRouteItemConfig({
+        getPath: (topic: string) => `/${decodeURIComponent(topic)}`,
+        props: { path: '/:topic', element: <QuizList /> }
     }),
     quizItem: createRouteItemConfig({
-        getPath: (quizId: string) => `/quiz/${encodeURIComponent(quizId)}`,
-        props: { path: '/quiz/:quizId', element: <QuizItemPage /> }
+        getPath: (topic: string, title: string) => `/${encodeURIComponent(topic)}/${encodeURIComponent(title)}`,
+        props: { path: '/:topic/:title', element: <QuizItemPage /> }
     }),
     scores: createRouteItemConfig({
-        getPath: (quizId: string) => `/scores/${encodeURIComponent(quizId)}`,
-        props: { path: '/scores/:quizId', element: <ScoresPage /> }
+        getPath: (quizCode: string) => `/scores/${encodeURIComponent(quizCode)}`,
+        props: { path: '/scores/:quizCode', element: <ScoresPage /> }
     }),
 }

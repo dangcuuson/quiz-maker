@@ -27,12 +27,11 @@ type TopicBreadcrumbs = {
 type QuizBreadcrumbs = {
     type: 'quiz';
     topic: string;
-    quizId: string;
-    quizTitle: string;
+    title: string;
 };
 type ScoreBreadcrumbs = {
     type: 'score';
-    quizId: string;
+    quizCode: string;
 };
 
 const getBaseBreadcrumbsItems = (): BreadcrumbsItem[] => {
@@ -45,14 +44,14 @@ const useBreadcrumbsStore = create<BreadcrumbsStore>((set) => ({
         const items = getBaseBreadcrumbsItems();
         const addTopicBreadcrumbs = (topic: string) => {
             items.push({
-                href: routeConfigs.topicItem.getPath(topic),
+                href: routeConfigs.quizList.getPath(topic),
                 label: topic,
             });
         };
-        const addQuizBreadcrumbs = (quizId: string, quizTitle: string) => {
+        const addQuizBreadcrumbs = (topic: string, title: string) => {
             items.push({
-                href: routeConfigs.quizItem.getPath(quizId),
-                label: quizTitle,
+                href: routeConfigs.quizItem.getPath(topic, title),
+                label: title,
             });
         };
         switch (config.type) {
@@ -61,7 +60,7 @@ const useBreadcrumbsStore = create<BreadcrumbsStore>((set) => ({
             }
             case 'quiz': {
                 addTopicBreadcrumbs(config.topic);
-                addQuizBreadcrumbs(config.quizId, config.quizTitle);
+                addQuizBreadcrumbs(config.topic, config.title);
                 break;
             }
             case 'topic': {
@@ -70,7 +69,7 @@ const useBreadcrumbsStore = create<BreadcrumbsStore>((set) => ({
             }
             case 'score': {
                 items.push({
-                    href: routeConfigs.scores.getPath(config.quizId),
+                    href: routeConfigs.scores.getPath(config.quizCode),
                     label: 'Scores',
                 });
                 break;

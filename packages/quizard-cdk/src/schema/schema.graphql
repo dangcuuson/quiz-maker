@@ -4,24 +4,24 @@ schema {
 }
 
 type Query {
-  # quiz + topic
-  quizItem(quizId: ID!): Quiz!
-  quizList(topic: String!): [Quiz!]!
+  # quiz
+  quizList(cond: KeyConditionExpression!, pagination: DDBPagination): QuizListResult!
   topicList: [String!]!
 
   # score
-  scoreList(index: ScoreListIndexSelector!, limit: Int!, exclusiveStartKey: AWSJSON): ScoreListResult!
+  scoreList(cond: KeyConditionExpression! indexConfig: ScoreIndexConfig!, pagination: DDBPagination!): ScoreListResult!
 }
 
 type Mutation {
-  # quiz + topic
-  addQuiz(input: QuizInput!): Quiz!
+  # quiz
+  addQuiz(input: QuizInput!): Quiz! @deprecated
   populateQuizData: Int!
 
   # score
   addScore(input: ScoreInput!): Score!
 }
 
+# define it again for codegen
 scalar AWSDate
 scalar AWSTime
 scalar AWSDateTime
@@ -31,3 +31,37 @@ scalar AWSJSON
 scalar AWSPhone
 scalar AWSURL
 scalar AWSIPAddress
+
+input DDBPagination {
+  limit: Int!
+  exclusiveStartKey: AWSJSON
+}
+
+# generic input to help shaping the query command
+# more details at https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html
+# and https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_AttributeValue.html
+input KeyValue {
+  string: String
+  float: Float
+  int: Int
+}
+
+input KeyConditionExpression {
+  pk: KeyValue!
+  sk: SKConditionExpression
+}
+
+input SKConditionExpression {
+  eq: KeyValue
+  lt: KeyValue
+  lte: KeyValue
+  gt: KeyValue
+  gte: KeyValue
+  beginsWith: KeyValue
+  between: SKBetweenConditionExpression
+}
+
+input SKBetweenConditionExpression {
+  from: KeyValue!
+  to: KeyValue!
+}
