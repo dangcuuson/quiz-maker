@@ -1,20 +1,8 @@
 import { Breadcrumbs } from '@aws-amplify/ui-react';
+import QuizLink from '@components/Widgets/QuizLink';
 import { routeConfigs } from '@config/routeConfigs';
 import React from 'react';
-import { Link as ReactRouterLink, useLocation } from 'react-router-dom';
-import styled from 'styled-components';
-
-// React router link supports client-side routing so it's better for SPA
-// Another approach could be wrapping amplify Breadcrumbs.Link
-// and intercept their nav behaviour to support client-side routing
-const QuizBreadcrumbsLink = styled(ReactRouterLink)<{ isCurrent?: boolean }>`
-    color: ${(props) => props.theme.tokens?.components?.breadcrumbs?.link?.color?.toString()};
-    text-decoration: none;
-    :visited {
-        color: ${(props) => props.theme.tokens?.components?.breadcrumbs?.link?.color?.toString()};
-        text-decoration: none;
-    }
-`;
+import { useLocation } from 'react-router-dom';
 
 const QuizBreadcrumbs: React.FC = () => {
     const { pathname } = useLocation();
@@ -27,7 +15,7 @@ const QuizBreadcrumbs: React.FC = () => {
     return (
         <Breadcrumbs.Container>
             <Breadcrumbs.Item>
-                <QuizBreadcrumbsLink
+                <QuizLink
                     to={{
                         pathname: routeConfigs.home.getPath(),
                     }}
@@ -38,7 +26,7 @@ const QuizBreadcrumbs: React.FC = () => {
                 return (
                     <Breadcrumbs.Item key={index}>
                         <Breadcrumbs.Separator />
-                        <QuizBreadcrumbsLink
+                        <QuizLink
                             to={{
                                 pathname: config.pathname,
                             }}

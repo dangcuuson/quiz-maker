@@ -9,7 +9,8 @@ type Query {
   topicList: [String!]!
 
   # score
-  scoreList(cond: KeyConditionExpression! indexConfig: ScoreIndexConfig!, pagination: DDBPagination!): ScoreListResult!
+  # pk value is ignore if index is user_*
+  scoreList(cond: KeyConditionExpression! indexConfig: ScoreIndexConfig!, pagination: DDBPagination! descSort: Boolean): ScoreListResult!
 }
 
 type Mutation {

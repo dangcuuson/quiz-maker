@@ -261,6 +261,7 @@ export interface QueryToScoreListArgs {
   cond: GQLKeyConditionExpression;
   indexConfig: GQLScoreIndexConfig;
   pagination: GQLDDBPagination;
+  descSort?: boolean;
 }
 export interface QueryToScoreListResolver<TParent = any, TResult = any> {
   (parent: TParent, args: QueryToScoreListArgs, context: any, info: GraphQLResolveInfo): TResult;

@@ -1,7 +1,20 @@
 import _isArray from 'lodash/isArray';
 import _isObject from 'lodash/isObject';
 
-// utilities for handle unknown data types
+/**
+ * utilities for handle unknown data types
+ */
+
+// quickly define a value in a type-safed way
+export function asType<T>(value: T): T {
+    return value;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const isTuple = <T>(val: any, tuples: readonly T[]): val is T => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    return tuples.includes(val);
+};
 
 export function isDefined<T>(value: T | undefined | null): value is T {
     return value !== undefined && value !== null;

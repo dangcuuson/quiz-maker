@@ -1,5 +1,5 @@
 import { Autocomplete, Collection } from '@aws-amplify/ui-react';
-import { QuizCard, QuizCardContent, QuizCardText } from '@components/QuizCard/QuizCard';
+import { QuizCard, QuizCardContent, QuizCardText } from '@components/Widgets/QuizCard';
 import { routeConfigs } from '@config/routeConfigs';
 import React from 'react';
 import { useNavigate } from 'react-router';

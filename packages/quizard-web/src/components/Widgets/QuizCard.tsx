@@ -1,19 +1,19 @@
-import { Card, View, Text } from '@aws-amplify/ui-react';
+import { Card, Text } from '@aws-amplify/ui-react';
 import styled from 'styled-components';
 
 export const QuizCard = styled(Card)`
     flex-grow: 1;
-    background-color: ${(props) => props.theme.tokens?.colors?.background?.info.toString()};
     padding: 0;
     :hover {
         cursor: pointer;
-        background-color: ${(props) => props.theme.tokens?.colors?.background?.secondary.toString()};
+        background-color: ${(props) => props.theme.tokens.colors.background.secondary.value};
+        
     }
     text-align: center;
 `;
 
-export const QuizCardContent = styled(View)`
-    padding: ${(props) => props.theme.tokens?.space?.small.toString()};
+export const QuizCardContent = styled(Card)`
+    padding: ${(props) => props.theme.tokens.space.small.toString()};
     display: flex;
     align-items: center;
     justify-content: center;

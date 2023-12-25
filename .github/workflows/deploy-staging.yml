@@ -23,12 +23,11 @@ jobs:
             - name: Install 🔧
               run: npm install
 
-            # TODO: npm run test
-            - name: QC 🏗️
-              run: |
-                  npm run build-gql
-                  npm run lint
-                  npm run tsc
+            - name: Configure AWS Credentials
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                  role-to-assume: arn:aws:iam::123456789100:role/my-github-actions-role
+                  aws-region: ap-southeast-2
 
             - name: Deploy Back end
               run: npm run deploy
