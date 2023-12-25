@@ -3,7 +3,7 @@ import ApolloQueryWrapper from '@components/ApolloWrapper/ApolloQueryWrapper';
 import { QuizCard, QuizCardContent, QuizCardText } from '@components/QuizCard/QuizCard';
 import { gql } from '@gql/gql';
 import { QuizListItemFragment } from '@gql/graphql';
-import { routeConfigs } from '@pages/routeConfig';
+import { routeConfigs } from '@config/routeConfigs';
 import _ from 'lodash';
 import React from 'react';
 import { useNavigate, useParams } from 'react-router';

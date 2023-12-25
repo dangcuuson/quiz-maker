@@ -1,5 +1,5 @@
 import { Breadcrumbs } from '@aws-amplify/ui-react';
-import { routeConfigs } from '@pages/routeConfig';
+import { routeConfigs } from '@config/routeConfigs';
 import React from 'react';
 import { Link as ReactRouterLink, useLocation } from 'react-router-dom';
 import styled from 'styled-components';

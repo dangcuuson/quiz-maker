@@ -17,7 +17,6 @@ const createRouteItemConfig = <TGet extends TGetFunc>(config: RouteItemConfig<TG
     return config;
 };
 
-// TODO: move this file to @config/routeConfigs
 export const routeConfigs = {
     home: createRouteItemConfig({
         getPath: () => '/',

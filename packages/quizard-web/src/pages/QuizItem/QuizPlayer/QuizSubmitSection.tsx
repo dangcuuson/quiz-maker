@@ -7,7 +7,7 @@ import { maybe } from '@utils/dataUtils';
 import { AddScoreMutation } from '@gql/graphql';
 import { useEffectOnce } from '@hooks/hooks';
 import { useNavigate } from 'react-router';
-import { routeConfigs } from '@pages/routeConfig';
+import { routeConfigs } from '@config/routeConfigs';
 
 const addScoreMutation = gql(/* GraphQL */ `
     mutation addScore($input: ScoreInput!) {

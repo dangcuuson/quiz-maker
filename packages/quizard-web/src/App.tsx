@@ -5,7 +5,7 @@ import ApolloCognitoProvider from './components/ApolloWrapper/ApolloCognitoProvi
 import ApolloMutationResultMessagePopup from './components/ApolloWrapper/ApolloMutationResultMessagePopup';
 import { Amplify } from 'aws-amplify';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { RouteItemConfig, routeConfigs } from '@pages/routeConfig';
+import { RouteItemConfig, routeConfigs } from '@config/routeConfigs';
 import { withAuthenticator, WithAuthenticatorProps } from '@aws-amplify/ui-react';
 import { LightDarkContextThemeProvider } from '@components/LightDarkMode/LightDarkContext';
 import '@aws-amplify/ui-react/styles.css';
