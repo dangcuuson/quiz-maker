@@ -40,7 +40,6 @@ jobs:
 
             - name: Deploy 🚀
               uses: peaceiris/actions-gh-pages@v3
-              working-directory: ./packages/quizard-web
               with:
                   github_token: ${{ secrets.GITHUB_TOKEN }}
-                  publish_dir: dist
+                  publish_dir: ./packages/quizard-web/dist
