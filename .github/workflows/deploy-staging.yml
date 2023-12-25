@@ -1,0 +1,46 @@
+name: Build and deploy
+on:
+    push:
+        branches:
+            - staging
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout 🛎️
+              uses: actions/checkout@master
+              with:
+                  persist-credentials: false
+
+            - name: Use Node.js 20.x
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 20.x
+                  cache: 'npm'
+
+            - name: Install 🔧
+              run: npm install
+
+            # TODO: npm run test
+            - name: QC 🏗️
+              run: |
+                  npm run build-gql
+                  npm run lint
+                  npm run tsc
+
+            - name: Deploy Back end
+              run: npm run deploy
+              working-directory: ./packages/quizard-cdk
+
+            - name: Build Web
+              run: npm run build
+              working-directory: ./packages/quizard-web
+
+            - name: Deploy 🚀
+              uses: peaceiris/actions-gh-pages@v3
+              working-directory: ./packages/quizard-web
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_dir: dist
