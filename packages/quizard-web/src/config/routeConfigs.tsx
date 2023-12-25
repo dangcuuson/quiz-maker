@@ -31,7 +31,7 @@ export const routeConfigs = {
         props: { path: '/:topic/:title', element: <QuizItemPage /> }
     }),
     myScores: createRouteItemConfig({
-        getPath: (quizCode: string) => `/Scores/${encodeURIComponent(quizCode)}`,
+        getPath: () => `/Scores`,
         props: { path: '/Scores', element: <ScoresPage filterMode="user" /> }
     }),
     scores: createRouteItemConfig({
