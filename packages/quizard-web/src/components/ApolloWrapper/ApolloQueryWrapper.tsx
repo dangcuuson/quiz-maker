@@ -1,7 +1,8 @@
 import { ApolloQueryResult, OperationVariables, QueryResult } from '@apollo/client';
 import { Query, QueryComponentOptions } from '@apollo/client/react/components';
 import { Message, Loader } from '@aws-amplify/ui-react';
-import _ from 'lodash';
+import isEmpty from 'lodash/isEmpty';
+import isFunction from 'lodash/isFunction';
 import React from 'react';
 
 // normal ApolloQuery will have data as TData | undefined
@@ -42,7 +43,7 @@ function ApolloQueryWrapper<TData, TVariables extends OperationVariables>(
                 const typedResult = _result as QueryResult<TData, TVariables>;
                 const { data, loading, error, refetch } = typedResult;
 
-                const isNoData = !data || _.isEmpty(data);
+                const isNoData = !data || isEmpty(data);
 
                 // only render loadingEl when no error & no data
                 // as fetchMore could make loading=true but data is defined
@@ -80,7 +81,7 @@ function ApolloQueryWrapper<TData, TVariables extends OperationVariables>(
                     return getErrorEl();
                 }
 
-                const childrenNode = _.isFunction(children) ? children({ ...typedResult, data }) : children || null;
+                const childrenNode = isFunction(children) ? children({ ...typedResult, data }) : children || null;
                 return <React.Fragment>{childrenNode}</React.Fragment>;
             }}
         </Query>

@@ -1,11 +1,26 @@
-import { defineConfig } from 'vite';
+import { defineConfig, splitVendorChunkPlugin } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [react()],
+    plugins: [react(), splitVendorChunkPlugin()],
     envDir: path.resolve('./'),
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    lodash: ['lodash'],
+                    React: ['react'],
+                    'aws-amplify-ui': ['@aws-amplify/ui'],
+                    'aws-amplify-ui-react': ['@aws-amplify/ui-react'],
+                    'styled-components': ['styled-components'],
+                    'react-router': ['react-router', 'react-router-dom'],
+                    'apollo-client': ['@apollo/client']
+                },
+            },
+        },
+    },
     resolve: {
         // path mapping. Need to repeat this config in tsconfig.json aswell
         alias: [
@@ -33,7 +48,6 @@ export default defineConfig({
                 find: '@config',
                 replacement: path.resolve(__dirname, 'src/config'),
             },
-            
         ],
     },
 });

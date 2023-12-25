@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React from 'react';
 import MainLayout from '@pages/MainLayout';
 import ApolloCognitoProvider from './components/ApolloWrapper/ApolloCognitoProvider';
@@ -28,7 +27,7 @@ Amplify.configure({
 });
 
 const renderRoutes = (configMap: { [K: string]: RouteItemConfig }) => {
-    return _.values(configMap).map((config, index) => {
+    return Object.values(configMap).map((config, index) => {
         return <Route key={index} {...config.props} />;
     });
 };

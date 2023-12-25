@@ -4,7 +4,8 @@ import { QuizCard, QuizCardContent, QuizCardText } from '@components/QuizCard/Qu
 import { gql } from '@gql/gql';
 import { QuizListItemFragment } from '@gql/graphql';
 import { routeConfigs } from '@config/routeConfigs';
-import _ from 'lodash';
+import reverse from 'lodash/reverse';
+import sortBy from 'lodash/sortBy';
 import React from 'react';
 import { useNavigate, useParams } from 'react-router';
 
@@ -42,7 +43,7 @@ const TopicItemPage: React.FC<Props> = () => {
 
 const TopicItemPageInner: React.FC<{ quizList: QuizListItemFragment[] }> = ({ quizList }) => {
     const sortedQuizList = React.useMemo(() => {
-        return _.reverse(_.sortBy(quizList, (q) => q.title));
+        return reverse(sortBy(quizList, (q) => q.title));
     }, [quizList]);
     const navigate = useNavigate();
     return (

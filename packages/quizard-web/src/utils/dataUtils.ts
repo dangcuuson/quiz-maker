@@ -1,4 +1,5 @@
-import _ from 'lodash';
+import _isArray from 'lodash/isArray';
+import _isObject from 'lodash/isObject';
 
 // utilities for handle unknown data types
 
@@ -16,7 +17,7 @@ export const restoreArr = <T>(args: {
 }): null | T[] => {
     const { value, itemRestore, strict } = args;
 
-    if (_.isArray(value)) {
+    if (_isArray(value)) {
         const items = value.map((item, index) => itemRestore(item, index)).filter(isDefined);
         if (strict && items.length !== value.length) {
             return null;
@@ -64,7 +65,7 @@ export const hasBoolField = <T extends string>(val: unknown, key: T): val is Rec
 };
 
 export const isObj = (val: unknown): val is Obj => {
-    return _.isObject(val);
+    return _isObject(val);
 };
 
 /**

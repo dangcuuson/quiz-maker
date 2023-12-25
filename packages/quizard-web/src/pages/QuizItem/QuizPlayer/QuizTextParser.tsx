@@ -45,6 +45,7 @@ function stringReplaceToArray<T>(data: string, regexp: RegExp, replacer: Replace
 const QImg = styled(Image)`
     min-width: 360px;
     max-width: 600px;
+    background-color: ${props => props.theme.tokens.colors.background.info};
 `;
 
 interface Props {

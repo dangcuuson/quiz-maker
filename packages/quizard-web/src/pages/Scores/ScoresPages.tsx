@@ -32,6 +32,8 @@ const scoresOfQuizQuery = gql(`
         userNickname
         createdAt
         quizCode
+        title
+        topic
         percentage
         nQuestions
         nCorrect

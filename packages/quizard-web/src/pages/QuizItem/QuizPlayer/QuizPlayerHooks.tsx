@@ -1,7 +1,7 @@
 import { QuizItemFragment, QuizItemQuestionFragment } from '@gql/graphql';
 import { useLocalStorage } from '@hooks/hooks';
 import { hasBoolField, hasNumField, hasObjField, hasStrField, restoreArr } from '@utils/dataUtils';
-import _ from 'lodash';
+import shuffle from 'lodash/shuffle';
 
 // expected data shape of quiz item that was stored in local storaged
 export type StoredQuiz = {
@@ -16,7 +16,7 @@ type StoredQuizQuestion = Omit<QuizItemQuestionFragment, '__typename'> & {
 };
 
 const pickQuizQuestions = (quizItem: QuizItemFragment): StoredQuiz => {
-    const questions = _.shuffle(quizItem.questions).slice(0, 10);
+    const questions = shuffle(quizItem.questions).slice(0, 10);
     return {
         ...quizItem,
         questions: questions.map((q) => ({

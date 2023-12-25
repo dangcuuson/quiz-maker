@@ -5,7 +5,7 @@ import { LambdaEnv } from '/opt/types';
 import { DBScore } from '/opt/models/models';
 import { PutCommand } from '@aws-sdk/lib-dynamodb';
 import { CognitoIdentityServiceProvider } from 'aws-sdk';
-import _ from 'lodash';
+import _get from 'lodash/get';
 
 type TResult = GQLMutation['addScore'];
 type TArgs = MutationToAddScoreArgs;
@@ -16,7 +16,7 @@ export const handler: AppSyncResolverHandler<TArgs, TResult> = async (event) => 
 
     const userPoolId = env.USER_POOL_ID;
     const cognitoIdentityServiceProvider = new CognitoIdentityServiceProvider();
-    const username = _.get(event.identity, 'username');
+    const username = _get(event.identity, 'username');
 
     if (typeof username !== 'string') {
         throw Error(`Invalid username ${username}`);

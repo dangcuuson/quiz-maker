@@ -36,7 +36,7 @@ const ScoresTableRow: React.FC<RowProps> = React.memo(({ data }) => {
                 {data.userNickname}
             </TableCell>
             <TableCell as="th">{data.nCorrect}/{data.nQuestions}</TableCell>
-            <TableCell as="th">{new Intl.DateTimeFormat('en-GB').format(new Date(data.createdAt))}</TableCell>
+            <TableCell as="th" title={data.createdAt}>{new Intl.DateTimeFormat('en-GB').format(new Date(data.createdAt))}</TableCell>
             <TableCell as="th">{data.quizCode}</TableCell>
         </TableRow>
     );

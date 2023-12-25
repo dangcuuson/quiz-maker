@@ -1,5 +1,6 @@
 import React from 'react';
-import { ThemeProvider, createTheme } from '@aws-amplify/ui-react';
+import { ThemeProvider, createTheme, defaultTheme } from '@aws-amplify/ui-react';
+// import { defaultTheme } from '@aws-amplify/ui';
 import { useLocalStorage } from '@hooks/hooks';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
 
@@ -13,6 +14,7 @@ type LightDarkContextType = {
 const LightTheme = createTheme({
     name: 'light_theme',
     cssText: 'light',
+    breakpoints: defaultTheme.breakpoints,
     tokens: {
         colors: {
             background: {
@@ -20,6 +22,7 @@ const LightTheme = createTheme({
                 secondary: { value: '{colors.blue.20}' },
             },
         },
+        // borderWidths: 'required'
     },
 });
 
