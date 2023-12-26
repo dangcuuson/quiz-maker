@@ -8,7 +8,7 @@
         "build": "vite build",
         "build-gql": "graphql-codegen -c ./scripts/graphql-codegen.ts",
         "build-gql:watch": "npm run build-gql -- --watch",
-        "build-env": "ts-node -P ../../tsconfig.node.json ./scripts/buildEnv.ts",
+        "build-env": "ts-node -TP ../../tsconfig.node.json ./scripts/buildEnv.ts",
         "predev": "npm run build-env && npm run build-gql",
         "dev": "vite --port 8000",
         "vite": "vite"
