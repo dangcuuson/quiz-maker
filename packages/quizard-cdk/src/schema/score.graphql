@@ -1,6 +1,6 @@
 type Score {
     username: String! #pk
-    userNickname: String! # for displaying while user should be masked (because it's email)
+    userNickname: String! # for displaying while username should be masked (because it's email)
     createdAt: AWSDateTime! #sk
 
     # data copied from quiz
@@ -33,4 +33,5 @@ input ScoreIndexConfig {
     quizCode_percentage: Boolean
     user_createdAt: Boolean
     user_quizCode: Boolean
+    user_percentage: Boolean
 }
