@@ -6,7 +6,7 @@
 * [Local setup and development workflow](#local-setup-and-development-workflow)
 
 ## Project structure
-Monorepo project setup with 2 main workspace: `quizard-dev` and `quizard-cdk`
+Monorepo project setup with 2 packages: `quizard-dev` and `quizard-cdk`
 ```
 ├── packages
 │   ├── quizard-dev
@@ -29,6 +29,7 @@ Using `DynamoDB` for storage, `Cognito` for Authentication, `AppSync` for GraphQ
 ## Local setup and development workflow
 
 ### Local setup
+
 * `npm run install`: install all package dependencies
 * `npm run build-gql`: generate typescript definitions from GraphQL schema
 * Navigate to `packages/quizard-cdk`
@@ -37,4 +38,15 @@ Using `DynamoDB` for storage, `Cognito` for Authentication, `AppSync` for GraphQ
 which contain information of the stack (e.g userPoolId, GraphQL endpoint). The information will be injected into React front-end
 * Navigate to `packages/quizard-web`
 * `npm run dev` and open browser on `http://localhost:8000`
-* The project generates TypeScript definition based on GraphQL schema. `npm run build-gql` to re-generate TypeScript types after changes in GraphQL schema
+
+### Development workflow
+
+#### When GraphQL change (either it's backend schema def, or front end query/mutation)
+
+`npm run build-gql` at root folder to re-generate TypeScript types
+
+#### When Backend code change
+`npm run deploy` on `quizard-cdk` to redeploy stack to the cloud
+
+#### When Frontend code change
+Changes should be refresh immediately on browser if using `npm run dev` on `quizard-web`
