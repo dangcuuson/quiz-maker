@@ -23,7 +23,7 @@ export const routeConfigs = {
         props: { path: '/', element: <HomePage /> }
     }),
     quizList: createRouteItemConfig({
-        getPath: (topic: string) => `/${decodeURIComponent(topic)}`,
+        getPath: (topic: string) => `/${encodeURIComponent(topic)}`,
         props: { path: `/:topic`, element: <QuizList /> }
     }),
     quizItem: createRouteItemConfig({
