@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, Image } from '@aws-amplify/ui-react';
 import styled from 'styled-components';
 
-const SvgImgPatternRegex = /\d{4}-\w+-q\d+.*?\.svg/;
+const SvgImgPatternRegex = /\d{4}(-\w+)*.*?\.svg/;
 type Replacer<T> = (match: string) => T;
 /**
  * Grep a string using regex, and replace matched parts by anything returned from replacer
