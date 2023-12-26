@@ -1,4 +1,4 @@
-import { Alert, Button, Loader, SelectField, View, Text } from '@aws-amplify/ui-react';
+import { Alert, Button, Loader, SelectField, View } from '@aws-amplify/ui-react';
 import React from 'react';
 import { useParams } from 'react-router';
 import ApolloQueryWrapper from '@components/ApolloWrapper/ApolloQueryWrapper';
@@ -43,7 +43,6 @@ type SortMode = (typeof sortModes)[number];
 interface Props {
     // quizCode: query scores of a quiz code
     // user: query scores from the logged in user
-    // when filterMode = 'user', only sort by time by default
     filterMode: 'quizCode' | 'user';
 }
 const ScoresPage: React.FC<Props> = ({ filterMode }) => {
@@ -55,7 +54,7 @@ const ScoresPage: React.FC<Props> = ({ filterMode }) => {
 
     return (
         <ApolloQueryWrapper
-            fetchPolicy='network-only'
+            fetchPolicy="network-only"
             notifyOnNetworkStatusChange={true}
             query={scoresOfQuizQuery}
             variables={{
@@ -63,7 +62,8 @@ const ScoresPage: React.FC<Props> = ({ filterMode }) => {
                 indexConfig: {
                     quizCode_createdAt: (filterMode === 'quizCode' && sortMode === 'Time') || undefined,
                     quizCode_percentage: (filterMode === 'quizCode' && sortMode === 'Score') || undefined,
-                    user_createdAt: filterMode === 'user' || undefined,
+                    user_createdAt: (filterMode === 'user' && sortMode === 'Time') || undefined,
+                    user_percentage: (filterMode === 'user' && sortMode === 'Score') || undefined,
                 },
             }}
         >
@@ -71,25 +71,21 @@ const ScoresPage: React.FC<Props> = ({ filterMode }) => {
                 const hasMore = !!data.scoreList.lastEvaluatedKey;
                 return (
                     <View>
-                        {filterMode === 'quizCode' && (
-                            <SelectField
-                                label="Sort by"
-                                size="small"
-                                variation="quiet"
-                                value={sortMode}
-                                onChange={(e) => {
-                                    const value = e.target.value;
-                                    if (isTuple(value, sortModes)) {
-                                        setSortMode(value);
-                                    }
-                                }}
-                            >
-                                <option value={asType<SortMode>('Time')}>Time</option>
-                                <option value={asType<SortMode>('Score')}>Score</option>
-                            </SelectField>
-                        )}
-                        {filterMode === 'user' && <Text fontSize="1.25rem">My scores</Text>}
-
+                        <SelectField
+                            label="View"
+                            size="small"
+                            variation="quiet"
+                            value={sortMode}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (isTuple(value, sortModes)) {
+                                    setSortMode(value);
+                                }
+                            }}
+                        >
+                            <option value={asType<SortMode>('Time')}>Latest score</option>
+                            <option value={asType<SortMode>('Score')}>Best score</option>
+                        </SelectField>
                         <ScoresTable
                             items={data.scoreList.items}
                             showQuizColumn={filterMode === 'user'}

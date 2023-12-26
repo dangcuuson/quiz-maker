@@ -5,7 +5,7 @@ import * as cognito from 'aws-cdk-lib/aws-cognito';
 import { CDKContext } from '../shared/types';
 import { Construct } from 'constructs';
 import { combineGraphqlFilesIntoSchema, buildResolvers, asType } from './stacksHelper';
-import { DBQuizKeys, Quiz_distinctTopic_GSI } from '../shared/models/models';
+import { DBQuizKeys, Quiz_distinctTopic_GSI, Score_user_percentage_LSI } from '../shared/models/models';
 import {
     DBScoreKeys,
     Score_user_quizCode_LSI,
@@ -49,6 +49,11 @@ export class QuizardStack extends Stack {
         scoreTable.addLocalSecondaryIndex({
             indexName: Score_user_quizCode_LSI,
             sortKey: { name: DBScoreKeys.quizCode, type: ddb.AttributeType.STRING },
+            projectionType: ddb.ProjectionType.ALL,
+        });
+        scoreTable.addLocalSecondaryIndex({
+            indexName: Score_user_percentage_LSI,
+            sortKey: { name: DBScoreKeys.percentage, type: ddb.AttributeType.NUMBER },
             projectionType: ddb.ProjectionType.ALL,
         });
         scoreTable.addGlobalSecondaryIndex({

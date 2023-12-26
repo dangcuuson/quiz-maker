@@ -44,5 +44,6 @@ export const DBScoreKeys: KeyedObj<DBScore> = {
 export const Score_quizCode_createdAt_GSI = 'quizCode_createdAt_gsi';
 export const Score_quizCode_percentage_GSI = 'quizCode_percentage_gsi'
 export const Score_user_quizCode_LSI = 'user_quizCode_lsi';
+export const Score_user_percentage_LSI = 'user_percentage_lsi';
 
 //#endregion

@@ -22,6 +22,7 @@
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "build-gql": "ts-node -P ../../tsconfig.node.json ./scripts/generateGQLTypes.ts",
         "predeploy": "npm run build-gql",
-        "deploy": "cdk deploy --outputs-file ../../cdk-outputs.json"
+        "deploy": "cdk deploy --outputs-file ../../cdk-outputs.json",
+        "deploy:dev": "npm run deploy -- --hotswap-fallback"
     }
 }

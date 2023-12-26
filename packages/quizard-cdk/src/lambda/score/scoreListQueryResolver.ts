@@ -6,6 +6,7 @@ import {
     DBScoreKeys,
     Score_quizCode_createdAt_GSI,
     Score_quizCode_percentage_GSI,
+    Score_user_percentage_LSI,
     Score_user_quizCode_LSI,
 } from '/opt/models/models';
 import { buildQueryCommandInput, getCognitoUser, getDDBDocClient, getExactOneDefinedField } from '/opt/utils';
@@ -51,6 +52,10 @@ export const handler: AppSyncResolverHandler<TArgs, TResult> = async (event) => 
             case 'user_createdAt': {
                 await injectCognitoUserToPkValue();
                 return { pkName: DBScoreKeys.username, skName: DBScoreKeys.createdAt, IndexName: undefined };
+            }
+            case 'user_percentage': {
+                await injectCognitoUserToPkValue();
+                return { pkName: DBScoreKeys.username, skName: DBScoreKeys.percentage, IndexName: Score_user_percentage_LSI };
             }
             case 'user_quizCode': {
                 await injectCognitoUserToPkValue();
