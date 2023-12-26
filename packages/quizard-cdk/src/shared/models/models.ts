@@ -6,13 +6,13 @@ type KeyedObj<T> = {
 
 /**
  * Describe how the data looked like in database
- * Also define names of GSI
+ * Also define names of GSI/LSI
  */
 
 
 //#region ---------- QUIZ ----------
 export type DBQuiz = GQLQuiz & {
-    // this will help query distinct topic without doing a table scan
+    // this will help query distinct topic without doing a full table scan
     // https://aws.amazon.com/blogs/database/generate-a-distinct-set-of-partition-keys-for-an-amazon-dynamodb-table-efficiently/
     dTopic?: string;
 }
