@@ -9,6 +9,7 @@ import {
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { useEffectOnce } from '@hooks/hooks';
+import { persistCache } from 'apollo3-cache-persist';
 import * as Auth from 'aws-amplify/auth';
 import React from 'react';
 
@@ -57,7 +58,7 @@ const useCognitoAuthToken = (): { token: string; ready: boolean } => {
     return { token: authToken, ready };
 };
 
-const makeApolloClient = (authToken: string): ApolloClient<NormalizedCacheObject> => {
+const makeApolloClient = async (authToken: string): Promise<ApolloClient<NormalizedCacheObject>> => {
     // just log error to console for now
     // In future we can modify this to e.g display an error dialog
     const errorLink = onError(({ graphQLErrors, networkError }) => {
@@ -87,6 +88,10 @@ const makeApolloClient = (authToken: string): ApolloClient<NormalizedCacheObject
     const link = ApolloLink.from([errorLink, authLink, httpLink]);
 
     const cache = new InMemoryCache();
+    await persistCache({
+        cache,
+        storage: localStorage,
+    });
     const client = new ApolloClient({ cache, link });
     return client;
 };
@@ -96,11 +101,12 @@ interface Props {
 }
 const ApolloCognitoProvider: React.FC<Props> = ({ children }) => {
     const { token, ready } = useCognitoAuthToken();
-    const client = React.useMemo(() => {
+    const [client, setClient] = React.useState<null | ApolloClient<NormalizedCacheObject>>(null);
+    React.useEffect(() => {
         if (!ready) {
-            return null;
+            return;
         }
-        return makeApolloClient(token);
+        void makeApolloClient(token).then(setClient);
     }, [token, ready]);
 
     if (!client) {

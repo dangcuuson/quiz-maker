@@ -27,6 +27,7 @@
         "@aws-amplify/ui-react": "6.0.7",
         "@graphql-codegen/cli": "5.0.0",
         "@graphql-codegen/client-preset": "4.1.0",
+        "apollo3-cache-persist": "0.14.1",
         "aws-amplify": "6.0.9",
         "graphql": "16.8.1",
         "lodash": "4.17.21",
