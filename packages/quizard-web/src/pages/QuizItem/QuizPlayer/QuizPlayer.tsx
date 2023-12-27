@@ -41,10 +41,10 @@ const QuizPlayer: React.FC<Props> = (props) => {
             <QuizSubmitSection
                 storedQuiz={storedQuiz}
                 onCompleted={() => {
-                    // setStoredQuiz({
-                    //     ...storedQuiz,
-                    //     submitted: true
-                    // })
+                    setStoredQuiz({
+                        ...storedQuiz,
+                        submitted: true
+                    })
                 }}
             />
         );
