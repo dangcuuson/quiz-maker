@@ -1,6 +1,6 @@
-import { QuizItemFragment } from '@gql/graphql';
+
 import React from 'react';
-import { useStoredQuizReconcilication } from './QuizPlayerHooks';
+import { StoredQuiz, useSavedQuizState } from './QuizPlayerHooks';
 import { Flex, Message } from '@aws-amplify/ui-react';
 import { maybe } from '@utils/dataUtils';
 import QuizNavigator from './QuizNavigator';
@@ -8,10 +8,10 @@ import QuizSubmitSection from './QuizSubmitSection';
 import QuizQuestionRenderer from './QuizQuestonRenderer';
 
 interface Props {
-    quizItem: QuizItemFragment;
+    quizItem: StoredQuiz;
 }
 const QuizPlayer: React.FC<Props> = (props) => {
-    const [storedQuiz, setStoredQuiz] = useStoredQuizReconcilication(props.quizItem);
+    const [storedQuiz, setStoredQuiz] = useSavedQuizState(props.quizItem);
     const [submitConfirmedByUser, setSubmitComfirmedByUser] = React.useState(false);
     const [qIndex, setQIndex] = React.useState(() => {
         return storedQuiz.questions.findIndex((q) => q.userSelected < 0);

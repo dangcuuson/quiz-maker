@@ -1,9 +1,10 @@
-import { Alert } from '@aws-amplify/ui-react';
+import { Alert, Button, Flex, Text, View } from '@aws-amplify/ui-react';
 import ApolloQueryWrapper from '@components/ApolloWrapper/ApolloQueryWrapper';
 import { gql } from '@gql/gql';
 import React from 'react';
 import { useParams } from 'react-router';
 import QuizPlayer from './QuizPlayer/QuizPlayer';
+import { generateQuizQuestions, getSavedQuizFromLS } from './QuizPlayer/QuizPlayerHooks';
 
 const quizItemQuery = gql(`
     query quizItem($topic: String!, $title: String!) {
@@ -37,11 +38,35 @@ const quizItemQuery = gql(`
 interface Props {}
 const QuizItemPage: React.FC<Props> = () => {
     const { topic, title } = useParams();
+    const savedQuiz = React.useMemo(() => {
+        return getSavedQuizFromLS();
+    }, []);
+    const [decision, setDecision] = React.useState<'Resume' | 'Get New' | null>(null);
     if (!topic) {
         return <Alert variation="error" hasIcon={true} heading="Missing topic" />;
     }
     if (!title) {
         return <Alert variation="error" hasIcon={true} heading="Missing title" />;
+    }
+
+    if (!decision && savedQuiz && !savedQuiz.submitted && savedQuiz.topic === topic && savedQuiz.title === title) {
+        return (
+            <View>
+                <Text fontSize="1.25rem">Found an in progress quiz. Do you want to resume?</Text>
+                <Flex gap="small">
+                    <Button variation="primary" colorTheme="success" onClick={() => setDecision('Resume')}>
+                        Resume quiz
+                    </Button>
+                    <Button variation="primary" colorTheme="warning" onClick={() => setDecision('Get New')}>
+                        Get new quiz
+                    </Button>
+                </Flex>
+            </View>
+        );
+    }
+
+    if (!!savedQuiz && decision === 'Resume') {
+        return <QuizPlayer quizItem={savedQuiz} />;
     }
 
     return (
@@ -57,7 +82,7 @@ const QuizItemPage: React.FC<Props> = () => {
                 if (!quizItem) {
                     return <Alert variation="error" hasIcon={true} heading="Unable to find quiz item" />;
                 }
-                return <QuizPlayer quizItem={quizItem} />
+                return <QuizPlayer quizItem={generateQuizQuestions(quizItem)} />;
             }}
         </ApolloQueryWrapper>
     );

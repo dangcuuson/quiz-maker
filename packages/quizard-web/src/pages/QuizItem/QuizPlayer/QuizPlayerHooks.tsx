@@ -15,7 +15,7 @@ export type StoredQuizQuestion = Omit<QuizItemQuestionFragment, '__typename'> & 
     userSelected: number;
 };
 
-const pickQuizQuestions = (quizItem: QuizItemFragment): StoredQuiz => {
+export const generateQuizQuestions = (quizItem: QuizItemFragment): StoredQuiz => {
     const questions = shuffle(quizItem.questions).slice(0, 10);
     return {
         ...quizItem,
@@ -27,81 +27,71 @@ const pickQuizQuestions = (quizItem: QuizItemFragment): StoredQuiz => {
     };
 };
 
-/**
- * Look for stored data in local storage and try to restore it into `StoredQuiz`
- * If stored quizCode is different than newQuizCode => always discard stored data
- * If we cannot restore local storage data => use new data (it will be saved back into local storage later)
- */
-export const useStoredQuizReconcilication = (newQuiz: QuizItemFragment) => {
-    const [storedQuiz, setStoredQuiz] = useLocalStorage<StoredQuiz>({
-        key: `QUIZ_ITEM_STORE`,
-        getInitValue: (storedStr) => {
-            const tryRestoreSavedQuiz = (): StoredQuiz | null => {
-                try {
-                    if (!storedStr) {
-                        return null;
-                    }
-                    const storedJson: unknown = JSON.parse(storedStr);
-                    if (
-                        !hasStrField(storedJson, 'quizCode') ||
-                        !hasStrField(storedJson, 'topic') ||
-                        !hasStrField(storedJson, 'title') ||
-                        !hasObjField(storedJson, 'questions') ||
-                        !hasBoolField(storedJson, 'submitted')
-                    ) {
-                        return null;
-                    }
-                    if (storedJson.quizCode !== newQuiz.quizCode) {
-                        return null;
-                    }
-                    if (storedJson.submitted) {
-                        return null;
-                    }
+export const STORED_QUIZ_LS_KEY = 'QUIZ_ITEM_STORE';
 
-                    const restoredQuestions = restoreArr<StoredQuizQuestion>({
-                        value: storedJson.questions,
-                        strict: true,
-                        itemRestore: (qItem) => {
-                            if (
-                                !hasStrField(qItem, 'questionText') ||
-                                !hasObjField(qItem, 'options') ||
-                                !hasNumField(qItem, 'userSelected')
-                            ) {
-                                return null;
-                            }
-                            type QOption = StoredQuizQuestion['options'][number];
-                            const restoredOptions = restoreArr<QOption>({
-                                value: qItem.options,
-                                strict: true,
-                                itemRestore: (qOption) => {
-                                    if (!hasStrField(qOption, 'optionText') || !hasBoolField(qOption, 'isCorrect')) {
-                                        return null;
-                                    }
-                                    return qOption;
-                                },
-                            });
-                            if (!restoredOptions) {
-                                return null;
-                            }
-                            return { ...qItem, options: restoredOptions };
-                        },
-                    });
-                    if (!restoredQuestions) {
-                        return null;
-                    }
-                    return { ...storedJson, questions: restoredQuestions };
-                } catch {
+/**
+ * Quiz data will be stored in LocalStorage so that user do not lose their progress
+ * This function help retrieving local storage data and make sure the data stored in LS
+ * match with expected StoredQuiz
+ */
+export const getSavedQuizFromLS = (): StoredQuiz | null => {
+    const storedStr = localStorage.getItem(STORED_QUIZ_LS_KEY);
+    try {
+        if (!storedStr) {
+            return null;
+        }
+        const storedJson: unknown = JSON.parse(storedStr);
+        if (
+            !hasStrField(storedJson, 'quizCode') ||
+            !hasStrField(storedJson, 'topic') ||
+            !hasStrField(storedJson, 'title') ||
+            !hasObjField(storedJson, 'questions') ||
+            !hasBoolField(storedJson, 'submitted')
+        ) {
+            return null;
+        }
+
+        const restoredQuestions = restoreArr<StoredQuizQuestion>({
+            value: storedJson.questions,
+            strict: true,
+            itemRestore: (qItem) => {
+                if (
+                    !hasStrField(qItem, 'questionText') ||
+                    !hasObjField(qItem, 'options') ||
+                    !hasNumField(qItem, 'userSelected')
+                ) {
                     return null;
                 }
-            };
-
-            const savedQuiz = tryRestoreSavedQuiz();
-            if (!savedQuiz || savedQuiz.questions.length === 0) {
-                return pickQuizQuestions(newQuiz);
-            }
-            return savedQuiz;
-        },
-        stringify: (v) => JSON.stringify(v),
-    });
-    return [storedQuiz, setStoredQuiz] as const;
+                type QOption = StoredQuizQuestion['options'][number];
+                const restoredOptions = restoreArr<QOption>({
+                    value: qItem.options,
+                    strict: true,
+                    itemRestore: (qOption) => {
+                        if (!hasStrField(qOption, 'optionText') || !hasBoolField(qOption, 'isCorrect')) {
+                            return null;
+                        }
+                        return qOption;
+                    },
+                });
+                if (!restoredOptions) {
+                    return null;
+                }
+                return { ...qItem, options: restoredOptions };
+            },
+        });
+        if (!restoredQuestions) {
+            return null;
+        }
+        return { ...storedJson, questions: restoredQuestions };
+    } catch {
+        return null;
+    }
 };
+
+export const useSavedQuizState = (initValue: StoredQuiz) => {
+    return useLocalStorage({
+        getInitValue: () => initValue,
+        key: STORED_QUIZ_LS_KEY,
+        stringify: v => JSON.stringify(v)
+    })
+}
