@@ -13,7 +13,6 @@ declare global {
     }
 
     interface ViteEnvExtension {
-        VITE_branch: string;
         VITE_userPoolId: string;
         VITE_userPoolClientId: string;
         VITE_GraphQLAPIURL: string;
