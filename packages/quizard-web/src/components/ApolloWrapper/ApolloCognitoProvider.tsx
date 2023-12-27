@@ -8,6 +8,7 @@ import {
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
+import { useEffectOnce } from '@hooks/hooks';
 import * as Auth from 'aws-amplify/auth';
 import React from 'react';
 
@@ -35,9 +36,9 @@ const useCognitoAuthToken = (): { token: string; ready: boolean } => {
             setReady(true);
         }
     };
-    React.useEffect(() => {
+    useEffectOnce(() => {
         void fetchAuthToken(false);
-    }, []);
+    });
 
     // when token is about to expire, fetch auth token again to keep user connected
     React.useEffect(() => {
