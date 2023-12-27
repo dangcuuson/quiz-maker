@@ -11,7 +11,7 @@ export type StoredQuiz = {
     questions: StoredQuizQuestion[];
     submitted: boolean;
 };
-type StoredQuizQuestion = Omit<QuizItemQuestionFragment, '__typename'> & {
+export type StoredQuizQuestion = Omit<QuizItemQuestionFragment, '__typename'> & {
     userSelected: number;
 };
 

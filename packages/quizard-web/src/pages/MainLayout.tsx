@@ -25,7 +25,7 @@ const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
                 >
                     <React.Suspense fallback="Loading...">
                         <Flex display="flex" flex="1" justifyContent="flex-start" alignItems="center">
-                            <Button size="large" variation="link" onClick={() => navigate(routeConfigs.home.getPath())}>
+                            <Button size="large" gap={"relative.small"} variation="link" onClick={() => navigate(routeConfigs.home.getPath())}>
                                 <FaWandMagicSparkles />
                                 <Text>Quizard</Text>
                             </Button>

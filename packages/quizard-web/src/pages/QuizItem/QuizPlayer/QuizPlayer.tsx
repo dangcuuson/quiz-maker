@@ -1,11 +1,11 @@
 import { QuizItemFragment } from '@gql/graphql';
 import React from 'react';
-import QuizTextParser from './QuizTextParser';
 import { useStoredQuizReconcilication } from './QuizPlayerHooks';
-import { Flex, Message, Radio, RadioGroupField } from '@aws-amplify/ui-react';
+import { Flex, Message } from '@aws-amplify/ui-react';
 import { maybe } from '@utils/dataUtils';
 import QuizNavigator from './QuizNavigator';
 import QuizSubmitSection from './QuizSubmitSection';
+import QuizQuestionRenderer from './QuizQuestonRenderer';
 
 interface Props {
     quizItem: QuizItemFragment;
@@ -32,7 +32,7 @@ const QuizPlayer: React.FC<Props> = (props) => {
             setQIndex(0);
         }
     }, [curQuestion, storedQuiz.questions.length, setQIndex]);
-    
+
     const nQuestions = storedQuiz.questions.length;
     const isLastQ = qIndex === nQuestions - 1;
 
@@ -40,12 +40,12 @@ const QuizPlayer: React.FC<Props> = (props) => {
         return (
             <QuizSubmitSection
                 storedQuiz={storedQuiz}
-                onCompleted={() =>
-                    setStoredQuiz({
-                        ...storedQuiz,
-                        submitted: true
-                    })
-                }
+                onCompleted={() => {
+                    // setStoredQuiz({
+                    //     ...storedQuiz,
+                    //     submitted: true
+                    // })
+                }}
             />
         );
     }
@@ -56,26 +56,10 @@ const QuizPlayer: React.FC<Props> = (props) => {
     return (
         // padding to make space for quiz nav, which is fixed bottom
         <Flex direction="column" paddingBottom="120px">
-            <QuizTextParser text={curQuestion.questionText || ''} />
-            <RadioGroupField
-                legend=""
-                name=""
-                onChange={(e) => {
-                    const newVal = +e.target.value;
-                    userSelectOption(isNaN(newVal) ? -1 : newVal);
-                }}
-            >
-                {curQuestion.options.map((option, index) => {
-                    return (
-                        <Radio
-                            key={index}
-                            children={<QuizTextParser text={option.optionText} />}
-                            checked={curQuestion.userSelected === index}
-                            value={index + ''}
-                        />
-                    );
-                })}
-            </RadioGroupField>
+            <QuizQuestionRenderer
+                quizQuestion={curQuestion}
+                onOptionSelected={(newIndex) => userSelectOption(newIndex)}
+            />
             <QuizNavigator
                 curIndex={qIndex}
                 setIndex={setQIndex}
