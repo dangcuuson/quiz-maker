@@ -1,3 +1,7 @@
+// this import needs to be above '@apollo/client' because 
+// it uses 'subscriptions-transport-ws'
+// // https://stackoverflow.com/questions/77245506/cannot-read-properties-of-undefined-reading-field-when-bumping-apollo-clien
+import { createApolloAppSyncWebsocketLink } from './ApolloAppsyncWebsocketLink';
 import {
     ApolloClient,
     ApolloLink,
@@ -5,6 +9,7 @@ import {
     HttpLink,
     InMemoryCache,
     NormalizedCacheObject,
+    split,
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
@@ -12,6 +17,8 @@ import { useEffectOnce } from '@hooks/hooks';
 import { persistCache } from 'apollo3-cache-persist';
 import * as Auth from 'aws-amplify/auth';
 import React from 'react';
+import { getMainDefinition } from '@apollo/client/utilities';
+import { Kind, OperationTypeNode } from 'graphql';
 
 const useCognitoAuthToken = (): { token: string; ready: boolean } => {
     const [authToken, setAuthToken] = React.useState<string>('');
@@ -25,7 +32,7 @@ const useCognitoAuthToken = (): { token: string; ready: boolean } => {
             const session = await Auth.fetchAuthSession({ forceRefresh });
             if (session.tokens) {
                 setTokenExpiry(session.tokens.accessToken.payload.exp || 0);
-                setAuthToken(`Bearer ${session.tokens.accessToken.toString()}`);
+                setAuthToken(session.tokens.accessToken.toString());
             } else {
                 console.warn('Access token not found');
                 setAuthToken('');
@@ -85,7 +92,21 @@ const makeApolloClient = async (authToken: string): Promise<ApolloClient<Normali
         uri: import.meta.env.VITE_GraphQLAPIURL,
     });
 
-    const link = ApolloLink.from([errorLink, authLink, httpLink]);
+    const wsLink = createApolloAppSyncWebsocketLink({
+        url: import.meta.env.VITE_GraphQLAPIURL,
+        authToken
+    });
+
+    const splitHTTPAndWSLink = split(
+        ({ query }) => {
+            const definition = getMainDefinition(query);
+            return definition.kind === Kind.OPERATION_DEFINITION && definition.operation === OperationTypeNode.SUBSCRIPTION;
+        },
+        wsLink,
+        httpLink,
+    );
+
+    const link = ApolloLink.from([errorLink, authLink, splitHTTPAndWSLink]);
 
     const cache = new InMemoryCache();
     await persistCache({
