@@ -125,6 +125,9 @@ export class QuizardStack extends Stack {
 
         // output for web client
         type ValidKey = keyof CDKOutputJSON;
+        new CfnOutput(this, asType<ValidKey>('region'), {
+            value: this.region,
+        });
         new CfnOutput(this, asType<ValidKey>('userPoolId'), {
             value: userPool.userPoolId,
         });
