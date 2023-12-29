@@ -24,6 +24,12 @@ Amplify.configure({
             },
         },
     },
+    API: {
+        GraphQL: {
+            defaultAuthMode: 'userPool',
+            endpoint: import.meta.env.VITE_GraphQLAPIURL
+        }
+    }
 });
 
 const renderRoutes = (configMap: { [K: string]: RouteItemConfig }) => {
