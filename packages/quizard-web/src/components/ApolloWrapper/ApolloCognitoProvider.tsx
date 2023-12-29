@@ -1,4 +1,4 @@
-// this import needs to be above '@apollo/client' because 
+// this import needs to be above '@apollo/client' because
 // it uses 'subscriptions-transport-ws'
 // // https://stackoverflow.com/questions/77245506/cannot-read-properties-of-undefined-reading-field-when-bumping-apollo-clien
 import { createApolloAppSyncWebsocketLink } from './ApolloAppsyncWebsocketLink';
@@ -94,13 +94,15 @@ const makeApolloClient = async (authToken: string): Promise<ApolloClient<Normali
 
     const wsLink = createApolloAppSyncWebsocketLink({
         url: import.meta.env.VITE_GraphQLAPIURL,
-        authToken
+        authToken,
     });
 
     const splitHTTPAndWSLink = split(
         ({ query }) => {
             const definition = getMainDefinition(query);
-            return definition.kind === Kind.OPERATION_DEFINITION && definition.operation === OperationTypeNode.SUBSCRIPTION;
+            return (
+                definition.kind === Kind.OPERATION_DEFINITION && definition.operation === OperationTypeNode.SUBSCRIPTION
+            );
         },
         wsLink,
         httpLink,

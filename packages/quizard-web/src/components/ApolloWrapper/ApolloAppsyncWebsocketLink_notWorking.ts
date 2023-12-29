@@ -5,11 +5,12 @@
  * based on the published websocket subscription workflow
  * https://docs.aws.amazon.com/appsync/latest/devguide/real-time-websocket-client.html
  * This custom wsLink focus on cognito userpool auth mode only
- * Some idea is from: https://github.com/apollographql/apollo-feature-requests/issues/224
+ * 
+ * NOTE: even though the message and handshake are all correct, somehow the server doesn't return start_ack message
  */
 
-import { Middleware, SubscriptionClient } from 'subscriptions-transport-ws';
-import { WebSocketLink } from '@apollo/client/link/ws';
+import { createClient } from 'graphql-ws';
+import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import _get from 'lodash/get';
 
 const asBase64EncodedJson = (data: object): string => btoa(JSON.stringify(data));
@@ -18,13 +19,10 @@ const appendUrlWithHeaderAndPayload = (url: string, header: AuthHeader) => {
     return `${url}?header=${asBase64EncodedJson(header)}&payload=${asBase64EncodedJson({})}`;
 };
 
-function tryParseJsonString(jsonString: string) {
-    try {
-        return JSON.parse(jsonString);
-    } catch (e) {
-        return undefined;
-    }
-}
+type AuthHeader = {
+    host: string;
+    Authorization: string;
+};
 
 const createAppSyncWebSocketImpl = (authHeader: AuthHeader) => {
     return class AppSyncWebSocketImpl extends WebSocket {
@@ -32,20 +30,6 @@ const createAppSyncWebSocketImpl = (authHeader: AuthHeader) => {
             // As stated in the doc: https://docs.aws.amazon.com/appsync/latest/devguide/real-time-websocket-client.html
             // The prorocol must be graphql-ws
             super(url, ['graphql-ws']);
-        }
-
-        set onmessage(handler: any) {
-            super.onmessage = event => {
-                if (event.data) {
-                    const data = tryParseJsonString(event.data);
-
-                    if (data && data.type === 'start_ack') {
-                        return;
-                    }
-                }
-
-                return handler(event);
-            };
         }
 
         send(data: string | ArrayBufferLike | Blob | ArrayBufferView) {
@@ -82,13 +66,7 @@ const createAppSyncWebSocketImpl = (authHeader: AuthHeader) => {
     };
 };
 
-type AuthHeader = {
-    host: string;
-    Authorization: string;
-};
-
-import * as graphqlPrinter from "graphql/language/printer";
-export const createApolloAppSyncWebsocketLink = (options: { url: string; authToken: string }) => {
+export const createApolloAppSyncWebsocketLink = (options: { url: string; authToken: string }): GraphQLWsLink => {
     const APPSYNC_MAX_CONNECTION_TIMEOUT_MILLISECONDS = 5 * 60 * 1000;
 
     const host = new URL(options.url).host;
@@ -98,35 +76,13 @@ export const createApolloAppSyncWebsocketLink = (options: { url: string; authTok
         host,
     };
 
-    const createAppSyncGraphQLOperationAdapter = (): Middleware => ({
-        applyMiddleware: async (options, next) => {
-            // AppSync expects GraphQL operation to be defined as a JSON-encoded object in a "data" property
-            options.data = JSON.stringify({
-                type: 'start',
-                query: !options.query ? '' : typeof options.query === 'string' ? options.query : graphqlPrinter.print(options.query),
-                variables: options.variables
-            });
-    
-            // AppSync only permits authorized operations
-            options.extensions = {
-                authorization: header
-            }
-    
-            // AppSync does not care about these properties
-            delete options.operationName;
-            delete options.variables;
-            // Not deleting "query" property as SubscriptionClient validation requires it
-    
-            next();
-        }
-    })
-
-    return new WebSocketLink(
-        new SubscriptionClient(appendUrlWithHeaderAndPayload(wsUrl, header), {
-            timeout: APPSYNC_MAX_CONNECTION_TIMEOUT_MILLISECONDS,
-            lazy: true,
-        }, createAppSyncWebSocketImpl(header)).use([
-            createAppSyncGraphQLOperationAdapter()
-        ]),
+    return new GraphQLWsLink(
+        createClient({
+            // As stated in the doc: https://docs.aws.amazon.com/appsync/latest/devguide/real-time-websocket-client.html
+            // The query string must contain header and payload parameters:
+            url: appendUrlWithHeaderAndPayload(wsUrl, header),
+            webSocketImpl: createAppSyncWebSocketImpl(header),
+            connectionAckWaitTimeout: APPSYNC_MAX_CONNECTION_TIMEOUT_MILLISECONDS,
+        }),
     );
 };
