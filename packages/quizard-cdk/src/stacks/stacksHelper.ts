@@ -114,7 +114,9 @@ export const buildResolvers = (buildArgs: BuildResolversArgs) => {
         responseMappingTemplate?: appsync.MappingTemplate;
     };
 
-    type ResolverMap<TypeName extends keyof GQLResolver, Type = GQLResolver[TypeName]> = Record<keyof Type, LambdaConfig | DDBConfig>;
+    type ResolverMap<TypeName extends keyof GQLResolver, Type = GQLResolver[TypeName]> = {
+        [K in keyof Type]: LambdaConfig | DDBConfig
+    }
     // StrictResolversMap ensures all fields must have a defined resolver
     type StrictResolversMap<TypeName extends keyof GQLResolver> = Required<ResolverMap<TypeName>>;
 

@@ -1,6 +1,7 @@
 schema {
   query: Query
   mutation: Mutation
+  subscription: Subscription
 }
 
 type Query {
@@ -20,6 +21,10 @@ type Mutation {
 
   # score
   addScore(input: ScoreInput!): Score!
+}
+
+type Subscription {
+  scoreAdded: Score @aws_subscribe(mutations: ["addScore"])
 }
 
 input DDBPagination {
