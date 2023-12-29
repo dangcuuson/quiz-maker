@@ -5,6 +5,7 @@ declare global {
     // CfnOutput doesn't accept _ so we need to maintain
     // keys of CDKOutputJSON and ViteEnvExtension manually
     interface CDKOutputJSON {
+        region: string;
         userPoolId: string;
         userPoolClientId: string;
         GraphQLAPIURL: string;
