@@ -2,6 +2,7 @@ import { CfnOutput, RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
 import * as ddb from 'aws-cdk-lib/aws-dynamodb';
 import * as appsync from 'aws-cdk-lib/aws-appsync';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
+import * as logs from 'aws-cdk-lib/aws-logs';
 import { CDKContext } from '../shared/types';
 import { Construct } from 'constructs';
 import { combineGraphqlFilesIntoSchema, buildResolvers, asType } from './stacksHelper';
@@ -10,7 +11,7 @@ import {
     DBScoreKeys,
     Score_user_quizCode_LSI,
     Score_quizCode_createdAt_GSI,
-    Score_quizCode_percentage_GSI
+    Score_quizCode_percentage_GSI,
 } from '../shared/models/models';
 
 export class QuizardStack extends Stack {
@@ -68,7 +69,6 @@ export class QuizardStack extends Stack {
             sortKey: { name: DBScoreKeys.percentage, type: ddb.AttributeType.NUMBER },
             projectionType: ddb.ProjectionType.ALL,
         });
-        
 
         // Cognito
         const verifyCodeBody = 'Thank you for signing up to Quizard! Your verification code is {####}';
@@ -112,7 +112,13 @@ export class QuizardStack extends Stack {
                     },
                 },
             },
+            logConfig: {
+                excludeVerboseContent: false,
+                fieldLogLevel: appsync.FieldLogLevel.ALL,
+                retention: logs.RetentionDays.ONE_WEEK
+            }
         });
+
         // build resolvers
         buildResolvers({
             rootStack: this,
