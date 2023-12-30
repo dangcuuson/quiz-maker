@@ -168,7 +168,7 @@ export const buildResolvers = (buildArgs: BuildResolversArgs) => {
             const lambdaFunction = new NodejsFunction(rootStack, `${typeName}-${fieldName}-lambda`, {
                 functionName,
                 // see vite.config.ts for how we got thse file location
-                entry: `dist/lambda/${fileName}.js`,
+                entry: `src/lambda/${fileName}.ts`,
                 runtime: lambda.Runtime.NODEJS_20_X,
                 environment,
                 role: lambdaSetup.lambdaRole,
