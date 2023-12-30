@@ -1,5 +1,10 @@
 name: QC
 
+on:
+    push:
+        branches:
+            - '**'
+
 concurrency:
     group: 'QC'
     cancel-in-progress: true
