@@ -1,10 +1,9 @@
 name: Deploy (dev)
 on:
     workflow_run:
-      workflows: ['QC']
-      types:
-          - completed
-    push:
+        workflows: ['QC']
+        types:
+            - completed
         branches:
             - dev
 
