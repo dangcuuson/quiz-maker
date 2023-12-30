@@ -1,4 +1,4 @@
-import { AppSyncResolverHandler } from 'aws-lambda';
+import type { AppSyncResolverHandler } from 'aws-lambda';
 import type { GQLMutation, MutationToAddQuizArgs } from '/opt/gqlTypes';
 import { getDDBDocClient } from '/opt/utils';
 import { LambdaEnv } from '/opt/types';
