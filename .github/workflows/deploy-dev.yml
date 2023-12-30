@@ -1,14 +1,12 @@
 name: Deploy (dev)
 on:
+    workflow_run:
+    workflows: ['QC']
+    types:
+        - completed
     push:
         branches:
             - dev
-
-on: 
-  workflow_run:
-    workflows: ['QC']
-    types:
-      - completed
 
 permissions:
     contents: read
