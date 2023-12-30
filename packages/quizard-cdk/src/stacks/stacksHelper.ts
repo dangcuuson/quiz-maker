@@ -43,7 +43,7 @@ export const combineGraphqlFilesIntoSchema = () => {
     return appsync.SchemaFile.fromAsset(fileName);
 };
 
-const setupLambda = (args: BuildResolversArgs): { lambdaRole: iam.Role; lambdaLayer: lambda.LayerVersion } => {
+const setupLambda = (args: BuildResolversArgs): { lambdaRole: iam.Role; lambdaLayers: lambda.LayerVersion[] } => {
     const { rootStack, contextId, quizTable, scoreTable, userPool } = args;
 
     const lambdaRole = new iam.Role(rootStack, 'lambdaRole', {
@@ -83,10 +83,11 @@ const setupLambda = (args: BuildResolversArgs): { lambdaRole: iam.Role; lambdaLa
         compatibleRuntimes: [lambda.Runtime.NODEJS_20_X],
         description: `Lambda Layer for ${contextId}`,
     });
+    
     quizTable.grantReadWriteData(lambdaRole);
     scoreTable.grantReadWriteData(lambdaRole);
 
-    return { lambdaRole, lambdaLayer };
+    return { lambdaRole, lambdaLayers: [lambdaLayer] };
 };
 
 type BuildResolversArgs = {
@@ -125,23 +126,23 @@ export const buildResolvers = (buildArgs: BuildResolversArgs) => {
      */
     const QueryTypeResolverMap: StrictResolversMap<'Query'> = {
         // quiz
-        quizList: { type: 'lambda', fileName: 'quiz/quizListQueryResolver.ts' },
-        topicList: { type: 'lambda', fileName: 'quiz/topicListQueryResolver.ts' },
+        quizList: { type: 'lambda', fileName: 'quiz/quizListQueryResolver' },
+        topicList: { type: 'lambda', fileName: 'quiz/topicListQueryResolver' },
 
         // score
-        scoreList: { type: 'lambda', fileName: 'score/scoreListQueryResolver.ts' },
+        scoreList: { type: 'lambda', fileName: 'score/scoreListQueryResolver' },
     };
     const MutationTypeResolverMap: StrictResolversMap<'Mutation'> = {
         // quiz
-        addQuiz: { type: 'lambda', fileName: 'quiz/addQuizMutationResolver.ts' },
+        addQuiz: { type: 'lambda', fileName: 'quiz/addQuizMutationResolver' },
         populateQuizData: {
             type: 'lambda',
-            fileName: 'quiz/populateQuizMutationResolver.ts',
+            fileName: 'quiz/populateQuizMutationResolver',
             timeout: cdk.Duration.millis(20000),
         },
 
         // score
-        addScore: { type: 'lambda', fileName: 'score/addScoreMutationResolver.ts' },
+        addScore: { type: 'lambda', fileName: 'score/addScoreMutationResolver' },
     };
 
     /**
@@ -166,11 +167,12 @@ export const buildResolvers = (buildArgs: BuildResolversArgs) => {
             };
             const lambdaFunction = new NodejsFunction(rootStack, `${typeName}-${fieldName}-lambda`, {
                 functionName,
-                entry: `src/lambda/${fileName}`,
+                // see vite.config.ts for how we got thse file location
+                entry: `dist/lambda/${fileName}.js`,
                 runtime: lambda.Runtime.NODEJS_20_X,
                 environment,
                 role: lambdaSetup.lambdaRole,
-                layers: [lambdaSetup.lambdaLayer],
+                layers: lambdaSetup.lambdaLayers,
                 timeout,
             });
 

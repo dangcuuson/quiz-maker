@@ -15,14 +15,17 @@
         "@types/aws-lambda": "8.10.130",
         "@types/git-branch": "2.0.5",
         "aws-cdk": "2.116.1",
-        "graphql-schema-typescript": "1.6.1"
+        "graphql-schema-typescript": "1.6.1",
+        "vite": "5.0.10"
     },
     "scripts": {
         "tsc": "tsc -p ./tsconfig.json",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "build-gql": "ts-node -TP ../../tsconfig.node.json ./scripts/generateGQLTypes.ts",
-        "predeploy": "npm run build-gql",
+        "predeploy": "npm run build-gql && vite build",
         "deploy": "cdk deploy --outputs-file ../../cdk-outputs.json",
-        "deploy:dev": "npm run deploy -- --hotswap-fallback"
+        "deploy:dev": "npm run deploy -- --hotswap-fallback",
+        "presynth": "vite build",
+        "synth": "cdk synth"
     }
 }
