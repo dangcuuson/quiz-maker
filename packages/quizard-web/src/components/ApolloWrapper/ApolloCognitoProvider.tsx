@@ -14,7 +14,7 @@ import {
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { useEffectOnce } from '@hooks/hooks';
-import { persistCache } from 'apollo3-cache-persist';
+// import { persistCache } from 'apollo3-cache-persist';
 import * as Auth from 'aws-amplify/auth';
 import React from 'react';
 import { getMainDefinition } from '@apollo/client/utilities';
@@ -111,10 +111,10 @@ const makeApolloClient = async (authToken: string): Promise<ApolloClient<Normali
     const link = ApolloLink.from([errorLink, authLink, splitHTTPAndWSLink]);
 
     const cache = new InMemoryCache();
-    await persistCache({
-        cache,
-        storage: localStorage,
-    });
+    // await persistCache({
+    //     cache,
+    //     storage: localStorage,
+    // });
     const client = new ApolloClient({ cache, link });
     return client;
 };
