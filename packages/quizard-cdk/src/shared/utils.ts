@@ -6,11 +6,12 @@ import {
     QueryCommandInput,
 } from '@aws-sdk/lib-dynamodb';
 import { GQLKeyConditionExpression } from './gqlTypes';
-import { omitBy, isNil } from 'lodash';
-import { LambdaEnv } from './types';
-import { CognitoIdentityServiceProvider } from 'aws-sdk';
+import _omitBy from 'lodash/omitBy';
+import _isNil from 'lodash/isNil';
 import _get from 'lodash/get';
-import { AppSyncIdentity } from 'aws-lambda';
+import { CognitoIdentityProviderClient, AdminGetUserCommand, AdminGetUserCommandOutput } from '@aws-sdk/client-cognito-identity-provider';
+import type { AppSyncIdentity } from 'aws-lambda';
+import { LambdaEnv } from './types';
 
 // Get Document Client
 export const getDDBDocClient = (): DynamoDBDocumentClient => {
@@ -72,7 +73,7 @@ export function getExactOneDefinedField<T extends object, K extends keyof T>(
     key: K;
     value: NonNullable<T[K]>;
 } {
-    const keys = Object.keys(omitBy(input, isNil)) as K[];
+    const keys = Object.keys(_omitBy(input, _isNil)) as K[];
     if (keys.length !== 1) {
         throw Error(`Expect input: ${inputName} to have one field, received: ${keys.length}`);
     }
@@ -152,20 +153,28 @@ export const buildQueryCommandInput = (args: {
     };
 };
 
-export const getCognitoUser = async (identity: AppSyncIdentity, env: LambdaEnv) => {
+export const getCognitoUser = async (identity: AppSyncIdentity, env: LambdaEnv): Promise<AdminGetUserCommandOutput & { Username: string }> => {
     const userPoolId = env.USER_POOL_ID;
-    const cognitoIdentityServiceProvider = new CognitoIdentityServiceProvider();
+    const cognitoIdentityServiceProvider = new CognitoIdentityProviderClient();
     const username = _get(identity, 'username');
 
     if (typeof username !== 'string') {
         throw Error(`Invalid username ${username}`);
     }
 
-    const cognitoUser = await cognitoIdentityServiceProvider
-        .adminGetUser({
-            Username: username,
+    const cognitoUser = await cognitoIdentityServiceProvider.send(
+        new AdminGetUserCommand({
             UserPoolId: userPoolId,
+            Username: username,
         })
-        .promise();
-    return cognitoUser;
+    );
+
+    const Username = cognitoUser.Username;
+    if (!Username) {
+        throw Error(`Unable to find user ${Username}`);
+    }
+    return {
+        ...cognitoUser,
+        Username
+    };
 };

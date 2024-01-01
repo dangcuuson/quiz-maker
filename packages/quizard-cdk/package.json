@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "license": "MIT",
     "dependencies": {
+        "@aws-sdk/client-cognito-identity-provider": "3.484.0",
         "@aws-sdk/client-dynamodb": "3.478.0",
         "@aws-sdk/lib-dynamodb": "3.478.0",
         "aws-cdk-lib": "2.115.0",
@@ -15,17 +16,14 @@
         "@types/aws-lambda": "8.10.130",
         "@types/git-branch": "2.0.5",
         "aws-cdk": "2.116.1",
-        "graphql-schema-typescript": "1.6.1",
-        "vite": "5.0.10"
+        "graphql-schema-typescript": "1.6.1"
     },
     "scripts": {
         "tsc": "tsc -p ./tsconfig.json",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "build-gql": "ts-node -TP ../../tsconfig.node.json ./scripts/generateGQLTypes.ts",
-        "predeploy": "npm run build-gql && vite build",
+        "predeploy": "npm run build-gql",
         "deploy": "cdk deploy --outputs-file ../../cdk-outputs.json",
-        "deploy:dev": "npm run deploy -- --hotswap-fallback",
-        "presynth": "vite build",
-        "synth": "cdk synth"
+        "deploy:dev": "npm run deploy -- --hotswap-fallback"
     }
 }
