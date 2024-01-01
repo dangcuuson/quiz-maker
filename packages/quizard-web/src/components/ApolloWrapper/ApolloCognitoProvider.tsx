@@ -11,6 +11,7 @@ import {
     NormalizedCacheObject,
     split,
 } from '@apollo/client';
+import { persistCache } from 'apollo3-cache-persist'
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { useEffectOnce } from '@hooks/hooks';
@@ -112,10 +113,10 @@ const makeApolloClient = async (authToken: string): Promise<ApolloClient<Normali
     const link = ApolloLink.from([errorLink, authLink, splitHTTPAndWSLink]);
 
     const cache = new InMemoryCache();
-    // await persistCache({
-    //     cache,
-    //     storage: localStorage,
-    // });
+    await persistCache({
+        cache,
+        storage: sessionStorage,
+    });
     const client = new ApolloClient({ cache, link });
     return client;
 };
