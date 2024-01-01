@@ -1,4 +1,4 @@
-import { Alert, Button, Collection } from '@aws-amplify/ui-react';
+import { Alert, Button, Collection, Flex } from '@aws-amplify/ui-react';
 import ApolloQueryWrapper from '@components/ApolloWrapper/ApolloQueryWrapper';
 import { QuizCard, QuizCardContent, QuizCardText } from '@components/Widgets/QuizCard';
 import { gql } from '@gql/gql';
@@ -32,8 +32,26 @@ const TopicItemPage: React.FC<Props> = () => {
     if (!topic) {
         return <Alert variation="error" hasIcon={true} heading="Missing topic" />;
     }
+
+    const emptyCard = (
+        <QuizCard>
+            <QuizCardContent>
+                <QuizCardText>
+                    &nbsp;
+                    <Button variation="link" children=" " />
+                </QuizCardText>
+            </QuizCardContent>
+        </QuizCard>
+    );
+    const loadingElement = (
+        <Flex direction="column" padding="small">
+            {emptyCard}
+            {emptyCard}
+            {emptyCard}
+        </Flex>
+    );
     return (
-        <ApolloQueryWrapper query={quizListQuery} variables={{ topic }}>
+        <ApolloQueryWrapper query={quizListQuery} variables={{ topic }} loadingEl={loadingElement}>
             {({ data }) => {
                 return <TopicItemPageInner quizList={data.quizList.items} />;
             }}
