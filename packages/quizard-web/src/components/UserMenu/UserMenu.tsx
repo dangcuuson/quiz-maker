@@ -26,11 +26,15 @@ const UserMenu: React.FC = () => {
         <Flex marginLeft="auto" alignItems="center">
             <Text>Hello {displayName}</Text>
             <Menu menuAlign="end">
-                <MenuItem onClick={() => {
-                    navigate({
-                        pathname: routeConfigs.myScores.getPath()
-                    })
-                }}>My scores</MenuItem>
+                <MenuItem
+                    onClick={() => {
+                        navigate({
+                            pathname: routeConfigs.myScores.getPath(),
+                        });
+                    }}
+                >
+                    My scores
+                </MenuItem>
                 <MenuItem onClick={() => authenticator.signOut()}>Sign out</MenuItem>
             </Menu>
         </Flex>

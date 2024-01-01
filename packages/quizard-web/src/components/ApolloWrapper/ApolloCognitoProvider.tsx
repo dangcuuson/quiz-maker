@@ -15,7 +15,6 @@ import { persistCache } from 'apollo3-cache-persist'
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { useEffectOnce } from '@hooks/hooks';
-// import { persistCache } from 'apollo3-cache-persist';
 import * as Auth from 'aws-amplify/auth';
 import React from 'react';
 import { getMainDefinition } from '@apollo/client/utilities';
