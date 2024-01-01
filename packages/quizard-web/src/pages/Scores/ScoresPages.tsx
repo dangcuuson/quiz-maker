@@ -57,28 +57,10 @@ interface Props {
     // user: query scores from the logged in user
     filterMode: 'quizCode' | 'user';
 }
-// const client = generateClient();
+
 const ScoresPage: React.FC<Props> = ({ filterMode }) => {
     const { quizCode } = useParams();
     const [sortMode, setSortMode] = React.useState<SortMode>('Time');
-
-    // useEffectOnce(() => {
-    //     const start = async () => {
-    //         const session = await Auth.fetchAuthSession({ forceRefresh: false });
-    //         const authToken = session.tokens?.accessToken.toString();
-    //         client
-    //             .graphql({
-    //                 query: `subscription x { scoreAdded { username, createdAt } }`,
-    //                 authMode: 'userPool',
-    //                 authToken: authToken
-    //             })
-    //             .subscribe({
-    //                 next: ({ data }) => console.log('>>>>DATA', data),
-    //                 error: (error) => console.warn('>>>>>ERROR', error),
-    //             });
-    //     };
-    //     void start();
-    // });
 
     if (!quizCode && filterMode === 'quizCode') {
         return <Alert variation="error" hasIcon={true} heading="Missing quiz code" />;
