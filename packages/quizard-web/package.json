@@ -5,13 +5,12 @@
         "tsc": "tsc -p ./tsconfig.json",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "prebuild": "npm run build-env",
-        "build": "vite build",
+        "build": "vite -c ./scripts/vite.config.ts build",
         "build-gql": "graphql-codegen -c ./scripts/graphql-codegen.ts",
         "build-gql:watch": "npm run build-gql -- --watch",
         "build-env": "ts-node -TP ../../tsconfig.node.json ./scripts/buildEnv.ts",
         "predev": "npm run build-env && npm run build-gql",
-        "dev": "vite --port 8000",
-        "vite": "vite"
+        "dev": "vite -c ./scripts/vite.config.ts --port 8000"
     },
     "devDependencies": {
         "@parcel/watcher": "2.3.0",

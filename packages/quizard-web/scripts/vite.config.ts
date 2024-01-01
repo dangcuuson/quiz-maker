@@ -31,27 +31,27 @@ export default defineConfig({
         alias: [
             {
                 find: '@gql',
-                replacement: path.resolve(__dirname, 'src/gql'),
+                replacement: path.resolve('src/gql'),
             },
             {
                 find: '@components',
-                replacement: path.resolve(__dirname, 'src/components'),
+                replacement: path.resolve('src/components'),
             },
             {
                 find: '@pages',
-                replacement: path.resolve(__dirname, 'src/pages'),
+                replacement: path.resolve('src/pages'),
             },
             {
                 find: '@hooks',
-                replacement: path.resolve(__dirname, 'src/hooks'),
+                replacement: path.resolve('src/hooks'),
             },
             {
                 find: '@utils',
-                replacement: path.resolve(__dirname, 'src/utils'),
+                replacement: path.resolve('src/utils'),
             },
             {
                 find: '@config',
-                replacement: path.resolve(__dirname, 'src/config'),
+                replacement: path.resolve('src/config'),
             },
         ],
     },
