@@ -1,5 +1,11 @@
 .env
 
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
 # auto generated files that has high chance of merge conflict
 src/gql/gql.ts
 src/gql/graphql.ts
