@@ -66,7 +66,6 @@ const useCognitoAuthToken = (): { token: string; ready: boolean } => {
     return { token: authToken, ready };
 };
 
-// eslint-disable-next-line @typescript-eslint/require-await
 const makeApolloClient = async (authToken: string): Promise<ApolloClient<NormalizedCacheObject>> => {
     // just log error to console for now
     // In future we can modify this to e.g display an error dialog
