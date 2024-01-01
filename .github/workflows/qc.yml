@@ -2,8 +2,8 @@ name: QC
 
 on:
     push:
-        branches:
-            - '**'
+        branches-ignore:
+            - 'dev'
 
 concurrency:
     group: 'QC'
