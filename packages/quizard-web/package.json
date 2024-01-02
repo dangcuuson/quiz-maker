@@ -11,7 +11,8 @@
         "build-gql:watch": "npm run build-gql -- --watch",
         "build-env": "ts-node -TP ../../tsconfig.node.json ./scripts/buildEnv.ts",
         "predev": "npm run build-env && npm run build-gql",
-        "dev": "vite -c ./scripts/vite.config.ts --port 8000"
+        "dev": "vite -c ./scripts/vite.config.ts --port 8000",
+        "bundle-review": "vite-bundle-visualizer -c ./scripts/vite.config.ts -o bundle-review.html --open"
     },
     "devDependencies": {
         "@parcel/watcher": "2.3.0",
@@ -22,7 +23,8 @@
         "@types/react-dom": "18.2.18",
         "@vitejs/plugin-react-swc": "3.5.0",
         "git-branch": "2.0.1",
-        "vite": "5.0.10"
+        "vite": "5.0.10",
+        "vite-bundle-visualizer": "1.0.0"
     },
     "dependencies": {
         "@apollo/client": "3.8.8",
