@@ -1,7 +1,7 @@
 import { QuizItemFragment, QuizItemQuestionFragment } from '@gql/graphql';
 import { useLocalStorage } from '@hooks/hooks';
-import { hasBoolField, hasNumField, hasObjField, hasStrField, restoreArr } from '@utils/dataUtils';
 import shuffle from 'lodash/shuffle';
+import { z } from 'zod';
 
 // expected data shape of quiz item that was stored in local storaged
 export type StoredQuiz = {
@@ -40,49 +40,31 @@ export const getSavedQuizFromLS = (): StoredQuiz | null => {
         if (!storedStr) {
             return null;
         }
-        const storedJson: unknown = JSON.parse(storedStr);
-        if (
-            !hasStrField(storedJson, 'quizCode') ||
-            !hasStrField(storedJson, 'topic') ||
-            !hasStrField(storedJson, 'title') ||
-            !hasObjField(storedJson, 'questions') ||
-            !hasBoolField(storedJson, 'submitted')
-        ) {
-            return null;
-        }
-
-        const restoredQuestions = restoreArr<StoredQuizQuestion>({
-            value: storedJson.questions,
-            strict: true,
-            itemRestore: (qItem) => {
-                if (
-                    !hasStrField(qItem, 'questionText') ||
-                    !hasObjField(qItem, 'options') ||
-                    !hasNumField(qItem, 'userSelected')
-                ) {
-                    return null;
-                }
-                type QOption = StoredQuizQuestion['options'][number];
-                const restoredOptions = restoreArr<QOption>({
-                    value: qItem.options,
-                    strict: true,
-                    itemRestore: (qOption) => {
-                        if (!hasStrField(qOption, 'optionText') || !hasBoolField(qOption, 'isCorrect')) {
-                            return null;
-                        }
-                        return qOption;
-                    },
-                });
-                if (!restoredOptions) {
-                    return null;
-                }
-                return { ...qItem, options: restoredOptions };
-            },
+        const storedQuizZodSchema = z.object({
+            quizCode: z.string(),
+            questions: z.array(
+                z.object({
+                    questionText: z.string(),
+                    options: z.array(
+                        z.object({
+                            optionText: z.string(),
+                            isCorrect: z.boolean(),
+                        }),
+                    ),
+                    userSelected: z.number(),
+                }),
+            ),
+            submitted: z.boolean(),
+            title: z.string(),
+            topic: z.string()
         });
-        if (!restoredQuestions) {
+        const storedJson: unknown = JSON.parse(storedStr);
+        const parseResult = storedQuizZodSchema.safeParse(storedJson);
+        if (parseResult.success) {
+            return parseResult.data;
+        } else {
             return null;
         }
-        return { ...storedJson, questions: restoredQuestions };
     } catch {
         return null;
     }
@@ -92,6 +74,6 @@ export const useSavedQuizState = (initValue: StoredQuiz) => {
     return useLocalStorage({
         getInitValue: () => initValue,
         key: STORED_QUIZ_LS_KEY,
-        stringify: v => JSON.stringify(v)
-    })
-}
+        stringify: (v) => JSON.stringify(v),
+    });
+};
