@@ -9,7 +9,7 @@
         "module": "ESNext",
         "moduleResolution": "bundler",
 
-        // path mapping. Need to repeat this config in vite.config.cjs aswell
+        // path mapping. Need to repeat this config in vite config aswell
         "baseUrl": "./src", // This is to avoid adding the ./src prefix to each path below.
         "paths": {
             "@gql/*": ["gql/*"],
@@ -23,6 +23,7 @@
     "include": [
         "src",
         "scripts",
+        "playwright",
         "../../globalTypes.d.ts"
     ]
 }
