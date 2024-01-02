@@ -27,7 +27,7 @@ export default defineConfig({
         },
     },
     resolve: {
-        // path mapping. Need to repeat this config in tsconfig.json aswell
+        // path mapping. Need to repeat this config in tsconfig.json as well
         alias: [
             {
                 find: '@gql',

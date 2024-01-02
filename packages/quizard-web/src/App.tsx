@@ -1,7 +1,7 @@
 import React from 'react';
 import MainLayout from '@pages/MainLayout';
-import ApolloCognitoProvider from './components/ApolloWrapper/ApolloCognitoProvider';
-import ApolloMutationResultMessagePopup from './components/ApolloWrapper/ApolloMutationResultMessagePopup';
+import ApolloCognitoProvider from '@components/ApolloWrapper/ApolloCognitoProvider';
+import ApolloMutationResultMessagePopup from '@components/ApolloWrapper/ApolloMutationResultMessagePopup';
 import { Amplify } from 'aws-amplify';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { RouteItemConfig, routeConfigs } from '@config/routeConfigs';
