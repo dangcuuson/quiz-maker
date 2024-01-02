@@ -23,7 +23,7 @@
     "include": [
         "src",
         "scripts",
-        "tests",
+        "playwright",
         "../../globalTypes.d.ts"
     ]
 }
