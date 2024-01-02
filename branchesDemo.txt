@@ -1,2 +1,4 @@
 branch1Commit
 branch2Commit
+branch1Commit2
+branch1Commit3
