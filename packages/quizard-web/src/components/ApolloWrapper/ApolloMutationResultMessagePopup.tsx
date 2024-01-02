@@ -31,7 +31,7 @@ const ApolloMutationResultMessagePopup: React.FC<Props> = () => {
     React.useEffect(() => {
         const handler = setTimeout(() => {
             setMessage(null);
-        }, 100000);
+        }, 5000);
         return () => {
             clearInterval(handler);
         };
