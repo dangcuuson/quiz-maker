@@ -6,4 +6,5 @@ yarn-error.log
 
 .aws-sam
 
+cdk-outputs
 cdk-outputs.json

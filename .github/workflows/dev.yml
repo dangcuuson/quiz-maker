@@ -74,7 +74,7 @@ jobs:
               working-directory: ./packages/quizard-cdk
 
             - name: Build Web
-              run: npm run build
+              run: WEB_BASE_URL="/quizard/" npm run build
               working-directory: ./packages/quizard-web
 
             - name: Setup Pages

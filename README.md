@@ -34,7 +34,7 @@ Using `DynamoDB` for storage, `Cognito` for Authentication, `AppSync` for GraphQ
 * `npm run build-gql`: generate typescript definitions from GraphQL schema
 * Navigate to `packages/quizard-cdk`
 * `aws configure` to setup aws cli. Need AWS CLI installed.
-* `npm run deploy`: deploy the stack to AWS. After deployment, a file named `cdk-outputs.json` will be generated,
+* `npm run deploy`: deploy the stack to AWS. After deployment, a file will be generated in `cdk-outputs/<git_branch>.json`,
 which contain information of the stack (e.g userPoolId, GraphQL endpoint). The information will be injected into React front-end
 * Navigate to `packages/quizard-web`
 * `npm run dev` and open browser on `http://localhost:8000`
