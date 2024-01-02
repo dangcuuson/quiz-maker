@@ -8,7 +8,7 @@ export const TEST_USER = {
     nickname: 'Test User',
 };
 
-test.beforeAll('setup test user', async ({ page }) => {
+test('setup test user', async ({ page }) => {
     const { userPoolId } = await readCDKOutputsJSON();
     try {
         const deleteUserCommand = `aws cognito-idp admin-delete-user \
@@ -38,7 +38,8 @@ test.beforeAll('setup test user', async ({ page }) => {
     // verify email
     const verifyEmailCommand = `aws cognito-idp admin-update-user-attributes \
                                 --user-pool-id ${userPoolId} \
-                                --user-attributes email_verified=true`;
+                                --username ${TEST_USER.username} \
+                                --user-attributes Name=email_verified,Value=true`;
     execSync(verifyEmailCommand);
 
     await page.goto('/');

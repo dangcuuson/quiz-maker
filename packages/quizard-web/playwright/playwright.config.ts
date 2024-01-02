@@ -6,6 +6,8 @@ import { defineConfig, devices } from '@playwright/test';
  */
 // require('dotenv').config();
 
+const BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:8000/';
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -24,7 +26,7 @@ export default defineConfig({
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
     use: {
         /* Base URL to use in actions like `await page.goto('/')`. */
-        baseURL: 'http://127.0.0.1:8000/quizard/',
+        baseURL: BASE_URL,
 
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
         trace: 'on-first-retry',
@@ -33,25 +35,26 @@ export default defineConfig({
     /* Configure projects for major browsers */
     projects: [
         {
-            name: 'authSetup',
-            testMatch: 'authSetup/**/*.test.ts'
+            name: 'authTest',
+            testMatch: 'authTest/**/*.spec.ts'
         },
         {
             name: 'chromium',
             use: { ...devices['Desktop Chrome'] },
-            dependencies: ['authSetup']
+            dependencies: ['authTest'],
+            testMatch: 'authenticated/**/*.spec.ts'
         },
-
         {
             name: 'firefox',
             use: { ...devices['Desktop Firefox'] },
-            dependencies: ['authSetup']
+            dependencies: ['authTest'],
+            testMatch: 'authenticated/**/*.spec.ts'
         },
-
         {
             name: 'webkit',
             use: { ...devices['Desktop Safari'] },
-            dependencies: ['authSetup']
+            dependencies: ['authTest'],
+            testMatch: 'authenticated/**/*.spec.ts'
         },
 
         /* Test against mobile viewports. */
