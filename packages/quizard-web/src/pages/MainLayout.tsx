@@ -22,6 +22,7 @@ const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
                     maxWidth={theme.breakpoints.values.large}
                     overflow="auto"
                     padding="medium"
+                    testId="main-layout"
                 >
                     <React.Suspense fallback="Loading...">
                         <Flex display="flex" flex="1" justifyContent="flex-start" alignItems="center">

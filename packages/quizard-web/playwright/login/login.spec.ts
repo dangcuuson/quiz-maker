@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
 import { readCDKOutputsJSON } from '../../scripts/readCDKOutputsJson';
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
 export const TEST_USER = {
     username: 'test@example.com',
@@ -43,9 +43,12 @@ test('setup test user', async ({ page }) => {
     execSync(verifyEmailCommand);
 
     await page.goto('/');
+    await expect(page).toHaveScreenshot('loginscreen.png');
 
     await page.locator("input[name='username']").fill(TEST_USER.username);
     await page.locator("input[name='password']").fill(TEST_USER.password);
 
     await page.locator('button[type="submit"]').click();
+
+    await expect(page.getByTestId('main-layout')).toBeInViewport();
 });

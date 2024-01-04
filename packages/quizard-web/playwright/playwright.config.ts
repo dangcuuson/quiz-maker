@@ -35,25 +35,25 @@ export default defineConfig({
     /* Configure projects for major browsers */
     projects: [
         {
-            name: 'authTest',
-            testMatch: 'authTest/**/*.spec.ts'
+            name: 'login',
+            testMatch: 'login/**/*.spec.ts'
         },
         {
             name: 'chromium',
             use: { ...devices['Desktop Chrome'] },
-            dependencies: ['authTest'],
+            dependencies: ['login'],
             testMatch: 'authenticated/**/*.spec.ts'
         },
         {
             name: 'firefox',
             use: { ...devices['Desktop Firefox'] },
-            dependencies: ['authTest'],
+            dependencies: ['login'],
             testMatch: 'authenticated/**/*.spec.ts'
         },
         {
             name: 'webkit',
             use: { ...devices['Desktop Safari'] },
-            dependencies: ['authTest'],
+            dependencies: ['login'],
             testMatch: 'authenticated/**/*.spec.ts'
         },
 
