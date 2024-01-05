@@ -22,7 +22,8 @@ const acquireAccount = async (id: number) => {
                                         --username ${TEST_USER.username} \
                                         --user-attributes Name=nickname,Value="${TEST_USER.nickname}" \
                                         --message-action SUPPRESS`; // SUPRESS so that aws does not send activation message
-            execSync(createUserCommand);
+            // supress stderr
+            execSync(`${createUserCommand} 2> /dev/null`);
         } catch (err) {
             // may error if user already exists, ignore
         }
