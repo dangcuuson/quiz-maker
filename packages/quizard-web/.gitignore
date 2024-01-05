@@ -5,6 +5,7 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+playwright/.auth
 bundle-review.html
 
 # auto generated files that has high chance of merge conflict

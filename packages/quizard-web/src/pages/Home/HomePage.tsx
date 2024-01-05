@@ -61,7 +61,7 @@ const HomePage: React.FC<Props> = () => {
                         );
                     }
                     return (
-                        <Flex direction="row" wrap="wrap" padding="small">
+                        <Flex direction="row" wrap="wrap" padding="small" testId="topic-list-container">
                             {data.topicList.map((topic) => (
                                 <TopicItemCard key={topic} topic={topic} onClick={() => selectTopic(topic)} />
                             ))}
