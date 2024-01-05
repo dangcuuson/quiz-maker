@@ -7,8 +7,6 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { RouteItemConfig, routeConfigs } from '@config/routeConfigs';
 import { withAuthenticator, WithAuthenticatorProps } from '@aws-amplify/ui-react';
 import { LightDarkContextThemeProvider } from '@components/LightDarkMode/LightDarkContext';
-import '@aws-amplify/ui-react/styles.css';
-import './App.css';
 
 Amplify.configure({
     Auth: {

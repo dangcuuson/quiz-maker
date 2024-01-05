@@ -2,6 +2,8 @@ import React from 'react';
 import { ThemeProvider, createTheme } from '@aws-amplify/ui-react';
 import { useLocalStorage } from '@hooks/hooks';
 import { ThemeProvider as StyledThemeProvider } from 'styled-components';
+import '@aws-amplify/ui-react/styles.css';
+import './LightDarkContext.css';
 
 type LightDarkContextType = {
     isDarkMode: boolean;
