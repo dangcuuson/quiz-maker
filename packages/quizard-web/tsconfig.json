@@ -2,8 +2,7 @@
     "extends": ["../../tsconfig.base.json"],
     "compilerOptions": {
         "types": [
-            "vite/client",
-            "./styled-components.d.ts"
+            "vite/client"
         ],
         "jsx": "react-jsx",
         "module": "ESNext",
