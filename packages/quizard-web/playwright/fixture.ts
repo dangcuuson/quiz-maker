@@ -4,34 +4,30 @@ import path from 'path';
 import { readCDKOutputsJSON } from '../scripts/readCDKOutputsJson';
 import { execSync } from 'child_process';
 import _get from 'lodash/get';
-import { BASE_URL } from './playwright.config';
 
 export * from '@playwright/test';
 
 const acquireAccount = async (id: number) => {
     const TEST_USER = {
-        username: `test${id}@example.com`,
+        username: `test_user_${id}@example.com`,
         password: 'Quizard-1',
         nickname: `Test User`,
     };
-
     const { userPoolId } = await readCDKOutputsJSON();
-    try {
-        const deleteUserCommand = `aws cognito-idp admin-delete-user \
-                                    --user-pool-id ${userPoolId} \
-                                    --username ${TEST_USER.username}`;
-        execSync(deleteUserCommand);
-    } catch {
-        //
-    }
-
-    // Create user
-    const createUserCommand = `aws cognito-idp admin-create-user \
-                              --user-pool-id ${userPoolId} \
-                              --username ${TEST_USER.username} \
-                              --user-attributes Name=nickname,Value="${TEST_USER.nickname}" \
-                              --message-action SUPPRESS`; // SUPRESS so that aws does not send activation message
-    execSync(createUserCommand);
+    const tryCreateUser = () => {
+        try {
+            // Create user
+            const createUserCommand = `aws cognito-idp admin-create-user \
+                                        --user-pool-id ${userPoolId} \
+                                        --username ${TEST_USER.username} \
+                                        --user-attributes Name=nickname,Value="${TEST_USER.nickname}" \
+                                        --message-action SUPPRESS`; // SUPRESS so that aws does not send activation message
+            execSync(createUserCommand);
+        } catch (err) {
+            // may error if user already exists, ignore
+        }
+    };
+    tryCreateUser();
 
     // set password
     const setPasswordCommand = `aws cognito-idp admin-set-user-password \
@@ -77,15 +73,15 @@ export const testWithAuth = baseTest.extend<object, { workerStorageState: string
             const account = await acquireAccount(id);
 
             // Perform authentication steps..
-            await page.goto(BASE_URL);
+            await page.goto('/');
 
             await page.locator("input[name='username']").fill(account.username);
             await page.locator("input[name='password']").fill(account.password);
 
             await page.locator('button[type="submit"]').click();
 
-            // wait for login to finish by checking if main-layout is in viewport
-            await expect(page.getByTestId('main-layout')).toBeInViewport();
+            // wait for login to finish
+            await expect(page.getByTestId('main-layout')).toBeVisible();
             // End of authentication steps.
 
             // save authentication state for reuse in other tests.
@@ -99,20 +95,16 @@ export const testWithAuth = baseTest.extend<object, { workerStorageState: string
 
 // Registers a client-side interception to graphql. Interceptions are per-operation, so multiple can be
 // registered for different operations without overwriting one-another.
-export async function interceptGQL<TData = unknown, TVariables = unknown>(args:{
-    page: Page,
-    operationName: string,
-    patchResponse?: (data: TData) => TData,
+export async function interceptGQL<TData = unknown, TVariables = unknown>(args: {
+    page: Page;
+    operationName: string;
+    patchResponse?: (data: TData) => TData;
 }): Promise<TVariables[]> {
     const { page, operationName, patchResponse } = args;
     // A list of GQL variables which the handler has been called with.
     const reqs: TVariables[] = [];
 
     // Register a new handler which intercepts all GQL requests.
-    await page.route('**/*', function (route: Route) {
-        console.log('>>>>ROUTE OVERRIDE');
-        return route.fallback();
-    })
     await page.route('**/graphql', async function (route: Route) {
         const req: unknown = route.request().postDataJSON();
 
@@ -123,6 +115,8 @@ export async function interceptGQL<TData = unknown, TVariables = unknown>(args:{
         }
 
         const response = await route.fetch();
+        expect(response.status()).toBe(200);
+        
         const respJSON: unknown = await response.json();
 
         // Store what variables we called the API with.
