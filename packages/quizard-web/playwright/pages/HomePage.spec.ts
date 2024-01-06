@@ -5,7 +5,7 @@ import { TopicListQuery, TopicListQueryVariables } from '@gql/graphql';
 test('should show login page if unauthenticated', async ({ page }) => {
     await page.goto('/');
     await expect(page).toHaveTitle('Quizard');
-    await expect(page).toHaveScreenshot('loginscreen.png', { fullPage: true });
+    await expect(page).toHaveScreenshot('login-screen.png', { fullPage: true });
 });
 
 testWithAuth('should show topic list if authenticated', async ({ page }) => {
@@ -31,5 +31,5 @@ testWithAuth('should show topic list if authenticated', async ({ page }) => {
     expect(called).toHaveLength(1);
     await expect(page).toHaveScreenshot('topic-list.png', { fullPage: true });
     // alternatively, can also take snapshot of the container only
-    // await expect(page.getByTestId('topic-list-container')).toHaveScreenshot('topiclist.png');
+    // await expect(page.getByTestId('topic-list-container')).toHaveScreenshot('topic_list.png');
 });
