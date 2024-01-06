@@ -36,5 +36,5 @@ jobs:
               if: always()
               with:
                   name: playwright-ct-report
-                  path: playwright-report/
+                  path: packages/quizard-web/playwright-report/
                   retention-days: 30
