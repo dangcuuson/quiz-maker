@@ -96,7 +96,8 @@ jobs:
               #set HOME=/root to fix error with firefox https://github.com/microsoft/playwright/issues/6500
               run: |
                   HOME=/root npm run test
-                  HOME=/root npm run test:e2e
+                  echo "PAGE_URL is ${{ steps.deployment.outputs.page_url }}"
+                  HOME=/root BASE_URL=${{ steps.deployment.outputs.page_url }} npm run test:e2e
               working-directory: ./packages/quizard-web
 
             - uses: actions/upload-artifact@v3
