@@ -37,14 +37,6 @@ jobs:
               run: |
                   npm run lint
                   npm run tsc
-                  npm run test
-
-            - uses: actions/upload-artifact@v3
-              if: always()
-              with:
-                  name: playwright-ct-report
-                  path: packages/quizard-web/playwright-report/
-                  retention-days: 30
 
     deploy:
         needs: QC
@@ -99,9 +91,9 @@ jobs:
               id: deployment
               uses: actions/deploy-pages@v2
 
-    E2ETest:
+    test:
         needs: deploy
-        runs-on: ubuntu-22.04
+        runs-on: mcr.microsoft.com/playwright:v1.40.0-jammy
         steps:
             - name: Checkout 🛎️
               uses: actions/checkout@master
@@ -122,6 +114,7 @@ jobs:
 
             - name: QC 🏗️
               run: |
+                  npm run test
                   npm run test:e2e
               working-directory: ./packages/quizard-web
 
