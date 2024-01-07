@@ -25,6 +25,7 @@
         "build-gql": "ts-node -TP ../../tsconfig.node.json ./scripts/generateGQLTypes.ts",
         "predeploy": "npm run build-gql",
         "deploy": "cdk deploy --outputs-file ../../cdk-outputs/`git rev-parse --abbrev-ref HEAD`.json",
+        "deploy:dev:ci": "cdk deploy --outputs-file ../../cdk-outputs/dev.json --require-approval never",
         "deploy:dev": "npm run deploy -- --hotswap-fallback"
     }
 }
