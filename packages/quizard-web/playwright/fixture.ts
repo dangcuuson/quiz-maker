@@ -2,48 +2,63 @@ import { test as baseTest, expect, Page, Route } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
 import { readCDKOutputsJSON } from '../scripts/readCDKOutputsJson';
-import { execSync } from 'child_process';
 import _get from 'lodash/get';
+import {
+    CognitoIdentityProviderClient,
+    AdminCreateUserCommand,
+    AdminSetUserPasswordCommand,
+    AdminUpdateUserAttributesCommand,
+} from '@aws-sdk/client-cognito-identity-provider';
 
 export * from '@playwright/test';
 
 const acquireAccount = async (id: number) => {
+    // TODO: instead of calling cognito to create user,
+    // use playwright to interact with web UI, along with mail trapping service to get activation code
+    // and create user that way
+
     const TEST_USER = {
         username: `test_user_${id}@example.com`,
         password: 'Quizard-1',
         nickname: `Test User`,
     };
     const { userPoolId } = await readCDKOutputsJSON();
-    const tryCreateUser = () => {
+    const cognitoIdentityServiceProvider = new CognitoIdentityProviderClient();
+
+    const tryCreateUser = async () => {
         try {
-            // Create user
-            const createUserCommand = `aws cognito-idp admin-create-user \
-                                        --user-pool-id ${userPoolId} \
-                                        --username ${TEST_USER.username} \
-                                        --user-attributes Name=nickname,Value="${TEST_USER.nickname}" \
-                                        --message-action SUPPRESS`; // SUPRESS so that aws does not send activation message
-            // supress stderr
-            execSync(`${createUserCommand} 2> /dev/null`);
+            await cognitoIdentityServiceProvider.send(
+                new AdminCreateUserCommand({
+                    UserPoolId: userPoolId,
+                    Username: TEST_USER.username,
+                    UserAttributes: [{ Name: 'nickname', Value: TEST_USER.nickname }],
+                    MessageAction: 'SUPPRESS',
+                }),
+            );
         } catch (err) {
             // may error if user already exists, ignore
         }
     };
-    tryCreateUser();
+    await tryCreateUser();
 
     // set password
-    const setPasswordCommand = `aws cognito-idp admin-set-user-password \
-                                --user-pool-id ${userPoolId} \
-                                --username ${TEST_USER.username} \
-                                --password ${TEST_USER.password} \
-                                --permanent`;
-    execSync(setPasswordCommand);
+    await cognitoIdentityServiceProvider.send(
+        new AdminSetUserPasswordCommand({
+            UserPoolId: userPoolId,
+            Username: TEST_USER.username,
+            Password: TEST_USER.password,
+            Permanent: true,
+        }),
+    );
 
     // verify email
-    const verifyEmailCommand = `aws cognito-idp admin-update-user-attributes \
-                                --user-pool-id ${userPoolId} \
-                                --username ${TEST_USER.username} \
-                                --user-attributes Name=email_verified,Value=true`;
-    execSync(verifyEmailCommand);
+    await cognitoIdentityServiceProvider.send(
+        new AdminUpdateUserAttributesCommand({
+            UserPoolId: userPoolId,
+            Username: TEST_USER.username,
+            UserAttributes: [{ Name: 'email_verified', Value: 'true' }],
+        }),
+    );
 
     return TEST_USER;
 };
@@ -117,7 +132,7 @@ export async function interceptGQL<TData = unknown, TVariables = unknown>(args: 
 
         const response = await route.fetch();
         expect(response.status()).toBe(200);
-        
+
         const respJSON: unknown = await response.json();
 
         // Store what variables we called the API with.
