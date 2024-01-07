@@ -93,9 +93,10 @@ jobs:
                   npm run tsc
 
             - name: Test
+              #set HOME=/root to fix error with firefox https://github.com/microsoft/playwright/issues/6500
               run: |
-                  npm run test
-                  npm run test:e2e
+                  HOME=/root npm run test
+                  HOME=/root npm run test:e2e
               working-directory: ./packages/quizard-web
 
             - uses: actions/upload-artifact@v3
