@@ -31,7 +31,6 @@ jobs:
               run: |
                   npm install
                   npm run build-gql
-                  npx playwright install --with-deps
 
             - name: QC 🏗️
               run: |
@@ -61,7 +60,6 @@ jobs:
               run: |
                   npm install
                   npm run build-gql
-                  npx playwright install --with-deps
 
             - name: Set up AWS CLI
               uses: aws-actions/configure-aws-credentials@v4
