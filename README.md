@@ -50,3 +50,18 @@ which contain information of the stack (e.g userPoolId, GraphQL endpoint). The i
 
 #### When Frontend code change
 Changes should be refresh immediately on browser if using `npm run dev` on `quizard-web`
+
+#### Run test on docker to generate screenshot
+We're using Playwright to generate screenshot. 
+
+To avoid problem where images are slightly different on each developer/ci environment, front end test will be run on docker as suggested on Playwright documentation: 
+
+https://playwright.dev/docs/test-snapshots
+
+On Linux:
+
+`docker run --rm -p 8000:8000 -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v1.40.0-jammy /bin/bash`
+
+On Windows:
+
+`docker run --rm --network host -v %cd%:/work/ -w /work/ -it mcr.microsoft.com/playwright:v1.40.0-jammy //bin/bash`
