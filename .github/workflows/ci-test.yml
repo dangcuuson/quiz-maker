@@ -1,0 +1,58 @@
+name: Dev
+on:
+    push:
+        branches:
+            - ci
+
+permissions:
+    contents: read
+    pages: write
+    id-token: write
+
+concurrency:
+    group: 'dev'
+
+jobs:
+    QC:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout 🛎️
+              uses: actions/checkout@master
+              with:
+                  persist-credentials: false
+
+            - name: Use Node.js 20.x
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 20.x
+                  cache: 'npm'
+
+            - uses: actions/cache@v3
+              name: node-modules-cache
+              id: node-modules-cache
+              with:
+                path: |
+                  **/node_modules
+                key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+                restore-keys: |
+                  ${{ runner.os }}-yarn
+
+            - name: Cache hit check
+              if: steps.node-modules-cache.outputs.cache-hit == 'true'
+              run: echo "CACHE HIT"
+
+            - name: Cache miss check
+              if: steps.node-modules-cache.outputs.cache-hit == 'true'
+              run: echo "CACHE MISS"
+
+            - name: Yarn Install
+              if: steps.node-modules-cache.outputs.cache-hit != 'true'
+              run: yarn install --frozen-lockfile --prefer-offline --non-interactive
+
+            - name: Build gql
+              run: yarn build-gql
+
+            - name: QC 🏗️
+              run: |
+                  npm run lint
+                  npm run tsc
