@@ -46,7 +46,6 @@ jobs:
               run: echo "CACHE MISS"
 
             - name: Yarn Install
-              if: steps.node-modules-cache.outputs.cache-hit != 'true'
               run: yarn install --frozen-lockfile --prefer-offline --non-interactive
 
             - name: Build gql
