@@ -42,7 +42,7 @@ jobs:
               run: echo "CACHE HIT"
 
             - name: Cache miss check
-              if: steps.node-modules-cache.outputs.cache-hit == 'true'
+              if: steps.node-modules-cache.outputs.cache-hit != 'true'
               run: echo "CACHE MISS"
 
             - name: Yarn Install
