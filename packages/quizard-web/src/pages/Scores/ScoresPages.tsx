@@ -4,7 +4,7 @@ import { useParams } from 'react-router';
 import ApolloQueryWrapper from '@components/ApolloWrapper/ApolloQueryWrapper';
 import { gql } from '@gql/gql';
 import ScoresTable from './ScoresTable';
-import { asType, isTuple } from '@utils/dataUtils';
+import { isTuple } from '@utils/dataUtils';
 import { ScoreAddedSubscription, ScoreAddedSubscriptionVariables } from '@gql/graphql';
 import { Subscription } from '@apollo/client/react/components';
 
@@ -104,8 +104,8 @@ const ScoresPage: React.FC<Props> = ({ filterMode }) => {
                                     }
                                 }}
                             >
-                                <option value={asType<SortMode>('Time')}>Latest score</option>
-                                <option value={asType<SortMode>('Score')}>Best score</option>
+                                <option value={'Time' satisfies SortMode}>Latest score</option>
+                                <option value={'Score' satisfies SortMode}>Best score</option>
                             </SelectField>
                             <ScoresTable
                                 items={data.scoreList.items}

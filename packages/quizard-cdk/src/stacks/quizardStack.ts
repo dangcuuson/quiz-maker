@@ -5,7 +5,7 @@ import * as cognito from 'aws-cdk-lib/aws-cognito';
 import * as logs from 'aws-cdk-lib/aws-logs';
 import { CDKContext } from '../shared/types';
 import { Construct } from 'constructs';
-import { combineGraphqlFilesIntoSchema, buildResolvers, asType } from './stacksHelper';
+import { combineGraphqlFilesIntoSchema, buildResolvers } from './stacksHelper';
 import { DBQuizKeys, Quiz_distinctTopic_GSI, Score_user_percentage_LSI } from '../shared/models/models';
 import {
     DBScoreKeys,
@@ -131,23 +131,23 @@ export class QuizardStack extends Stack {
 
         // output for web client
         type ValidKey = keyof CDKOutputJSON;
-        new CfnOutput(this, asType<ValidKey>('region'), {
+        new CfnOutput(this, 'region' satisfies ValidKey, {
             value: this.region,
         });
-        new CfnOutput(this, asType<ValidKey>('userPoolId'), {
+        new CfnOutput(this, 'userPoolId' satisfies ValidKey, {
             value: userPool.userPoolId,
         });
-        new CfnOutput(this, asType<ValidKey>('userPoolClientId'), {
+        new CfnOutput(this, 'userPoolClientId' satisfies ValidKey, {
             value: userPoolClient.userPoolClientId,
         });
-        new CfnOutput(this, asType<ValidKey>('GraphQLAPIURL'), {
+        new CfnOutput(this, 'GraphQLAPIURL' satisfies ValidKey, {
             value: graphqlApi.graphqlUrl,
         });
         // do not output graphql api as we only use user pool auth
-        // new CfnOutput(this, asType<ValidKey>('GraphQLAPIKey'), {
+        // new CfnOutput(this, 'GraphQLAPIKey' satisfies ValidKey, {
         //     value: graphqlApi.apiKey || '',
         // });
-        // new CfnOutput(this, asType<ValidKey>('GraphQLAPIID'), {
+        // new CfnOutput(this, 'GraphQLAPIID' satisfies ValidKey, {
         //     value: graphqlApi.apiId,
         // });
     }

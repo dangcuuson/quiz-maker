@@ -10,11 +10,6 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { LambdaEnv } from '../shared/types';
 import { GQLResolver } from '../shared/gqlTypes';
 
-// quickly define a value in a type-safed way
-export function asType<T>(value: T): T {
-    return value;
-}
-
 export const combineGraphqlFilesIntoSchema = () => {
     // recursively look through schema folder and grab files ended with .graphql
     // and merge them together into one file
